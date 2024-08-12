@@ -1,0 +1,273 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <p>Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-info bubble-shadow-small">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Mesas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-success bubble-shadow-small">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Menús</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-secondary bubble-shadow-small">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Reservas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-8">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form class="" action="/procesarActualizacionReservas/"  enctype="multipart/form-data" method="post" id="frm_nuevo_reservas" >
+          {% csrf_token %}
+          <input type="hidden" name="reserva_id"  value="{{reservas.reserva_id}}">
+          <div class="row">
+          <div class="form-group col-md-6">
+            <b><i class="fas fa-user"></i> CLIENTE</b>
+          <br>
+          <select class="form-control selectpicker"  data-live-search="true" data-live-search-style="startsWith" name="cliente_id_cliente" id="cliente_id_cliente" required  data-live-search-placeholder="Buscar categoria...">
+            <option value="">Seleccione el Cliente</option>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+            {% endfor %}
+            </select>
+            </div>
+            <div class="form-group col-md-6">
+              <b><i class="fas fa-chair"></i> MESA</b>
+            <br>
+            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="id_mesa_mesa" id="id_mesa_mesa" required data-live-search-placeholder="Buscar proveedor...">
+                <option value="">Seleccione la Mesa</option>
+                    {% for mesa in mesas %}
+                    <option value="{{ mesa.id_mesa }}">{{ mesa.numero_mes }}</option>
+                    {% endfor %}
+            </select>
+            </div>
+            <script type="text/javascript">
+                document.getElementById("cliente_id_cliente").value="{{reservas.cliente.cliente_id}}";
+              </script>
+
+              <script type="text/javascript">
+                document.getElementById("id_mesa_mesa").value="{{reservas.mesa.id_mesa}}";
+            </script>
+            </div>
+            <br>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <b><i class="fas fa-calendar-alt"></i> FECHA RESERVA:</b>
+                <input type="date" name="fecha_reserva" id="fecha_reserva" oninput="" value="{{reservas.fecha_reserva|date:'Y-m-d'}}" placeholder="Ingrese el nombre del cliente" class="form-control" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="estado_reserva">
+                    <b><i class="fas fa-info-circle"></i> ESTADO RESERVA:</b>
+              </label>
+              <select name="estado_reserva" id="estado_reserva" class="form-control" required>
+                  <option value="">Seleccione el Estado</option>
+                  <option value="confirmada" {% if reservas.estado_reserva == 'confirmada' %}selected{% endif %}>Confirmada</option>
+                  <option value="pendiente" {% if reservas.estado_reserva == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                  <option value="cancelada" {% if reservas.estado_reserva == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                  <!-- Agrega más opciones según sea necesario -->
+              </select>
+          </div>
+
+          </div>
+          <br>
+          <br>
+          <div class="row">
+						<div class="form-group col-md-6">
+              <b><i class="fas fa-users"></i> NUMERO PERSONAS:</b>
+            <input type="number" name="numero_personas_reserva" id="numero_personas_reserva" min="1" max="20" oninput="soloNumeros(this)"  value="{{reservas.numero_personas_reserva}}" placeholder="Ingrese numero Personas" class="form-control" required>
+						</div>
+            <div class="form-group col-md-6">
+              <b><i class="fas fa-clock"></i> HORA RESERVA:</b>
+                <input type="time" name="hora_reserva" id="hora_reserva" value="{% if reservas.hora_reserva %}{{ reservas.hora_reserva|time:'H:i' }}{% endif %}" placeholder="Ingrese la hora de Reserva" class="form-control" required>
+                <!-- Agregar una breve indicación, si es necesario -->
+                <small class="form-text text-muted">Formato: HH:MM (24 horas)</small>
+            </div>
+					</div>
+          <div class="modal-footer">
+            <button type="submit" name="button" class="btn btn-warning">
+              &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
+            </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'listadoReservas' %}" class="btn btn-danger">
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="form-group col-md-3">
+    <div class="card card-profile card-secondary">
+          <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+									<div class="profile-picture">
+										<div class="avatar avatar-xl">
+											<img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="user-profile text-center">
+                    <div class="name">
+                        <span>{{ clientes.nombre_cli }}</span>
+                    </div>
+										<div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
+                    <div class="">
+                        <span>{{ clientes.email_cli }}</span>
+                    </div>
+                    <div class="job">
+                        <p>"En esta sección, editarás los datos de  <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli}}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
+                    </div>
+									</div>
+								</div>
+							</div>
+
+            </div>
+  </div>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $("#frm_nuevo_reservas").validate({
+              rules: {
+                  "cliente_id_cliente": {
+                      required: true
+                  },
+                  "id_mesa_mesa": {
+                      required: true
+                  },
+                  "fecha_reserva": {
+                      required: true
+                  },
+                  "hora_reserva": {
+                      required: true
+                  },
+                  "numero_personas_reserva": {
+                      required: true,
+                      digits: true,
+                      min: 1,
+                      max: 20
+                  },
+                  "estado_reserva": {
+                      required: true
+                  }
+              },
+              messages: {
+                  "cliente_id_cliente": {
+                      required: "Debe seleccionar el cliente"
+                  },
+                  "id_mesa_mesa": {
+                      required: "Debe seleccionar la mesa"
+                  },
+                  "fecha_reserva": {
+                      required: "Debe ingresar la fecha de la reserva"
+                  },
+                  "hora_reserva": {
+                      required: "Debe ingresar la hora de la reserva"
+                  },
+                  "numero_personas_reserva": {
+                      required: "Por favor ingrese el número de personas",
+                      digits: "Ingrese solo números",
+                      min: "Debe ser al menos 1 persona",
+                      max: "El número máximo de personas es 20"
+                  },
+                  "estado_reserva": {
+                      required: "Por favor seleccione el estado de la reserva"
+                  }
+              }
+          });
+      });
+  </script>
+  <script>
+    function soloLetras(input) {
+      input.value = input.value.replace(/[^a-zA-Z ]/g, '');
+    }
+
+    function soloNumeros(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+
+    function validarCorreo(input) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!regex.test(input.value)) {
+        input.setCustomValidity('Ingrese un correo válido.');
+      } else {
+        input.setCustomValidity('');
+      }
+    }
+  </script>
+{% endblock %}

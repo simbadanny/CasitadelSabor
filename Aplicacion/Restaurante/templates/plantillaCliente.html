@@ -1,0 +1,364 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="{% static 'assetscli/images/logo.ico' %}" type="">
+
+  <title> La Casita del Sabor </title>
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'assetscli/css/bootstrap.css' %}" />
+
+  <!--owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <!-- nice select  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-ZKss5MhA14d2fZ7k1T5X00b2J6h9b0B36kHaWfqLky4uPthF08zG/vyMwS9qZY2nYbOyfKwGfKU1Q6nI9t+eyA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+  <!-- font awesome style -->
+  <link href="{% static 'assetscli/css/font-awesome.min.css' %}" rel="stylesheet" />
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'assetscli/css/style.css' %}" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="{% static 'assetscli/css/responsive.css' %}" rel="stylesheet" />
+
+</head>
+
+<body>
+
+  <div class="hero_area">
+    <div class="bg-box">
+      <img src="{% static 'assetscli/images/hero-bg.jpg' %}" alt="">
+    </div>
+    <!-- header section strats -->
+    <header class="header_section">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+          <a class="navbar-brand" href="index.html">
+            <span>
+              La Casita del Sabor
+            </span>
+          </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class=""> </span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav  mx-auto ">
+              <li class="nav-item active">
+                <a class="nav-link" href="">Inicio <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'listadoOrdenMenus'%}">Menú</a>
+              </li>
+
+              <!-- <li class="nav-item">
+                <a class="nav-link" href="book.html">Mesas</a>
+              </li> -->
+            </ul>
+            <div class="user_option">
+              {% if user.is_authenticated %}
+                  <span class="username">Hola, {{ user.username }}!</span>
+                  <a href="{% url 'logout' %}" class="order_online">Cerrar Sesión</a>
+              {% else %}
+                  <a href="{% url 'login' %}" class="order_online">Iniciar Sesión</a>
+                  <a href="{% url 'registro' %}" class="order_online">Regístrate</a>
+              {% endif %}
+          </div>
+            <style>
+              .username {
+                color: #ffffff;
+                font-weight: bold;
+              }
+            </style>
+
+          </div>
+        </nav>
+      </div>
+    </header>
+    <!-- end header section -->
+    <!-- slider section -->
+    <section class="slider_section ">
+      <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-7 col-lg-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      Tenemos Promociones
+                    </h1>
+                    <p style="text-align: justify;">
+                      ¡Explora el placer de sabores únicos con nuestras increíbles promociones en platos deliciosos! 🍝🍔 Desde pastas artesanales hasta hamburguesas gourmet, ¡cada bocado es una experiencia inolvidable! No esperes más para disfrutar momentos deliciosos en nuestro restaurante. ¡Ven y déjate cautivar por la magia de nuestros sabores! ✨
+                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'login'%}" class="btn1">
+                        ¡Ordena ahora!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item ">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-7 col-lg-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      Lo Mejor en Parrilladas
+                    </h1>
+                    <p style="text-align: justify;">
+                      ¡Disfruta de las mejores parrilladas con nuestras promociones imperdibles! 🍖 Saborea jugosas carnes asadas y acompañamientos irresistibles en nuestro restaurante. ¡Ven y déjate cautivar por la magia de nuestros sabores! ✨                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'login'%}" class="btn1">
+                        ¡Ordena ahora!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-7 col-lg-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      Reserva tu Mesa Para tu Familia
+                    </h1>
+                    <p style="text-align: justify;">
+                      ¡Reserva tu mesa para disfrutar de momentos especiales en familia! 🍽️ Déjate sorprender por nuestros sabores únicos y nuestro cálido servicio. ¡Haz de cada comida una experiencia inolvidable con nosotros! 🎉                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'login'%}" class="btn1">
+                        ¡Ordena ahora!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <ol class="carousel-indicators">
+            <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
+            <li data-target="#customCarousel1" data-slide-to="1"></li>
+            <li data-target="#customCarousel1" data-slide-to="2"></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+<br>
+<br>
+
+
+  <div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="bg-light p-4 rounded">
+                <h2 class="mb-4">La Mision</h2>
+                <p style="text-align: justify;">🍽️ La misión de La Casita del Sabor es ofrecer una experiencia culinaria única, preservando la comida tradicional con un enfoque en el cuidado de la salud. Nos esforzamos por innovar continuamente, incorporando las opiniones de nuestros clientes para garantizar su máxima satisfacción. 💡</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div>
+                <img src="{% static 'assetscli/images/mi.jpg' %}" class="img-fluid" alt="">
+            </div>
+        </div>
+    </div>
+  </div>
+<br>
+<br>
+<br>
+<br>
+    <section class="about_section layout_padding">
+      <div class="container  ">
+
+        <div class="row">
+          <div class="col-md-6 ">
+            <div class="img-box">
+              <img src="{% static 'assetscli/images/mi.jpg' %}" class="img-fluid" alt="">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-box">
+              <div class="heading_container">
+                <h2>
+                  LA Vision
+                </h2>
+              </div>
+              <p style="text-align: justify;">
+                "🌟 Nuestro objetivo es ser reconocidos como el restaurante líder en la preservación de la comida tradicional, adaptándola a un estilo de vida saludable. 💚 Aspiramos a crear un espacio donde cada cliente se sienta valorado y donde la innovación y la calidad sean nuestras principales características, logrando así una experiencia culinaria inigualable y memorable. 🍴✨"
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <br>
+    <br>
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="mb-4">Historia del Restaurante</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card history-card p-3 mb-4">
+                    <div class="card-body">
+                        <p style="text-align: justify;">La Casita del Sabor es un emprendimiento familiar que comenzó en 2016 en el Cantón Píllaro, en la parroquia San Miguelito. Inicialmente, se abrió en un pequeño local con solo cuatro mesas, ofreciendo almuerzos caseros. La propietaria, con la ayuda de sus hijas, se encargaba de la preparación de los almuerzos.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card history-card p-3 mb-4">
+                    <div class="card-body">
+                        <p style="text-align: justify;">A raíz de la pandemia, debido a la distancia de su domicilio en otro cantón y la falta de transporte, se tomó la decisión de trasladar el restaurante a la localidad donde se ubicaba su domicilió en el Cantón Patate Parroquia Los Andes. Este cambio llevó a la adaptación del espacio para instalar el restaurante en el nuevo domicilio. En un principio, el negocio se enfocó en ofrecer almuerzos para llevar, pero la falta de publicidad y el reducido número de habitantes en la nueva ubicación representaron un desafío significativo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card history-card p-3 mb-4">
+                    <div class="card-body">
+                        <p style="text-align: justify;">Sin embargo, con el tiempo, el esfuerzo dio frutos y comenzaron a llegar clientes conocidos. Con el control de la pandemia y el crecimiento del área en el ámbito turístico, la clientela aumentó notablemente. El restaurante, ahora bien establecido, se ha convertido en un negocio familiar donde cada miembro de la familia desempeña una función específica dentro del local.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .history-card {
+            border: 2px solid #f1c40f; /* Bordes amarillos */
+            border-radius: 15px; /* Bordes redondeados */
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .history-card:hover {
+            transform: scale(1.05); /* Escalado al pasar el ratón */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra al pasar el ratón */
+        }
+    </style>
+
+    <section class="client_section layout_padding-bottom">
+     <div class="container">
+       <div class="heading_container heading_center psudo_white_primary mb_45">
+         <h2>
+          "En cada plato 🍽️, servimos una experiencia única ✨. ¡Gracias por acompañarnos y permitirnos ser parte de sus momentos especiales 🎉!"
+         </h2>
+       </div>
+     </div>
+   </section>
+  <footer class="footer_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 footer-col">
+          <div class="footer_contact">
+            <h4>
+              Contactos
+            </h4>
+            <div class="contact_link_box">
+              <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9"target="_blank">
+                <i class="fa fa-map-marker" aria-hidden="true" ></i>
+                <span>
+                  Lugar
+                </span>
+              </a>
+              <a href="https://wa.me/593992217026"target="_blank">
+                <i class="fa fa-phone" aria-hidden="true" ></i>
+                <span>
+                  Numero telefonico +593 99 221 7026
+                </span>
+              </a>
+              <a href="mailto:casitasabor823%40gmail.com"target="_blank">
+                <i class="fa fa-envelope" aria-hidden="true" ></i>
+                <span>
+                  casitasabor823@gmail.com
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 footer-col">
+          <div class="footer_detail">
+            <a href="" class="footer-logo">
+              La Casita del Sabor
+            </a>
+            <p>
+              La felicidad es compartir en familia, ven y conose la nuestra por que aki comeras como en casa
+            </p>
+            <div class="footer_social">
+              <a href="https://www.facebook.com/profile.php?id=100063899085512&mibextid=ZbWKwL" target="_blank">
+                  <i class="fa fa-facebook" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 footer-col">
+          <h4>
+            Horario de Atención
+          </h4>
+          <p>
+            Lunes - Domingo
+          </p>
+          <p>
+            08 Am - 07 Pm
+          </p>
+        </div>
+      </div>
+      <div class="footer-info">
+        <p>
+          &copy; <span id="displayYear"></span> Universidad Tecnica Cotopaxi
+          <a href="https://html.design/"></a><br><br>
+          &copy; <span id="displayYear"></span> La Casita
+          <a href="https://themewagon.com/" target="_blank">del Sabor</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'assetscli/js/jquery-3.4.1.min.js' %}"></script>
+  <!-- popper js -->
+  <script src="{% static 'assetscli/https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js' %}" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+  <!-- bootstrap js -->
+  <script src="{% static 'assetscli/js/bootstrap.js' %}"></script>
+  <!-- owl slider -->
+  <script src="{% static 'assetscli/https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js' %}">
+  </script>
+  <!-- isotope js -->
+  <script src="{% static 'assetscli/https://unpkg.com/isotope-layout@3.0.4/dist/isotope.pkgd.min.js' %}"></script>
+  <!-- nice select -->
+  <script src="{% static 'assetscli/https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js' %}"></script>
+  <!-- custom js -->
+  <script src="{% static 'assetscli/js/custom.js' %}"></script>
+  <!-- Google Map -->
+  <script src="{% static 'assetscli/https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap' %}">
+  </script>
+  <!-- End Google Map -->
+
+</body>
+
+</html>

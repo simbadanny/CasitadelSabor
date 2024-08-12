@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Registro</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="{% static 'assets/img/icon.ico' %}" type="image/x-icon"/>
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/azzara.min.css' %}">
+    <script src="{% static 'library/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugin/jquery.validate/jquery.validate.min.js' %}"></script>
+</head>
+<body class="login" style="background-image: url('{% static 'assets/img/hero-bg.jpg' %}'); background-size: cover; background-position: center;">
+
+    <div class="wrapper wrapper-login">
+        <div class="container container-login animated fadeIn">
+            <h3 class="text-center">Crear una cuenta</h3>
+            <div class="login-form">
+                <form method="post" action="" id="frm_nuevo_cliente">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.username.id_for_label }}">Primer Nombre:</label>
+                            {{ form.username }}
+                            <script>
+                                document.getElementById('{{ form.username.id_for_label }}').oninput = function() { convertirMayusculas(this); };
+                            </script>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}">Segundo Nombre:</label>
+                            {{ form.first_name }}
+                            <script>
+                                document.getElementById('{{ form.first_name.id_for_label }}').oninput = function() { convertirMayusculas(this); };
+                            </script>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.last_name.id_for_label }}">Apellido:</label>
+                            {{ form.last_name }}
+                            <script>
+                                document.getElementById('{{ form.last_name.id_for_label }}').oninput = function() { convertirMayusculas(this); };
+                            </script>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.email.id_for_label }}">Correo Electrónico:</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.password1.id_for_label }}">Contraseña:</label>
+                            {{ form.password1 }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.password2.id_for_label }}">Confirmar Contraseña:</label>
+                            {{ form.password2 }}
+                            <i class="flaticon-interface"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <input type="submit" value="Registrar" class="btn btn-primary btn-block">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="reset" value="Cancelar" class="btn btn-danger btn-block">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Validación del formulario usando jQuery Validate plugin
+            $("#frm_nuevo_cliente").validate({
+                rules: {
+                    "username": {
+                        required: true,
+                        minlength: 4
+                    },
+                    "first_name": {
+                        required: true
+                    },
+                    "last_name": {
+                        required: true
+                    },
+                    "email": {
+                        required: true,
+                        email: true
+                    },
+                    "password1": {
+                        required: true,
+                        minlength: 6
+                    },
+                    "password2": {
+                        required: true,
+                        equalTo: "#id_password1"
+                    }
+                },
+                messages: {
+                    "username": {
+                        required: "Por favor, ingrse el usuario",
+                        minlength: "El nombre de usuario debe tener al menos 4 caracteres"
+                    },
+                    "first_name": {
+                        required: "Por favor, ingrese su nombre"
+                    },
+                    "last_name": {
+                        required: "Por favor, ingrese su apellido"
+                    },
+                    "email": {
+                        required: "Ingrese un correo electrónico",
+                        email: "Ingrese un correo electrónico válido"
+                    },
+                    "password1": {
+                        required: "Por favor, ingrese una contraseña",
+                        minlength: "La contraseña debe tener al menos 6 caracteres"
+                    },
+                    "password2": {
+                        required: "Por favor, confirme la contraseña",
+                        equalTo: "Las contraseñas no coinciden"
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element); // Coloca los mensajes de error después de cada campo
+                },
+                submitHandler: function (form) {
+                    form.submit(); // Envía el formulario si todas las validaciones son correctas
+                }
+            });
+
+            // Función para permitir solo letras en un campo
+            $("input[name='first_name'], input[name='last_name']").on('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+
+            // Función para validar formato de correo electrónico
+            $("input[name='email']").on('input', function(event) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!regex.test(event.target.value)) {
+                    event.target.setCustomValidity('Ingrese un correo válido.');
+                } else {
+                    event.target.setCustomValidity('');
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+    function convertirMayusculas(input) {
+        input.value = input.value.toUpperCase();
+    }
+  </script>
+
+    <script src="{% static 'assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/ready.js' %}"></script>
+
+</body>
+</html>

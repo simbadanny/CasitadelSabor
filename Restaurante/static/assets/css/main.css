@@ -1,0 +1,11 @@
+.card {
+    margin-bottom: 20px;
+}
+
+.card img {
+    max-height: 150px;
+}
+
+.card .btn {
+    width: 100px;
+}

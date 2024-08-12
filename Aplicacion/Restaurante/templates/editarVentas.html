@@ -1,0 +1,247 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <p>Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-info bubble-shadow-small">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Mesas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-success bubble-shadow-small">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Menús</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-secondary bubble-shadow-small">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Reservas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-8">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form class="" action="/procesarActualizacionVentas/"  enctype="multipart/form-data" method="post" id="frm_nuevo_ventas" >
+          {% csrf_token %}
+          <input type="hidden" name="venta_id"  value="{{ventas.venta_id}}">
+          <div class="row">
+          <div class="form-group col-md-6">
+            <b><i class="fas fa-user"></i> CLIENTE:</b>
+          <br>
+          <select class="form-control selectpicker"  data-live-search="true" data-live-search-style="startsWith" name="cliente_id_cliente" id="cliente_id_cliente" required  data-live-search-placeholder="Buscar categoria...">
+            <option value="">Seleccione el Cliente</option>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+            {% endfor %}
+            </select>
+            </div>
+            <script type="text/javascript">
+                document.getElementById("cliente_id_cliente").value="{{ventas.cliente.cliente_id}}";
+              </script>
+            </div>
+            <br>
+            <div class="form-group">
+              <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
+                <input type="date" name="fecha_venta" id="fecha_venta"  value="{{ ventas.fecha_venta|date:'Y-m-d'}}" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <b><i class="fas fa-dollar-sign"></i> Total de Ventas:</b>
+                <input type="number" name="total_venta" id="total_venta"  oninput="soloNumeros(this)" value="{{ ventas.total_venta }}" class="form-control" required>
+            </div>
+          <div class="modal-footer">
+            <button type="submit" name="button" class="btn btn-warning">
+              &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
+            </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'listadoVentas' %}" class="btn btn-danger">
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="form-group col-md-3">
+    <div class="card card-profile card-secondary">
+          <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+									<div class="profile-picture">
+										<div class="avatar avatar-xl">
+											<img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="user-profile text-center">
+                    <div class="name">
+                        <span>{{ clientes.nombre_cli }}</span>
+                    </div>
+										<div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
+                    <div class="">
+                        <span>{{ clientes.email_cli }}</span>
+                    </div>
+                    <div class="job">
+                        <p>"En esta sección, editarás los datos de  <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli}}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
+                    </div>
+									</div>
+								</div>
+							</div>
+
+            </div>
+  </div>
+  <script>
+      function eliminarVentas(venta_id) {
+          swal({
+              title: '¿Estás seguro?',
+              text: "¡No podrás revertir esto!",
+              icon: 'warning',
+              buttons: {
+                  cancel: {
+                      visible: true,
+                      text: 'No, cancelar',
+                      className: 'btn btn-secondary'
+                  },
+                  confirm: {
+                      text: 'Sí, eliminarlo',
+                      className: 'btn btn-danger'
+                  }
+              }
+          }).then((willDelete) => {
+              if (willDelete) {
+                  window.location.href = '/eliminarVentas/' + venta_id;
+              } else {
+                  swal("¡La Venta está segura!", {
+                      icon: "info",
+                      buttons: {
+                          confirm: {
+                              className: 'btn btn-success'
+                          }
+                      }
+                  });
+              }
+          });
+      }
+
+      $(document).ready(function () {
+          $("#frm_nuevo_ventas").validate({
+              rules: {
+                  "fecha_venta": {
+                      required: true,
+                      dateISO: true
+                  },
+                  "total_venta": {
+                      required: true,
+                      number: true,
+                      min: 0.01,
+                      max: 1000000 // Ajusta el máximo según tus requisitos
+                  },
+                  "cliente_id_cliente": {
+                      required: true
+                  }
+              },
+              messages: {
+                  "fecha_venta": {
+                      required: "Debe ingresar la fecha de la venta",
+                      dateISO: "Por favor, ingrese una fecha válida (ISO)"
+                  },
+                  "total_venta": {
+                      required: "Debe ingresar el total de la venta",
+                      number: "Ingrese un número válido para el total",
+                      min: "El total no puede ser menor que 0.01",
+                      max: "El total no puede ser mayor que 1,000,000" // Ajusta el mensaje según el máximo definido
+                  },
+                  "cliente_id_cliente": {
+                      required: "Debe seleccionar un cliente"
+                  }
+              }
+          });
+
+          $('#tbl_reservas').DataTable();
+
+          $('.selectpicker').selectpicker();
+
+      });
+
+      function soloNumeros(input) {
+          // Reemplaza cualquier carácter que no sea un dígito numérico con una cadena vacía
+          input.value = input.value.replace(/\D/g, '');
+      }
+
+      function soloLetras(input) {
+          // Reemplaza cualquier carácter que no sea una letra o espacio con una cadena vacía
+          input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+      }
+  </script>
+{% endblock %}

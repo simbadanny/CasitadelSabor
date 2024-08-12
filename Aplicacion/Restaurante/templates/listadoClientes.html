@@ -1,0 +1,284 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+	<i class="fas fa-plus"></i> Agregar Cliente
+</button>
+<br>
+<br>
+<div class="row">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title"><i class="fas fa-list"></i> Listado Clientes</h4>
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+									<table id="tbl_clientes" class="display table table-striped table-hover" cellspacing="0" width="100%">
+                      <thead>
+                      <tr>
+                      <th>ID</th>
+                      <th>NOMBRE</th>
+                      <th>APELLIDO</th>
+                      <th>CORREO</th>
+											<th>CEDULA</th>
+                      <th>TELEFONO</th>
+                      <th>FECHA</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cliente in clientes %}
+                    <tr>
+                      <td>{{ cliente.cliente_id }}</td>
+                      <td>{{ cliente.nombre_cli }}</td>
+                      <td>{{ cliente.apellido_cli }}</td>
+											<td>{{ cliente.email_cli }}</td>
+                      <td>{{ cliente.cedula_cli }}</td>
+											<td>{{ cliente.telefono_cli }}</td>
+                      <td>{{ cliente.fecha_Reguistro_cli}}</td>
+                      <td>
+
+												<a href="/editarClientes/{{cliente.cliente_id}}" class="btn btn-warning">
+												    <i class="fas fa-edit"></i>
+												</a>
+												<a href="javascript:void(0)" onclick="eliminarClientes('{{cliente.cliente_id}}');" class="btn btn-danger">
+												    <i class="fas fa-trash-alt"></i>
+												</a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+            <!-- Button trigger modal -->
+
+
+				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Registrar Cliente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+			<div class="modal-body">
+				  <form action="/guardarClientes/" method="post" enctype="multipart/form-data" id="frm_nuevo_cliente">
+				    {% csrf_token %}
+				    <div class="row">
+				      <div class="form-group col-md-6">
+				        <label for="nombre_cli"><i class="fas fa-user"></i> <b>Nombre:</b></label>
+				        <input type="text" name="nombre_cli" id="nombre_cli" oninput="soloLetras(this)" onblur="convertirMayusculas(this)" placeholder="Ingrese el nombre del cliente" class="form-control" required>
+				      </div>
+				      <div class="form-group col-md-6">
+				        <label for="apellido_cli"><i class="fas fa-user"></i> <b>Apellido:</b></label>
+								<input type="text" name="apellido_cli" id="apellido_cli" oninput="soloLetras(this)" onblur="convertirMayusculas(this)"  placeholder="Ingrese el apellido del cliente" class="form-control" required>
+				      </div>
+				    </div>
+						<div class="form-group">
+						  <label for="email_cli">
+						    <i class="fas fa-envelope"></i> <b>Email:</b>
+						  </label>
+						  <div class="input-group">
+						    <div class="input-group-prepend">
+						      <span class="input-group-text"><i class="fas fa-at"></i></span>
+						    </div>
+						    <input type="email" name="email_cli" id="email_cli" oninput="validarCorreo(this)" placeholder="Ingrese el correo" class="form-control" required>
+						  </div>
+						</div>
+				    <div class="row">
+				      <div class="form-group col-md-6">
+				        <label for="telefono_cli"><i class="fas fa-phone"></i> <b>Teléfono:</b></label>
+				        <input type="tel" name="telefono_cli" id="telefono_cli" oninput="soloNumeros(this)" placeholder="Ingrese el número" class="form-control" required>
+				      </div>
+				      <div class="form-group col-md-6">
+				        <label for="cedula_cli"><i class="fas fa-id-card"></i> <b>Cédula:</b></label>
+				        <input type="number" name="cedula_cli" id="cedula_cli" oninput="soloNumeros(this)" placeholder="Ingrese el número" class="form-control" required>
+				      </div>
+				    </div>
+				    <div class="form-group">
+				      <label for="fecha_Reguistro_cli"><i class="fas fa-calendar-alt"></i> <b>Fecha de Registro:</b></label>
+				      <input type="date" name="fecha_Reguistro_cli" id="fecha_Reguistro_cli" class="form-control" required>
+				    </div>
+				  </form>
+				</div>
+      <div class="modal-footer">
+        <button type="submit" form="frm_nuevo_cliente" class="btn btn-secondary">Guardar</button>
+				<button type="reset" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#frm_nuevo_cliente").validate({
+            rules: {
+                "nombre_cli": {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 50
+
+                },
+                "apellido_cli": {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 50
+
+                },
+                "email_cli": {
+                    required: true,
+                    email: true
+                },
+                "telefono_cli": {
+                    required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 10
+                },
+                "cedula_cli": {
+                    required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 10
+                },
+                "fecha_Reguistro_cli": {
+                    required: true,
+                    dateISO: true
+                }
+            },
+            messages: {
+                "nombre_cli": {
+                    required: "Debe ingresar el nombre del cliente",
+                    minlength: "El nombre debe tener al menos 3 caracteres",
+                    maxlength: "El nombre no puede tener más de 50 caracteres"
+                },
+                "apellido_cli": {
+                    required: "Debe ingresar el apellido del cliente",
+                    minlength: "El apellido debe tener al menos 3 caracteres",
+                    maxlength: "El apellido no puede tener más de 50 caracteres"
+                },
+                "email_cli": {
+                    required: "Debe ingresar el correo electrónico del cliente",
+                    email: "Por favor, ingrese un correo electrónico válido"
+                },
+                "telefono_cli": {
+                    required: "Debe ingresar el teléfono del cliente",
+                    digits: "Por favor, ingrese solo números",
+                    minlength: "El teléfono debe tener al menos 10 dígitos",
+                    maxlength: "El teléfono no puede tener más de 10 dígitos"
+                },
+                "cedula_cli": {
+                    required: "Debe ingresar la cédula del cliente",
+                    digits: "Por favor, ingrese solo números",
+                    minlength: "La cédula debe tener 10 dígitos",
+                    maxlength: "La cédula no puede tener más de 10 dígitos"
+                },
+                "fecha_Reguistro_cli": {
+                    required: "Debe ingresar la fecha de registro del cliente",
+                    dateISO: "Por favor, ingrese una fecha válida (ISO)"
+                }
+            },
+            submitHandler: function (form) {
+                form.submit();
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    function soloNumeros(input) {
+        input.value = input.value.replace(/\D/g, '');
+    }
+
+    function soloLetras(input) {
+        input.value = input.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
+    }
+
+    function validarCorreo(event) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(event.target.value)) {
+            event.target.setCustomValidity('Ingrese un correo válido.');
+        } else {
+            event.target.setCustomValidity('');
+        }
+    }
+</script>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#tbl_clientes').DataTable({
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-secondary',
+                        messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimir',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV',
+                        className: 'btn btn-secondary'
+                    }
+                ],
+                responsive: true
+            });
+        });
+    </script>
+
+<script>
+function eliminarClientes(cliente_id) {
+    swal({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        buttons: {
+            cancel: {
+                visible: true,
+                text: 'No, cancelar',
+                className: 'btn btn-secondary'
+            },
+            confirm: {
+                text: 'Sí, eliminarlo',
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((willDelete) => {
+        if (willDelete) {
+            window.location.href = '/eliminarClientes/' + cliente_id;
+        } else {
+            swal("¡El cliente está seguro!", {
+                icon: "info",
+                buttons: {
+                    confirm: {
+                        className: 'btn btn-success'
+                    }
+                }
+            });
+        }
+    });
+}
+</script>
+
+<script type="text/javascript">
+    function convertirMayusculas(input) {
+        input.value = input.value.toUpperCase();
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,603 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>La casita del Sabor </title>
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<link rel="icon" href="{% static 'assets/img/logo.ico' %}" type="image/x-icon"/>
+
+	<!-- Fonts and icons -->
+	<script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+	<script>
+		WebFont.load({
+			google: {"families":["Open+Sans:300,400,600,700"]},
+			custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ["{% static 'assets/css/fonts.css' %}"]},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
+	<!-- Importar jQuery y otras dependencias -->
+	<script src="{% static 'library/jquery/jquery.min.js' %}"></script>
+
+	<!-- Bootstrap Select CSS -->
+	<link href="{% static 'library/bootstrap-select/bootstrap-select.css' %}" rel="stylesheet">
+	<!-- Bootstrap Select JS -->
+	<script src="{% static 'library/bootstrap-select/bootstrap-select.js' %}"></script>
+
+	<!-- Insertar las validaciones -->
+	<script src="{% static 'assets/js/plugin/jquery.validate/jquery.validate.min.js' %}"></script>
+
+	<!-- Datatables -->
+	<script src="{% static 'assets/js/plugin/datatables/datatables.min.js' %}"></script>
+	<!-- DataTables Buttons -->
+	<script type="text/javascript" src="{% static 'library/data-table/data-botones.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'library/data-table/data-print.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'library/data-table/data-pdf.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'library/data-table/data-pdf-make.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'library/data-table/data-botones-html.min.js' %}"></script>
+
+	<!-- Izitoast CSS -->
+	<link rel="stylesheet" href="{% static 'library/izitoast/iziToast.min.css' %}"   />
+	<!-- Izitoast JS -->
+	<script src="{% static 'library/izitoast/iziToast.min.js' %}" ></script>
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/azzara.min.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/demo.css' %}">
+
+	<!-- Incluye Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-bEh6V8gHC4P5+oA9wo/2rdJZ7JGp8aRv8EV5q4x5EYJbU0bwkIuTFcYKX9b57nmEgpVhRt5GR/8Z+4SPH3r7PQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+	<!-- Bootstrap Fileinput CSS -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/css/fileinput.min.css">
+
+   <!-- Bootstrap Fileinput JS -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/fileinput.min.js"></script>
+   <!-- español fileinput -->
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/locales/es.min.js"></script>
+
+   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+
+	 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+	<div class="wrapper">
+		<!--
+			Tip 1: You can change the background color of the main header using: data-background-color="blue | purple | light-blue | green | orange | red"
+		-->
+		<div class="main-header" data-background-color="purple">
+			<!-- Logo Header -->
+			<div class="logo-header">
+
+				<a href="index.html" class="logo">
+					<img src="{% static 'assets/img/logoazzara.svg' %}" alt="navbar brand" class="navbar-brand">
+				</a>
+				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon">
+						<i class="fa fa-bars"></i>
+					</span>
+				</button>
+				<button class="topbar-toggler more"><i class="fa fa-ellipsis-v"></i></button>
+				<div class="navbar-minimize">
+					<button class="btn btn-minimize btn-rounded">
+						<i class="fa fa-bars"></i>
+					</button>
+				</div>
+			</div>
+			<!-- End Logo Header -->
+
+			<!-- Navbar Header -->
+			<nav class="navbar navbar-header navbar-expand-lg">
+
+				<div class="container-fluid">
+					<div class="collapse" id="search-nav">
+						<form class="navbar-left navbar-form nav-search mr-md-3">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<button type="submit" class="btn btn-search pr-1">
+										<i class="fa fa-search search-icon"></i>
+									</button>
+								</div>
+								<input type="text" placeholder="Search ..." class="form-control">
+							</div>
+						</form>
+					</div>
+					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+						<li class="nav-item toggle-nav-search hidden-caret">
+							<a class="nav-link" data-toggle="collapse" href="#search-nav" role="button" aria-expanded="false" aria-controls="search-nav">
+								<i class="fa fa-search"></i>
+							</a>
+						</li>
+						<li class="nav-item dropdown hidden-caret">
+							<a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-envelope"></i>
+							</a>
+							<ul class="dropdown-menu messages-notif-box animated fadeIn" aria-labelledby="messageDropdown">
+								<li>
+									<div class="dropdown-title d-flex justify-content-between align-items-center">
+										Mensajes
+										<a href="#" class="small">Mark all as read</a>
+									</div>
+								</li>
+								<li>
+									<div class="message-notif-scroll scrollbar-outer">
+										<div class="notif-center">
+											<a href="#">
+												<div class="notif-img">
+													<img src="{% static 'assets/img/jm_denis.jpg' %}" alt="Img Profile">
+												</div>
+												<div class="notif-content">
+													<span class="subject">Jimmy Denis</span>
+													<span class="block">
+														How are you ?
+													</span>
+													<span class="time">5 minutes ago</span>
+												</div>
+											</a>
+											<a href="#">
+												<div class="notif-img">
+													<img src="{% static 'assets/img/chadengle.jpg' %}" alt="Img Profile">
+												</div>
+												<div class="notif-content">
+													<span class="subject">Chad</span>
+													<span class="block">
+														Ok, Thanks !
+													</span>
+													<span class="time">12 minutes ago</span>
+												</div>
+											</a>
+
+											<a href="#">
+												<div class="notif-img">
+													<img src="{% static 'assets/img/mlane.jpg' %}" alt="Img Profile">
+												</div>
+												<div class="notif-content">
+													<span class="subject">Jhon Doe</span>
+													<span class="block">
+														Ready for the meeting today...
+													</span>
+													<span class="time">12 minutes ago</span>
+												</div>
+											</a>
+											<a href="#">
+												<div class="notif-img">
+													<img src="{% static 'assets/img/talha.jpg' %}" alt="Img Profile">
+												</div>
+												<div class="notif-content">
+													<span class="subject">Talha</span>
+													<span class="block">
+														Hi, Apa Kabar ?
+													</span>
+													<span class="time">17 minutes ago</span>
+												</div>
+											</a>
+										</div>
+									</div>
+								</li>
+								<li>
+									<a class="see-all" href="javascript:void(0);">See all messages<i class="fa fa-angle-right"></i> </a>
+								</li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown hidden-caret">
+							<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-bell"></i>
+								<span class="notification">4</span>
+							</a>
+							<ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
+								<li>
+									<div class="dropdown-title">Tienes cuatro notificaciones</div>
+								</li>
+								<li>
+									<div class="notif-scroll scrollbar-outer">
+										<div class="notif-center">
+											<a href="#">
+												<div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i> </div>
+												<div class="notif-content">
+													<span class="block">
+														New user registered
+													</span>
+													<span class="time">5 minutes ago</span>
+												</div>
+											</a>
+											<a href="#">
+												<div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
+												<div class="notif-content">
+													<span class="block">
+														Rahmad commented on Admin
+													</span>
+													<span class="time">12 minutes ago</span>
+												</div>
+											</a>
+											<a href="#">
+												<div class="notif-img">
+													<img src="{% static '/img/profile2.jpg' %}" alt="Img Profile">
+												</div>
+												<div class="notif-content">
+													<span class="block">
+														Reza send messages to you
+													</span>
+													<span class="time">12 minutes ago</span>
+												</div>
+											</a>
+											<a href="#">
+												<div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
+												<div class="notif-content">
+													<span class="block">
+														Farrah liked Admin
+													</span>
+													<span class="time">17 minutes ago</span>
+												</div>
+											</a>
+										</div>
+									</div>
+								</li>
+								<li>
+									<a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i> </a>
+								</li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown hidden-caret">
+							<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
+								<div class="avatar-sm">
+									<img src="{% static 'assets/img/profile.jpg' %}" alt="..." class="avatar-img rounded-circle">
+								</div>
+							</a>
+							<ul class="dropdown-menu dropdown-user animated fadeIn">
+								<li>
+									<div class="user-box">
+										<div class="u-text">
+											<h4>{{ user.username | upper }} {{ user.last_name | upper }}</h4>
+											<p class="text-muted">{{ user.email | upper }}</p><a href="profile.html" class="btn btn-rounded btn-danger btn-sm"></a>
+										</div>
+									</div>
+								</li>
+								<li>
+									<a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sección</a>
+								</li>
+							</ul>
+						</li>
+
+					</ul>
+				</div>
+			</nav>
+			<!-- End Navbar -->
+		</div>
+
+		<!-- Sidebar -->
+		<div class="sidebar">
+
+			<div class="sidebar-background"></div>
+			<div class="sidebar-wrapper scrollbar-inner">
+				<div class="sidebar-content">
+					<div class="user">
+						<div class="avatar-sm float-left mr-2">
+							<img src="{% static 'assets/img/profile.jpg' %}" alt="..." class="avatar-img rounded-circle">
+						</div>
+						<div class="info">
+							<a data-toggle="collapse" href="#collapseExa" aria-expanded="true">
+								<span>
+									{{ user.username | upper }}
+									<span class="user-level">Administrator</span>
+									<span class="caret"></span>
+								</span>
+							</a>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+					<ul class="nav">
+						<li class="nav-item active">
+							<a href="{% url 'bienvenida'%}">
+								<i class="fas fa-home"></i>
+								<p>Inicio</p>
+								<span class="badge badge-count"></span>
+							</a>
+						</li>
+						<li class="nav-section">
+							<span class="sidebar-mini-icon">
+								<i class="fa fa-ellipsis-h"></i>
+							</span>
+							<h4 class="text-section">Administra</h4>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#base">
+								<i class="fas fa-users"></i>
+								<p>Cliente</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="base">
+								<ul class="nav nav-collapse">
+									<li>
+									    <a href="{% url 'listadoClientes' %}">
+									        <span class="sub-item">Listado Clientes</span>
+									    </a>
+									</li>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#forms">
+								<i class="fas fa-table"></i>
+								<p>MESAS-ADMIN</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="forms">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'listadoMesas'%}">
+											<span class="sub-item">LISTA DE MESAS</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#tables">
+								<i class="fas fa-calendar-alt"></i>
+								<p>RESERVAS</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="tables">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'listadoReservas' %}">
+											<span class="sub-item">Listado Reservas</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#maps">
+								<i class="fas fa-chart-line"></i>
+								<p>VENTAS</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="maps">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'listadoVentas' %}">
+											<span class="sub-item">LISTADO VENTAS</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#charts">
+								<i class="fas fa-utensils"></i>
+								<p>MENUS</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="charts">
+								<ul class="nav nav-collapse">
+
+									<li>
+										<a href="{% url 'listadoMenus'%}">
+											<span class="sub-item">Listado Menu</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#custompages">
+								<i class="far fa-calendar-check"></i>
+								<p>DETALLES DE RESERVA</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="custompages">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'listadoDetalles_Reservas' %}">
+											<span class="sub-item">Listado De Reservas</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+					    <a data-toggle="collapse" href="#promocionesCollapse">
+					        <i class="fas fa-utensils"></i>
+					        <p>PROMOCIONES</p>
+					        <span class="caret"></span>
+					    </a>
+					    <div class="collapse" id="promocionesCollapse">
+					        <ul class="nav nav-collapse">
+					            <li>
+					                <a href="{% url 'listadoPromociones' %}">
+					                    <span class="sub-item">Listado Promociones</span>
+					                </a>
+					            </li>
+					        </ul>
+					    </div>
+					</li>
+					<li class="nav-item">
+							<a data-toggle="collapse" href="#reciboReservas">
+									<i class="fas fa-receipt"></i>
+									<p>RECIBO RESERVAS</p>
+									<span class="caret"></span>
+							</a>
+							<div class="collapse" id="reciboReservas">
+									<ul class="nav nav-collapse">
+											<li>
+													<a href="{% url 'listadoRecibo_Reserva' %}">
+															<span class="sub-item">listado Recibo </span>
+													</a>
+											</li>
+									</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+								<a data-toggle="collapse" href="#detallesrecivos">
+									<i class="fas fa-file-invoice"></i>
+
+										<p>DETALLES VENTAS</p>
+										<span class="caret"></span>
+								</a>
+								<div class="collapse" id="detallesrecivos">
+										<ul class="nav nav-collapse">
+												<li>
+														<a href="{% url 'listadoDetalles_Ventas' %}">
+																<span class="sub-item">listados Deta_Ventas</span>
+														</a>
+												</li>
+										</ul>
+								</div>
+							</li>
+							<li class="nav-item">
+							    <a data-toggle="collapse" href="#reporte_semanal">
+							        <i class="fas fa-chart-line"></i>
+							        <p>REPORTE SEMANAL</p>
+							        <span class="caret"></span>
+							    </a>
+							    <div class="collapse" id="reporte_semanal">
+							        <ul class="nav nav-collapse">
+							            <li>
+							                <a href="{% url 'reporte_semanal' %}">
+							                    <i class="fas fa-chart-line"></i>
+							                    <span class="sub-item">Reportes Semanales</span>
+							                </a>
+							            </li>
+							        </ul>
+							    </div>
+							</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- End Sidebar -->
+
+		<div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+
+						<div class="btn-group btn-group-page-header ml-auto">
+							<button type="button" class="btn btn-light btn-round btn-page-header-dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-ellipsis-h"></i>
+							</button>
+							<div class="dropdown-menu">
+								<div class="arrow"></div>
+								<a class="dropdown-item" href="{% url 'listadoClientes' %}">Ver Clientes</a>
+								<a class="dropdown-item" href="{% url 'listadoPromociones' %}">Ver Promociones</a>
+								<a class="dropdown-item" href="{% url 'listadoReservas' %}">Ver Reservas</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="{% url 'reporte_semanal' %}">Ver Reporte Semanal</a>
+							</div>
+						</div>
+					</div>
+
+
+					{% block contenido  %}
+						{% endblock %}
+
+				</div>
+			</div>
+
+		</div>
+
+				{% if messages %}
+		    {% for mensaje in messages %}
+		        <script type="text/javascript">
+		            iziToast.success({
+		                title: 'OK',
+		                message: '{{ mensaje }}',
+		                position: 'topRight',
+		                progressBarColor: 'rgb(245, 247, 248)',
+		                backgroundColor: '#F5F7F8'
+		            });
+		        </script>
+		    {% endfor %}
+		{% endif %}
+		<!-- Custom template | don't include it in your project! -->
+		<div class="custom-template">
+			<div class="title">Configuración</div>
+			<div class="custom-content">
+				<div class="switcher">
+					<div class="switch-block">
+						<h4>Topbar</h4>
+						<div class="btnSwitch">
+							<button type="button" class="changeMainHeaderColor" data-color="blue"></button>
+							<button type="button" class="selected changeMainHeaderColor" data-color="purple"></button>
+							<button type="button" class="changeMainHeaderColor" data-color="light-blue"></button>
+							<button type="button" class="changeMainHeaderColor" data-color="green"></button>
+							<button type="button" class="changeMainHeaderColor" data-color="orange"></button>
+							<button type="button" class="changeMainHeaderColor" data-color="red"></button>
+						</div>
+					</div>
+					<div class="switch-block">
+						<h4>Background</h4>
+						<div class="btnSwitch">
+							<button type="button" class="changeBackgroundColor" data-color="bg2"></button>
+							<button type="button" class="changeBackgroundColor selected" data-color="bg1"></button>
+							<button type="button" class="changeBackgroundColor" data-color="bg3"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="custom-toggle">
+				<i class="flaticon-settings"></i>
+			</div>
+		</div>
+		<!-- End Custom template -->
+	</div>
+</div>
+
+
+
+
+
+
+
+<script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+
+<!-- jQuery UI -->
+<script src="{% static 'assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js' %}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+<!-- Moment JS -->
+<script src="{% static 'assets/js/plugin/moment/moment.min.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/js/plugin/chart.js/chart.min.js' %}"></script>
+
+<!-- jQuery Sparkline -->
+<script src="{% static 'assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+<!-- Chart Circle -->
+<script src="{% static 'assets/js/plugin/chart-circle/circles.min.js' %}"></script>
+
+<!-- Bootstrap Toggle -->
+<script src="{% static 'assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js' %}"></script>
+
+<!-- jQuery Vector Maps -->
+<script src="{% static 'assets/js/plugin/jqvmap/jquery.vmap.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/jqvmap/maps/jquery.vmap.world.js' %}"></script>
+
+<!-- Google Maps Plugin -->
+<script src="{% static 'assets/js/plugin/gmaps/gmaps.js' %}"></script>
+
+<!-- Sweet Alert -->
+<script src="{% static 'assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+<!-- Azzara JS -->
+<script src="{% static 'assets/js/ready.min.js' %}"></script>
+
+<!-- Azzara DEMO methods, don't include it in your project! -->
+<script src="{% static 'assets/js/setting-demo.js' %}"></script>
+<script src="{% static 'assets/js/demo.js' %}"></script>
+
+</body>
+</html>

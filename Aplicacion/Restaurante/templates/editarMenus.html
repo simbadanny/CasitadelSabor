@@ -1,0 +1,296 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <p>Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-info bubble-shadow-small">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Mesas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-success bubble-shadow-small">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Menús</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-secondary bubble-shadow-small">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Reservas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-8">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form class="" action="/procesarActualizacionMenus/"  enctype="multipart/form-data" method="post" id="frm_nuevo_menu" >
+          {% csrf_token %}
+          <input type="hidden" name="menu_id"  value="{{menus.menu_id}}">
+          <div class="card-body">
+              <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE PLATO</b></label>
+                      <input type="text" class="form-control" id="nombre_menu" name="nombre_menu"  value="{{menus.nombre_menu}}" oninput="soloLetras(this)" onblur="convertirMayusculas(this)" placeholder="Ingrese nombre Plato" required>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="categoria_menu"><i class="fas fa-tags"></i> <b>Categoría</b></label>
+                    <select class="form-control" id="categoria_menu" name="categoria_menu" required>
+                        <option value="" disabled>Seleccione categoría</option>
+                        <option value="almuerzos" {% if menus.categoria_menu == "almuerzos" %} selected {% endif %}>Menu del Dia</option>
+                        <option value="platos_tradicionales" {% if menus.categoria_menu == "platos_tradicionales" %} selected {% endif %}>Platos Tradicionales</option>
+                        <option value="mariscos" {% if menus.categoria_menu == "mariscos" %} selected {% endif %}>Mariscos</option>
+                        <option value="parrilladas" {% if menus.categoria_menu == "parrilladas" %} selected {% endif %}>Parrilladas</option>
+                        <option value="platos" {% if menus.categoria_menu == "platos" %} selected {% endif %}>Seccion de Platos</option>
+                        <option value="bebidas" {% if menus.categoria_menu == "bebidas" %} selected {% endif %}>Bebidas</option>º
+                    </select>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="descripcion_menu"><i class="far fa-comment-alt"></i><b>Descripción Plato</b></label>
+                      <textarea name="descripcion_menu" id="descripcion_menu"  rows="3" class="form-control" placeholder="Ingrese la Descripción" required letterswithbasicpunc>{{menus.descripcion_menu}}</textarea>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="disponibilidad_menu"><i class="fas fa-check-circle"></i> <b>Disponibilidad o <i class="fas fa-times-circle"></i> No Disponible</b></label>
+                    <select class="form-control" id="disponibilidad_menu" name="disponibilidad_menu" required>
+                        <option value="" disabled {% if not menus.disponibilidad_menu %} selected {% endif %}>Seleccione disponibilidad</option>
+                        <option value="disponible" {% if menus.disponibilidad_menu == "disponible" %} selected {% endif %}>Disponible</option>
+                        <option value="no_disponible" {% if menus.disponibilidad_menu == "no_disponible" %} selected {% endif %}>No disponible</option>
+                    </select>
+                </div>
+                  <div class="form-group col-md-6">
+                    <label for="precio_menu"><i class="fas fa-dollar-sign"></i> <b>Precio Plato</b></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text"id="precio_menu" name="precio_menu" class="form-control" value="{{menus.precio_menu}}" placeholder="Ingrese Precio Plato" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="fotos_menu"><b><i class="far fa-image"></i> <b>FOTOGRAFIA PLATO</b></b></label>
+                        <!-- Mostrar imagen actual si existe -->
+                        {% if menus.fotos_menu %}
+                            <div class="mb-3">
+                                <img src="{{ menus.fotos_menu.url }}" alt="Imagen del menú" height="100px">
+                                <p><small>Imagen actual</small></p>
+                            </div>
+                        {% endif %}
+                        <input type="file" name="fotos_menu" id="fotos_menu" accept="image/*" class="form-control">
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $("#fotos_menu").fileinput({
+                            // configuración adicional del plugin de file input
+                            language: 'es',
+                            // otras opciones según tus necesidades
+                        });
+                    });
+                </script>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" name="button" class="btn btn-warning">
+              &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
+            </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'listadoMenus' %}" class="btn btn-danger">
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="form-group col-md-3">
+    <div class="card card-profile card-secondary">
+          <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+									<div class="profile-picture">
+										<div class="avatar avatar-xl">
+											<img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="user-profile text-center">
+                    <div class="name">
+                        <span>{{ clientes.nombre_cli }}</span>
+                    </div>
+										<div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
+                    <div class="">
+                        <span>{{ clientes.email_cli }}</span>
+                    </div>
+                    <div class="job">
+                        <p>"En esta sección, editarás los datos de  <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli}}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
+                    </div>
+									</div>
+								</div>
+							</div>
+
+            </div>
+  </div>
+
+
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $("#frm_nuevo_menu").validate({
+              rules: {
+                  "nombre_menu": {
+                      required: true,
+                      minlength: 3,
+                      maxlength: 50
+                  },
+                  "descripcion_menu": {
+                      required: true,
+                      minlength: 10,
+                      maxlength: 800
+                  },
+                  "categoria_menu": {
+                      required: true
+                  },
+                  "disponibilidad_menu": {
+                      required: true
+                  },
+                  "precio_menu": {
+                      required: true,
+                      number: true,
+                      min: 0.01,
+                      max: 10000
+                  },
+                  "fotos_menu": {
+                      required: true,
+                      extension: "jpg|jpeg|png|gif"
+                  }
+
+              },
+              messages: {
+                  "nombre_menu": {
+                      required: "Debe ingresar el nombre del menú",
+                      minlength: "El nombre del menú debe tener al menos 3 caracteres",
+                      maxlength: "El nombre del menú no puede tener más de 50 caracteres"
+                  },
+                  "descripcion_menu": {
+                      required: "Debe ingresar la descripción del menú",
+                      minlength: "La descripción debe tener al menos 10 caracteres",
+                      maxlength: "La descripción no puede tener más de 200 caracteres"
+                  },
+                  "categoria_menu": {
+                      required: "Por favor seleccione la categoría del menú"
+                  },
+                  "disponibilidad_menu": {
+                      required: "Por favor seleccione la disponibilidad del menú"
+                  },
+                  "precio_menu": {
+                      required: "Debe ingresar el precio del menú",
+                      number: "El precio debe ser un número válido",
+                      min: "El precio debe ser al menos 0.01",
+                      max: "El precio no puede exceder los 10000"
+                  },
+                  "fotos_menu": {
+                      required: "Debe seleccionar una imagen para el menú",
+                      extension: "Por favor seleccione un archivo con una extensión válida (jpg, jpeg, png, gif)"
+                  }
+              }
+          });
+      });
+  </script>
+
+  <script type="text/javascript">
+  function soloNumeros(input) {
+    let valor = input.value;
+    valor = valor.replace(/[^0-9.,]/g, '');
+    valor = valor.replace(/,/g, '.');
+    const partes = valor.split('.');
+    if (partes.length > 2) {
+        valor = partes[0] + '.' + partes.slice(1).join('');
+    }
+    input.value = valor;
+  }
+
+  function soloLetras(input) {
+    input.value = input.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
+}
+</script>
+  <script type="text/javascript">
+      function convertirMayusculas(input) {
+          input.value = input.value.toUpperCase();
+      }
+  </script>
+
+{% endblock %}

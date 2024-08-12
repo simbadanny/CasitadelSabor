@@ -1,0 +1,270 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Agregar Promocion
+</button>
+<br>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-bullhorn"></i> Listado Promociones
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tbl_promociones" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>DESCRIPCION</th>
+                                <th>FECHA INICIO</th>
+                                <th>FECHA FIN</th>
+                                <th>DESCUENTO</th>
+                                <th>NOMBRE MENU</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for promocion in promociones %}
+                            <tr>
+                                <td>{{ promocion.promociones_id }}</td>
+                                <td>{{ promocion.descripcion_pro }}</td>
+                                <td>{{ promocion.fecha_inicio_pro }}</td>
+                                <td>{{ promocion.fecha_fin_pro }}</td>
+                                <td>{{ promocion.descuento_pro }}</td>
+                                <td>{{ promocion.menu.nombre_menu }}</td>
+                                <td>
+                                  <a href="/editarPromociones/{{promocion.promociones_id}}" class="btn btn-warning">
+                                      <i class="fas fa-edit"></i>
+                                  </a>
+                                  <a href="javascript:void(0)" onclick="eliminarPromociones('{{promocion.promociones_id}}');" class="btn btn-danger">
+                                      <i class="fas fa-trash-alt"></i>
+                                  </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="POST" action="/guardarPromociones/" id="frm_nuevo_promociones">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ingresar Promocion</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Registrar Promociones</div>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label for="menu_id_menu"><b><i class="fas fa-utensils"></i> MENÚS:</b></label>
+                      <br>
+                      <br>
+                      <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu" id="menu_id_menu" required data-live-search-placeholder="Buscar proveedor...">
+                        <option value="">Seleccione El Menú</option>
+                        {% for menu in menus %}
+                          <option value="{{ menu.menu_id }}">{{ menu.nombre_menu }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="fecha_inicio_pro"><i class="fas fa-calendar-alt"></i> Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio_pro" name="fecha_inicio_pro" placeholder="fecha_inicio_pro">
+                      </div>
+                    </div>
+                      <label for="descripcion_pro"><i class="fas fa-align-left"></i> Descripcion</label>
+                      <textarea class="form-control" id="descripcion_pro" name="descripcion_pro" oninput="soloLetras(this)" placeholder="" rows="3"></textarea>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="fecha_fin_pro"><i class="fas fa-calendar-check"></i> Fecha Fin</label>
+                        <input type="date" class="form-control" id="fecha_fin_pro" name="fecha_fin_pro" placeholder="fecha_fin_pro">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="descuento_pro"><i class="fas fa-percent"></i> Descuento (%)</label>
+                        <input type="number" class="form-control" id="descuento_pro" oninput="soloNumeros(this)" name="descuento_pro" min="0" max="100">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function () {
+      $("#frm_nuevo_promociones").validate({
+          rules: {
+              "descripcion_pro": {
+                  required: true,
+                  minlength: 3,
+                  maxlength: 550
+              },
+              "fecha_inicio_pro": {
+                  required: true,
+                  dateISO: true
+              },
+              "fecha_fin_pro": {
+                  required: true,
+                  dateISO: true
+              },
+              "disponibilidad_pro": {
+                  required: true
+              },
+              "descuento_pro": {
+                  required: true,
+                  number: true,
+                  min: 0.01,
+                  max: 100
+              },
+              "menu_id_menu": {
+                  required: true,
+
+              }
+
+          },
+          messages: {
+              "descripcion_pro": {
+                  required: "Debe ingresar la descripción de la promoción",
+                  minlength: "La descripción debe tener al menos 3 caracteres",
+                  maxlength: "La descripción no puede tener más de 550 caracteres"
+              },
+              "fecha_inicio_pro": {
+                  required: "Debe ingresar la fecha de inicio de la promoción",
+                  dateISO: "Por favor, ingrese una fecha válida (ISO)"
+              },
+              "fecha_fin_pro": {
+                  required: "Debe ingresar la fecha de fin de la promoción",
+                  dateISO: "Por favor, ingrese una fecha válida (ISO)"
+              },
+              "disponibilidad_pro": {
+                  required: "Por favor seleccione la disponibilidad de la promoción"
+              },
+              "descuento_pro": {
+                  required: "Debe ingresar el descuento de la promoción",
+                  number: "Por favor, ingrese un número válido",
+                  min: "El descuento no puede ser menor a 0.01",
+                  max: "El descuento no puede ser mayor a 100"
+              },
+              "menu_id_menu": {
+                  required: "Debe seleccionar un Menu",
+
+              }
+          }
+      });
+  });
+</script>
+
+<script type="text/javascript">
+    function soloNumeros(input) {
+        input.value = input.value.replace(/[^0-9.,]/g, '');
+    }
+
+    function soloLetras(input) {
+        input.value = input.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
+    }
+
+    function validarCorreo(event) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(event.target.value)) {
+            event.target.setCustomValidity('Ingrese un correo válido.');
+        } else {
+            event.target.setCustomValidity('');
+        }
+    }
+</script>
+
+<script>
+function eliminarPromociones(promociones_id) {
+    swal({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        buttons: {
+            cancel: {
+                visible: true,
+                text: 'No, cancelar',
+                className: 'btn btn-secondary'
+            },
+            confirm: {
+                text: 'Sí, eliminarlo',
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((willDelete) => {
+        if (willDelete) {
+            window.location.href = '/eliminarPromociones/' + promociones_id;
+        } else {
+            swal("¡La Promociones está seguro!", {
+                icon: "info",
+                buttons: {
+                    confirm: {
+                        className: 'btn btn-success'
+                    }
+                }
+            });
+        }
+    });
+}
+</script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#tbl_promociones').DataTable({
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-secondary',
+                        messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimir',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV',
+                        className: 'btn btn-secondary'
+                    }
+                ],
+                responsive: true
+            });
+        });
+    </script>
+
+{% endblock %}

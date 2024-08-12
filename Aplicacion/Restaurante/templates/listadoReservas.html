@@ -1,0 +1,281 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+	<i class="fas fa-plus"></i> Agregar Reserva
+</button>
+<br>
+<br>
+<div class="row">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									 <i class="fas fa-calendar-alt"></i> Listado Reservas
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+										<table id="tbl_reservas" class="display table table-striped table-hover">
+                      <thead>
+                      <tr>
+                      <th>ID</th>
+                      <th>FECHA-RESERVA</th>
+                      <th>HORA-RESERVA</th>
+                      <th>NUMERO-PERSONAS</th>
+                      <th>ESTADO</th>
+											<th>CLIENTE</th>
+                      <th>MESA</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for reserva in reservas %}
+                    <tr>
+                      <td>{{ reserva.reserva_id }}</td>
+                      <td>{{ reserva.fecha_reserva }}</td>
+                      <td>{{ reserva.hora_reserva }}</td>
+											<td>{{ reserva.numero_personas_reserva }}</td>
+                      <td>{{ reserva.estado_reserva }}</td>
+											<td>{{ reserva.cliente.nombre_cli }}</td>
+                      <td>{{ reserva.mesa.numero_mes}}</td>
+                      <td>
+
+												<a href="/editarReservas/{{reserva.reserva_id}}" class="btn btn-warning">
+												    <i class="fas fa-edit"></i>
+												</a>
+												<a href="javascript:void(0)" onclick="eliminarReservas('{{reserva.reserva_id}}');" class="btn btn-danger">
+												    <i class="fas fa-trash-alt"></i>
+												</a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+            <!-- Button trigger modal -->
+
+
+				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Registrar Una Reserva</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+			<div class="modal-body">
+				  <form action="/guardarReservas/" method="post" enctype="multipart/form-data" id="frm_nuevo_reservas">
+				    {% csrf_token %}
+				    <div class="row">
+				      <div class="form-group col-md-6">
+				        <label for="cliente_id_cliente">
+				          <b><i class="fas fa-user"></i> CLIENTE</b>
+				        </label>
+				        <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="cliente_id_cliente" id="cliente_id_cliente" required data-live-search-placeholder="Buscar cliente...">
+				          <option value="">Seleccione el Cliente</option>
+				          {% for cliente in clientes %}
+				          <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+				          {% endfor %}
+				        </select>
+				      </div>
+				      <div class="form-group col-md-6">
+				        <label for="id_mesa_mesa">
+				          <b><i class="fas fa-chair"></i> MESA</b>
+				        </label>
+				        <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="id_mesa_mesa" id="id_mesa_mesa" required data-live-search-placeholder="Buscar mesa...">
+				          <option value="">Seleccione la Mesa</option>
+				          {% for mesa in mesas %}
+				          <option value="{{ mesa.id_mesa }}">{{ mesa.numero_mes }}</option>
+				          {% endfor %}
+				        </select>
+				      </div>
+				    </div>
+				    <br>
+				    <div class="row">
+				      <div class="form-group col-md-6">
+				        <label for="fecha_reserva">
+				          <b><i class="fas fa-calendar-alt"></i> FECHA RESERVA:</b>
+				        </label>
+				        <input type="date" name="fecha_reserva" id="fecha_reserva" placeholder="Ingrese la fecha de reserva" class="form-control" required>
+				      </div>
+				      <div class="form-group col-md-6">
+				        <label for="estado_reserva">
+				          <b><i class="fas fa-info-circle"></i> ESTADO RESERVA:</b>
+				        </label>
+				        <select name="estado_reserva" id="estado_reserva" class="form-control" required>
+				          <option value="">Seleccione el Estado</option>
+				          <option value="confirmada">Confirmada</option>
+				          <option value="pendiente">Pendiente</option>
+				          <option value="cancelada">Cancelada</option>
+				          <!-- Agrega más opciones según sea necesario -->
+				        </select>
+				      </div>
+				    </div>
+				    <br>
+				    <div class="row">
+				      <div class="form-group col-md-6">
+				        <label for="numero_personas_reserva">
+				          <b><i class="fas fa-users"></i> NUMERO PERSONAS:</b>
+				        </label>
+				        <input type="number" name="numero_personas_reserva" id="numero_personas_reserva" min="1" max="20" oninput="soloNumeros(this)" placeholder="Ingrese número de personas" class="form-control" required>
+				      </div>
+				      <div class="form-group col-md-6">
+				        <label for="hora_reserva">
+				          <b><i class="fas fa-clock"></i> HORA RESERVA:</b>
+				        </label>
+				        <input type="time" name="hora_reserva" id="hora_reserva" placeholder="Ingrese la hora de reserva" class="form-control" required>
+				        <small class="form-text text-muted">Formato: HH:MM (24 horas)</small>
+				      </div>
+				    </div>
+				    <br>
+				  </form>
+				</div>
+      <br>
+      <br>
+      <div class="modal-footer">
+        <button type="submit" form="frm_nuevo_reservas" class="btn btn-secondary">Guardar</button>
+				<button type="reset" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#frm_nuevo_reservas").validate({
+            rules: {
+                "cliente_id_cliente": {
+                    required: true
+                },
+                "id_mesa_mesa": {
+                    required: true
+                },
+                "fecha_reserva": {
+                    required: true
+                },
+                "hora_reserva": {
+                    required: true
+                },
+                "numero_personas_reserva": {
+                    required: true,
+                    digits: true,
+                    min: 1,
+                    max: 20
+                },
+                "estado_reserva": {
+                    required: true
+                }
+            },
+            messages: {
+                "cliente_id_cliente": {
+                    required: "Debe seleccionar el cliente"
+                },
+                "id_mesa_mesa": {
+                    required: "Debe seleccionar la mesa"
+                },
+                "fecha_reserva": {
+                    required: "Debe ingresar la fecha de la reserva"
+                },
+                "hora_reserva": {
+                    required: "Debe ingresar la hora de la reserva"
+                },
+                "numero_personas_reserva": {
+                    required: "Por favor ingrese el número de personas",
+                    digits: "Ingrese solo números",
+                    min: "Debe ser al menos 1 persona",
+                    max: "El número máximo de personas es 20"
+                },
+                "estado_reserva": {
+                    required: "Por favor seleccione el estado de la reserva"
+                }
+            }
+        });
+    });
+</script>
+<script>
+  function soloLetras(input) {
+    input.value = input.value.replace(/[^a-zA-Z ]/g, '');
+  }
+
+  function soloNumeros(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+  }
+
+  function validarCorreo(input) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(input.value)) {
+      input.setCustomValidity('Ingrese un correo válido.');
+    } else {
+      input.setCustomValidity('');
+    }
+  }
+</script>
+
+<script>
+function eliminarReservas(reserva_id) {
+    swal({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        buttons: {
+            cancel: {
+                visible: true,
+                text: 'No, cancelar',
+                className: 'btn btn-secondary'
+            },
+            confirm: {
+                text: 'Sí, eliminarlo',
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((willDelete) => {
+        if (willDelete) {
+            window.location.href = '/eliminarReservas/' + reserva_id;
+        } else {
+            swal("¡La Reserva está seguro!", {
+                icon: "info",
+                buttons: {
+                    confirm: {
+                        className: 'btn btn-success'
+                    }
+                }
+            });
+        }
+    });
+}
+</script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#tbl_reservas').DataTable({
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-secondary',
+                        messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimir',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV',
+                        className: 'btn btn-secondary'
+                    }
+                ],
+                responsive: true
+            });
+        });
+    </script>
+
+{% endblock %}

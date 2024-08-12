@@ -1,0 +1,251 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+  {% load static %}
+  <div class="row">
+      <div class="col-sm-6 col-md-3">
+          <div class="card card-stats card-round">
+              <div class="card-body">
+                  <div class="row align-items-center">
+                      <div class="col-icon text-center">
+                          <div class="icon-big icon-primary bubble-shadow-small">
+                              <i class="fas fa-users"></i>
+                          </div>
+                      </div>
+                      <div class="col col-stats text-center">
+                          <div class="numbers">
+                              <p class="card-category">Administra</p>
+                              <p>Clientes</p>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-footer text-center">
+                      <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+          <div class="card card-stats card-round">
+              <div class="card-body">
+                  <div class="row align-items-center">
+                      <div class="col-icon text-center">
+                          <div class="icon-big icon-info bubble-shadow-small">
+                              <i class="fas fa-table"></i>
+                          </div>
+                      </div>
+                      <div class="col col-stats text-center">
+                          <div class="numbers">
+                              <p class="card-category">Administra</p>
+                              <h4 class="card-title">Mesas</h4>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-footer text-center">
+                      <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+          <div class="card card-stats card-round">
+              <div class="card-body">
+                  <div class="row align-items-center">
+                      <div class="col-icon text-center">
+                          <div class="icon-big icon-success bubble-shadow-small">
+                              <i class="fas fa-utensils"></i>
+                          </div>
+                      </div>
+                      <div class="col col-stats text-center">
+                          <div class="numbers">
+                              <p class="card-category">Administra</p>
+                              <h4 class="card-title">Menús</h4>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-footer text-center">
+                      <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+          <div class="card card-stats card-round">
+              <div class="card-body">
+                  <div class="row align-items-center">
+                      <div class="col-icon text-center">
+                          <div class="icon-big icon-secondary bubble-shadow-small">
+                              <i class="fas fa-calendar-check"></i>
+                          </div>
+                      </div>
+                      <div class="col col-stats text-center">
+                          <div class="numbers">
+                              <p class="card-category">Administra</p>
+                              <h4 class="card-title">Reservas</h4>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-footer text-center">
+                      <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-md-8">
+      <div class="modal-content">
+        <div class="modal-body">
+          <form action="/procesarActualizacionRecibo_Reserva/" enctype="multipart/form-data" method="post" id="frm_nuevo_promociones">
+            {% csrf_token %}
+            <input type="hidden" name="id_re" id="id_re" value="{{ recibo_Reservas.id_re }}">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="menu_id_menu"><b><i class="fas fa-user"></i> CLIENTE:</b></label>
+                  <select class="form-control selectpicker"  data-live-search="true" data-live-search-style="startsWith" name="cliente_id_cliente" id="cliente_id_cliente" required  data-live-search-placeholder="Buscar categoria...">
+                    <option value="">Seleccione el Cliente</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="reserva_id_reserva"><i class="fas fa-shopping-cart"></i> <b>Ventas:</b></label>
+                  <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="reserva_id_reserva" id="reserva_id_reserva" required data-live-search-placeholder="Buscar categoría...">
+                    <option value="">Seleccione Total Ventas</option>
+                    {% for reserva in reservas %}
+                      <option value="{{ reserva.reserva_id }}">{{ reserva.fecha_reserva }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <script type="text/javascript">
+                  document.getElementById("cliente_id_cliente").value="{{recibo_Reservas.cliente.cliente_id}}";
+                </script>
+              <script type="text/javascript">
+                  document.getElementById("reserva_id_reserva").value="{{recibo_Reservas.reserva.reserva_id}}";
+                </script>
+              <div class="row mt-3">
+                <div class="form-group col-md-6">
+                      <label for="total_re"><b>Total:</b></label>
+                      <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">$</span>
+                          </div>
+                          <input type="text" class="form-control" name="total_re" value="{{ recibo_Reservas.total_re }}" oninput="soloNumeros(this)" id="total_re" required>
+                      </div>
+                  </div>
+              <div class="form-group col-md-6">
+                  <label for="fecha_emision_re"><b>Fecha Emision :</b></label>
+                  <input type="date" class="form-control"  name="fecha_emision_re" oninput="" value="{{ recibo_Reservas.fecha_emision_re|date:'Y-m-d' }}" id="fecha_emision_re" required>
+              </div>
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" name="button" class="btn btn-warning">
+                &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
+              </button>&nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="{% url 'listadoRecibo_Reserva' %}" class="btn btn-danger">
+                Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-md-4">
+      <div class="card card-profile card-secondary">
+        <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+          <div class="profile-picture">
+            <div class="avatar avatar-xl">
+              <img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-profile text-center">
+            <div class="name">
+              <span>{{ clientes.nombre_cli }} {{ clientes.apellido_cli }}</span>
+            </div>
+            <div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
+            <div>
+              <span>{{ clientes.email_cli }}</span>
+            </div>
+            <div class="job">
+              <p>"En esta sección, editarás los datos de <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli }}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#frm_nuevo_promociones").validate({
+        rules: {
+          "descripcion_pro": {
+            required: true,
+            minlength: 3,
+            maxlength: 50
+          },
+          "fecha_inicio_pro": {
+            required: true,
+            dateISO: true
+          },
+          "fecha_fin_pro": {
+            required: true,
+            dateISO: true
+          },
+          "disponibilidad_pro": {
+            required: true
+          },
+          "descuento_pro": {
+            required: true,
+            number: true,
+            min: 0.01,
+            max: 100
+          },
+          "menu_id_menu": {
+            required: true
+          }
+        },
+        messages: {
+          "descripcion_pro": {
+            required: "Debe ingresar la descripción de la promoción",
+            minlength: "La descripción debe tener al menos 3 caracteres",
+            maxlength: "La descripción no puede tener más de 50 caracteres"
+          },
+          "fecha_inicio_pro": {
+            required: "Debe ingresar la fecha de inicio de la promoción",
+            dateISO: "Por favor, ingrese una fecha válida (ISO)"
+          },
+          "fecha_fin_pro": {
+            required: "Debe ingresar la fecha de fin de la promoción",
+            dateISO: "Por favor, ingrese una fecha válida (ISO)"
+          },
+          "disponibilidad_pro": {
+            required: "Por favor seleccione la disponibilidad de la promoción"
+          },
+          "descuento_pro": {
+            required: "Debe ingresar el descuento de la promoción",
+            number: "Por favor, ingrese un número válido",
+            min: "El descuento no puede ser menor a 0.01",
+            max: "El descuento no puede ser mayor a 100"
+          },
+          "menu_id_menu": {
+            required: "Debe seleccionar un Menú"
+          }
+        }
+      });
+    });
+  </script>
+
+  <script>
+    function soloNumeros(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+  </script>
+
+{% endblock %}

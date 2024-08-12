@@ -1,0 +1,208 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <i class="fas fa-plus"></i> Agregar Ventas
+</button>
+<br>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-receipt"></i> Listado Ventas
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tbl_ventas" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>FECHA-VENTA</th>
+                                <th>TOTAL-VENTA</th>
+                                <th>CLIENTE</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in ventas %}
+                            <tr>
+                                <td>{{ venta.venta_id }}</td>
+                                <td>{{ venta.fecha_venta }}</td>
+                                <td>{{ venta.total_venta }}</td>
+                                <td>{{ venta.cliente.nombre_cli }} {{ venta.cliente.apellido_cli }}</td>
+
+                                <td>
+                                    <a href="/editarVentas/{{venta.venta_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarVentas('{{venta.venta_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Button trigger modal -->
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Registrar Ventas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/guardarVentas/" method="post" enctype="multipart/form-data" id="frm_nuevo_ventas">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="cliente_id_cliente">
+                                <b><i class="fas fa-user"></i> CLIENTE:</b>
+                            </label>
+                            <select class="form-control selectpicker" data-live-search="true" name="cliente_id_cliente" id="cliente_id_cliente" required>
+                                <option value="">Seleccione el Cliente</option>
+                                {% for cliente in clientes %}
+                                <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_venta">
+                                <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
+                            </label>
+                            <input type="date" name="fecha_venta" id="fecha_venta" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="total_venta">
+                                <b><i class="fas fa-dollar-sign"></i> Total de Ventas:</b>
+                            </label>
+                            <input type="number" name="total_venta" id="total_venta" class="form-control" oninput="soloNumeros(this)" placeholder="Ingrese el total de ventas" min="0" step="0.01" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" form="frm_nuevo_ventas" class="btn btn-secondary">Guardar</button>
+                    <button type="reset" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function eliminarVentas(venta_id) {
+        swal({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            buttons: {
+                cancel: {
+                    visible: true,
+                    text: 'No, cancelar',
+                    className: 'btn btn-secondary'
+                },
+                confirm: {
+                    text: 'Sí, eliminarlo',
+                    className: 'btn btn-danger'
+                }
+            }
+        }).then((willDelete) => {
+            if (willDelete) {
+                window.location.href = '/eliminarVentas/' + venta_id;
+            } else {
+                swal("¡La Venta está segura!", {
+                    icon: "info",
+                    buttons: {
+                        confirm: {
+                            className: 'btn btn-success'
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#frm_nuevo_ventas").validate({
+            rules: {
+                "fecha_venta": {
+                    required: true,
+                    dateISO: true
+                },
+                "total_venta": {
+                    required: true,
+                    number: true,
+                    min: 0.01,
+                    max: 1000000 // Ajusta el máximo según tus requisitos
+                },
+                "cliente_id_cliente": {
+                    required: true
+                }
+            },
+            messages: {
+                "fecha_venta": {
+                    required: "Debe ingresar la fecha de la venta",
+                    dateISO: "Por favor, ingrese una fecha válida (ISO)"
+                },
+                "total_venta": {
+                    required: "Debe ingresar el total de la venta",
+                    number: "Ingrese un número válido para el total",
+                    min: "El total no puede ser menor que 0.01",
+                    max: "El total no puede ser mayor que 1,000,000" // Ajusta el mensaje según el máximo definido
+                },
+                "cliente_id_cliente": {
+                    required: "Debe seleccionar un cliente"
+                }
+            }
+        });
+    });
+
+    function soloNumeros(input) {
+        // Reemplaza cualquier carácter que no sea un dígito numérico con una cadena vacía
+        input.value = input.value.replace(/\D/g, '');
+    }
+
+    function soloLetras(input) {
+        // Reemplaza cualquier carácter que no sea una letra o espacio con una cadena vacía
+        input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+    }
+</script>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#tbl_ventas').DataTable({
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-secondary',
+                        messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimir',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV',
+                        className: 'btn btn-secondary'
+                    }
+                ],
+                responsive: true
+            });
+        });
+    </script>
+{% endblock %}

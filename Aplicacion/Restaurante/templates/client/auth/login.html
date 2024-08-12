@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Login</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="{% static 'assets/img/icon.ico' %}" type="image/x-icon"/>
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Open+Sans:300,400,600,700"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ["{% static 'assets/css/fonts.css' %}"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/azzara.min.css' %}">
+</head>
+<body class="login" style="background-image: url('{% static 'assets\img\hero-bg.jpg' %}'); background-size: cover; background-position: center;">
+
+    <div class="wrapper wrapper-login">
+        <div class="container container-login animated fadeIn">
+            <h3 class="text-center">Iniciar sesión</h3>
+            <div class="login-form">
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username" class="placeholder"><b>Usuario</b></label>
+                        <input id="username" name="username" type="text" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="placeholder"><b>Contraseña</b></label>
+                        <a href="#" class="link float-right">Olvidaste tu contraseña ?</a>
+                        <div class="position-relative">
+                            <input id="password" name="password" type="password" class="form-control" required>
+                            <div class="show-password">
+                                <i class="flaticon-interface"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-action-d-flex mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="rememberme">
+                            <label class="custom-control-label m-0" for="rememberme">Recuérdame</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary col-md-5 float-right mt-3 mt-sm-0 fw-bold">Iniciar sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'assets/js/core/jquery.3.2.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/ready.js' %}"></script>
+</body>
+</html>

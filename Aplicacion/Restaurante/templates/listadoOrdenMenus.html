@@ -1,0 +1,756 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="{% static 'assetscli/images/logo.ico' %}" type="">
+
+  <title>Menu</title>
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'assetscli/css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-nE8fB9u90uwgIppx2k7I5Et6SyD9F7vQhNezZ/6f9/VSSjIrXkRf4nId1HHjHSS2x1zgO/cv8rg1oO1a1lvH9w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <!-- nice select  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" />
+  <!-- iziToast CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+  <!-- iziToast JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+  <!-- font awesome style -->
+  <link href="{% static 'assetscli/css/font-awesome.min.css' %}" rel="stylesheet" />
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'assetscli/css/style.css' %}" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="{% static 'assetscli/css/responsive.css' %}" rel="stylesheet" />
+  <!-- base css -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet" />
+
+  <!-- ajax -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+
+<body class="sub_page">
+
+  <div class="hero_area">
+    <div class="bg-box">
+      <img src="{% static 'assetscli/images/hero-bg.jpg' %}" alt="">
+    </div>
+    <!-- header section strats -->
+    <header class="header_section">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+          <a class="navbar-brand" href="/">
+            <span>
+              La Casita del Sabor
+            </span>
+          </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class=""> </span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'listadoOrdenMenus' %}">Menú</a>
+              </li>
+            </ul>
+            <div class="user_option">
+              {% if login %}
+                <span class="username">¡Hola! Ordena ahora {{ username }}</span>
+                <a href="{% url 'logout' %}" class="order_online">Cerrar Sesión</a>
+              {% else %}
+                <a href="{% url 'login' %}" class="order_online">Iniciar Sesión</a>
+                <a href="{% url 'registro' %}" class="order_online">Regístrate</a>
+              {% endif %}
+            </div>
+            <style>
+              .username {
+                color: #ffffff;
+                font-weight: bold;
+              }
+            </style>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <!-- end header section -->
+  </div>
+
+  <!-- food section -->
+  <section class="food_section layout_padding">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>La Casita del Sabor</h2>
+      </div>
+
+
+      <ul class="filters_menu">
+        <li class="active" data-filter=".almuerzos">Menu del Día</li>
+        <li data-filter=".platos">Sección de Platos</li>
+        <li data-filter=".parrilladas">Parrilladas</li>
+        <li data-filter=".bebidas">Bebidas</li>
+        <li data-filter=".platos_tradicionales">Platos Tradicionales</li>
+        <li data-filter=".mariscos">Mariscos</li>
+      </ul>
+
+      <div class="row menu-items">
+          {% for menu in menus %}
+          <div class="col-sm-6 col-lg-4 menu-item {{ menu.categoria_menu|lower }}">
+              <div class="box">
+                  <!-- Etiqueta de Promoción -->
+                  {% if menu in menus_con_promocion %}
+                  <div class="promotion-tag">¡En Promoción!</div>
+                  {% endif %}
+                  <div class="img-box">
+                      {% if menu.fotos_menu %}
+                      <img src="{{ menu.fotos_menu.url }}" alt="{{ menu.nombre_menu }}">
+                      {% else %}
+                      <img src="{% static 'placeholder.jpg' %}" alt="No Image">
+                      {% endif %}
+                  </div>
+                  <div class="detail-box">
+                      <h5>{{ menu.nombre_menu }}</h5>
+                      <p style="text-align: justify;">{{ menu.descripcion_menu }}</p>
+                      <div class="availability">
+                          {% if menu.disponibilidad_menu == "disponible" %}
+                          <span class="badge badge-success">Disponible</span>
+                          {% elif menu.disponibilidad_menu == "no_disponible" %}
+                          <span class="badge badge-danger">No Disponible</span>
+                          {% else %}
+                          <span class="badge badge-warning">Indeterminate</span>
+                          {% endif %}
+                      </div>
+                      <div class="options">
+                          <h6>${{ menu.precio_menu }}</h6>
+                          <button type="button" class="btnProducto btn bg-info text-white"
+                          data-id="{{menu.menu_id}}"
+                          data-img="{{menu.fotos_menu}}"
+                          data-name="{{menu.nombre_menu}}"
+                          data-price="{{menu.precio_menu}}"
+                          data-toggle="modal" data-target="#exampleModal"
+                          {% if menu.disponibilidad_menu != "disponible" %}disabled{% endif %}>
+                          Ordenar
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Carrito de compras</h5>
+                  <button type="button" class="close btnCloseModal" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <div class="alert alert-danger validate" role="alert" style="display: none;"></div>
+
+                  <!-- Mesa Select -->
+                  <div class="mb-3">
+                      <select id="mesa-select" class="form-control">
+                          <option value=""><b>--Seleccione una mesa--</b></option>
+                          {% for mesa in mesas %}
+                              <option value="{{ mesa.id_mesa }}">
+                                  <b>Numero:</b> {{ mesa.numero_mes }} | <b>Capacidad:</b> {{ mesa.capacidad_mes }}
+                              </option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <br>
+                  <br>
+                  <div class="input-group input-group-sm mb-3">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">Personas</span>
+                      </div>
+                      <input type="number" value="1" min="1" class="form-control" id="personas" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                  </div>
+
+                  <!-- Fecha y Hora -->
+                  <div class="d-flex mb-3">
+                    <div class="flex-fill mr-2">
+                      <div class="form-group">
+                        <label for="fecha-compra">Fecha:</label>
+                        <input type="date" id="fecha-compra" class="form-control">
+                      </div>
+                    </div>
+                    <div class="flex-fill">
+                      <div class="form-group">
+                        <label for="hora-compra">Hora:</label>
+                        <input type="time" id="hora-compra" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cuerpo del carrito -->
+                  <div id="cuerpo-carrito">
+                      <!-- Aquí se mostrarán los ítems del carrito -->
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-success" onclick="comprar()">Comprar</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const filters = document.querySelectorAll('.filters_menu li');
+      const menuItems = document.querySelectorAll('.menu-item');
+
+      filters.forEach(filter => {
+        filter.addEventListener('click', function () {
+          filters.forEach(f => f.classList.remove('active'));
+          this.classList.add('active');
+
+          const selectedFilter = this.getAttribute('data-filter').substring(1);
+
+          menuItems.forEach(item => {
+            if (selectedFilter === '*' || item.classList.contains(selectedFilter)) {
+              item.style.display = 'block';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Filtrado inicial, mostrar todos los elementos al cargar la página
+      filters[0].click(); // Simula un clic en el filtro "Todos" al cargar la página
+    });
+  </script>
+
+
+
+
+  <footer class="footer_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 footer-col">
+          <div class="footer_contact">
+            <h4>
+              Contactos
+            </h4>
+            <div class="contact_link_box">
+              <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <span>
+                  Lugar
+                </span>
+              </a>
+              <a href="https://wa.me/593992217026">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+                <span>
+                  Numero telefonico +593 99 221 7026
+                </span>
+              </a>
+              <a href="mailto:casitasabor823%40gmail.com">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                <span>
+                  casitasabor823@gmail.com
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 footer-col">
+          <div class="footer_detail">
+            <a href="" class="footer-logo">
+              La Casita del Sabor
+            </a>
+            <p>
+              La felicidad es compartir en familia, ven y conose la nuestra por que aki comeras como en casa
+            </p>
+            <div class="footer_social">
+              <a href="https://www.facebook.com/profile.php?id=100063899085512&mibextid=ZbWKwL" target="_blank">
+                  <i class="fa fa-facebook" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 footer-col">
+          <h4>
+            Horario de Atención
+          </h4>
+          <p>
+            Lunes - Domingo
+          </p>
+          <p>
+            08 Am - 07 Pm
+          </p>
+        </div>
+      </div>
+      <div class="footer-info">
+        <p>
+          &copy; <span id="displayYear"></span> Universidad Tecnica Cotopaxi
+          <a href="https://html.design/"></a><br><br>
+          &copy; <span id="displayYear"></span> La Casita
+          <a href="https://themewagon.com/" target="_blank">del Sabor</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+  <!-- footer section -->
+
+  <script src="{% static 'assetscli/js/jquery-3.4.1.min.js' %}"></script>
+  <!-- popper js -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+  <!-- bootstrap js -->
+  <script src="{% static 'assetscli/js/bootstrap.js' %}"></script>
+  <!-- owl slider -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <!-- isotope js -->
+  <script src="https://unpkg.com/isotope-layout@3.0.4/dist/isotope.pkgd.min.js"></script>
+  <!-- nice select -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+  <!-- custom js -->
+  <script src="{% static 'assetscli/js/custom.js' %}"></script>
+  <!-- Google Map -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap">
+  </script>
+
+  <input type="hidden" name="user" id="user" value="{{ user.cliente_id }}">
+  <!-- <input type="hidden" name="url" id="url" value="{% url 'plantillaCliente' %}"> -->
+  <!-- carrito de compras -->
+  <script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', (event) => {
+      const fechaCompraInput = document.getElementById('fecha-compra');
+      const horaCompraInput = document.getElementById('hora-compra');
+
+      let today = new Date();
+      let day = String(today.getDate()).padStart(2, '0');
+      let month = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0
+      let year = today.getFullYear();
+      let hours = String(today.getHours()).padStart(2, '0');
+      let minutes = String(today.getMinutes()).padStart(2, '0');
+
+      // Define la hora mínima y máxima permitida
+      let minAllowedHours = 8;
+      let maxAllowedHours = 19;
+      let minAllowedTime = `${String(minAllowedHours).padStart(2, '0')}:${String(0).padStart(2, '0')}`; // 08:00 AM
+      let maxAllowedTime = `${String(maxAllowedHours).padStart(2, '0')}:${String(0).padStart(2, '0')}`; // 07:00 PM
+
+      let todayDate = `${year}-${month}-${day}`;
+
+      // Establece la fecha mínima en el input de fecha
+      fechaCompraInput.setAttribute('min', todayDate);
+      // Establece la hora mínima y máxima en el input de hora
+      horaCompraInput.setAttribute('min', minAllowedTime);
+      horaCompraInput.setAttribute('max', maxAllowedTime);
+
+      // Actualiza la hora mínima y máxima cuando se cambia la fecha
+      fechaCompraInput.addEventListener('change', () => {
+        let selectedDate = new Date(fechaCompraInput.value);
+        if (selectedDate.toDateString() === today.toDateString()) {
+          horaCompraInput.setAttribute('min', minAllowedTime);
+          horaCompraInput.setAttribute('max', maxAllowedTime);
+        } else {
+          horaCompraInput.removeAttribute('min');
+          horaCompraInput.removeAttribute('max');
+        }
+      });
+
+      // Verifica la hora mínima y máxima al cargar la página si la fecha actual es seleccionada
+      if (fechaCompraInput.value === todayDate) {
+        horaCompraInput.setAttribute('min', minAllowedTime);
+        horaCompraInput.setAttribute('max', maxAllowedTime);
+      }
+    });
+
+    $('.btnProducto').click(function (e) {
+      let plato = $(this).attr('data-id');
+      let name = $(this).attr('data-name');
+      let price = $(this).attr('data-price');
+      let img = $(this).attr('data-img');
+      let cuerpoCarritoDB = localStorage.getItem('cuerpoCarrito');
+      $('#cuerpo-carrito').html(cuerpoCarritoDB);
+
+      let buscarPlato = $(".carrito-nombre-plato[data-id=" + plato + "]");
+
+      if (!buscarPlato.length) {
+        let html = `
+          <div class="row" articulo-id="${plato}">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <img src="/media/${img}" class="img-fluid" alt="Imagen del producto">
+                    </div>
+                    <div class="col-md-8">
+                      <p class="card-title"><b>${name}</b></p>
+                      <p class="card-text"><strong>Precio:</strong> $${price}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <input type="number" class="carrito-nombre-plato form-control w-25"
+                        value="1" min="1"
+                        data-id="${plato}"
+                        data-price="${price}"
+                        data-name="${name}">
+                        <button class="btn btn-danger btn-reserva-eliminar" data-id="${plato}">Eliminar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        $('#cuerpo-carrito').append(html);
+      }
+
+      $(this).removeClass('bg-info');
+      $(this).addClass('bg-danger');
+      $(this).text('Ordenado');
+
+      let cuerpoCarrito = $('#cuerpo-carrito').html();
+      localStorage.setItem('cuerpoCarrito', cuerpoCarrito);
+    });
+
+    $("#cuerpo-carrito").on('click', '.btn-reserva-eliminar', function (e) {
+      e.preventDefault();
+      let id = $(this).attr('data-id');
+      $('div[articulo-id="' + id + '"]').remove();
+
+      $('.btnProducto[data-id="' + id + '"]').removeClass('bg-danger');
+      $('.btnProducto[data-id="' + id + '"]').addClass('bg-info');
+      $('.btnProducto[data-id="' + id + '"]').text('Ordenar');
+
+      let cuerpoCarrito = $('#cuerpo-carrito').html();
+
+      localStorage.setItem('cuerpoCarrito', cuerpoCarrito);
+    });
+
+    async function comprar() {
+      let user = $('#user').val();
+      let mesa = $('#mesa-select').val();
+      let personas = parseInt($("#personas").val(), 10);
+      let fecha = $('#fecha-compra').val();
+      let hora = $('#hora-compra').val();
+      let validar = true;
+
+      var inputs = $('input.carrito-nombre-plato');
+      let articulos = [];
+
+      // Recorre cada input y añade su valor a la lista
+      inputs.each(function () {
+        articulos.push({
+          plato_id: $(this).attr('data-id'),
+          nombre_plato: $(this).attr('data-name'), // Incluye el nombre del plato
+          cantidad: $(this).val(),
+          price: $(this).attr('data-price')
+        });
+      });
+
+      // Validaciones aquí...
+      if (!user) {
+        mostrarError('Perdón, pero necesitas iniciar sesión.');
+        validar = false;
+      }
+
+      if (!mesa) {
+        mostrarError('Selecciona una mesa por favor.');
+        validar = false;
+      }
+
+      if (isNaN(personas) || personas <= 0) {
+        mostrarError('Tiene que estar mínimo una persona en la mesa.');
+        validar = false;
+      }
+
+      if (!fecha || !hora) {
+        mostrarError('Debe seleccionar una fecha y hora.');
+        validar = false;
+      } else {
+        let fechaHoy = new Date();
+        let fechaReserva = new Date(fecha + 'T' + hora);
+
+        // Verifica que la fecha y hora no sean anteriores a dos horas desde ahora
+        let dosHorasDesdeAhora = new Date(fechaHoy.getTime() + 2 * 60 * 60 * 1000); // Dos horas en el futuro
+
+        if (fechaReserva < dosHorasDesdeAhora) {
+          mostrarError('La reserva debe hacerse con al menos dos horas de anticipación.');
+          validar = false;
+        }
+
+        if (fechaReserva < fechaHoy) {
+          mostrarError('Selecciona una fecha y hora válidas, con al menos dos horas de anticipación.');
+          validar = false;
+        }
+
+        let horaReserva = fechaReserva.getHours();
+        let minutosReserva = fechaReserva.getMinutes();
+        if (horaReserva < 8 || horaReserva > 19 || (horaReserva === 19 && minutosReserva > 0)) { // Verifica que la hora esté dentro del rango permitido
+          mostrarError('La hora de la reserva debe estar entre las 08:00 AM y las 07:00 PM.');
+          validar = false;
+        }
+      }
+
+      if (articulos.length <= 0) {
+        mostrarError('No podemos reservar una mesa sin órdenes antes.');
+        validar = false;
+      }
+
+      if (validar) {
+        Swal.fire({
+          title: '¿Confirmar compra?',
+          text: "Una vez confirmada, no podrás cancelarla.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, confirmar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajaxSetup({
+              beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                  xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                }
+              }
+            });
+
+            let data = {
+              cliente: user,
+              mesa,
+              articulos: JSON.stringify(articulos),
+              personas,
+              fecha,
+              hora
+            };
+
+            $.ajax({
+              type: "POST",
+              url: "{% url 'reservarMesaCliente' %}",
+              data,
+              headers: {
+                'X-CSRFToken': csrfToken
+              },
+              success: function (response) {
+                if (response.status) {
+                  localStorage.removeItem('cuerpoCarrito');
+                  $('.btnCloseModal').trigger('click');
+                  Swal.fire(
+                    '¡Gracias!',
+                    'Tu compra se realizó con éxito! Recuerda llevar tu recibo 🎉🛒✨',
+                    'success'
+                  ).then(() => {
+                    generarComprobante(user, mesa, articulos);
+                  });
+                } else {
+                  mostrarError(
+                    'Perdón, hubo un error. Por favor, intenta nuevamente más tarde.'
+                  );
+                }
+              },
+              error: function () {
+                mostrarError(
+                  'Perdón, hubo un error. Por favor, intenta nuevamente más tarde.'
+                );
+              }
+            });
+          }
+        });
+      }
+    }
+
+    function mostrarError(mensaje) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: mensaje
+      });
+    }
+async function generarComprobante(nombreUsuario, nombreMesa, articulos) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const fechaReserva = document.getElementById('fecha-compra').value;
+  const horaReserva = document.getElementById('hora-compra').value;
+
+  if (!fechaReserva || !horaReserva) {
+    alert('Por favor, completa la fecha y hora de la reserva.');
+    return;
+  }
+
+  // URL de la imagen
+  const imgUrl = 'https://scontent.fuio11-2.fna.fbcdn.net/v/t39.30808-6/427990885_897372799069348_2346240393185279234_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeH-PGmXsSzuinNwYjuZjw62zvpbGf-krIfO-lsZ_6Ssh_W_Ccj9TGnq_HPc6vHYfAOXGeEeUiB1SAyEWAmVn2ZG&_nc_ohc=0qN-fyyXmowQ7kNvgHhMyzD&_nc_ht=scontent.fuio11-2.fna&oh=00_AYAsccqXPWqCz7KL151Sx8dCTHjEyr6lxgL2QkFDx5awlg&oe=66B8AC3D';
+
+  // Descargar la imagen y agregarla al PDF
+  const img = await fetch(imgUrl);
+  const imgBlob = await img.blob();
+  const imgBase64 = await blobToBase64(imgBlob);
+
+  // Añadir imagen al PDF
+  doc.addImage(imgBase64, 'JPEG', 20, 10, 50, 30); // Posición (x, y), ancho, alto
+
+  // Título
+  doc.setFontSize(24);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(0, 51, 102); // Color más oscuro
+  const title = 'La Casita del Sabor';
+  const titleWidth = doc.getTextWidth(title);
+  const pageWidth = doc.internal.pageSize.width;
+  doc.text(title, (pageWidth - titleWidth) / 2, 50);
+
+  // Instrucciones
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(0, 0, 0); // Color negro
+  const instructions = 'Debes llevar este comprobante para que puedas retirar o pedir tu reserva de alimentos';
+  const instructionsWidth = doc.getTextWidth(instructions);
+  doc.text(instructions, (pageWidth - instructionsWidth) / 2, 60);
+
+  // Información del cliente y reserva
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(0, 51, 102); // Color más oscuro
+  doc.text(`Cliente: ${nombreUsuario}`, 20, 80);
+  doc.text(`Mesa: ${nombreMesa}`, 20, 90);
+
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(0, 0, 0); // Color negro
+  doc.text(`Fecha de Reserva: ${fechaReserva}`, 20, 100);
+  doc.text(`Hora de Reserva: ${horaReserva}`, 20, 110);
+
+  // Línea de separación
+  doc.setDrawColor(0, 0, 0); // Color negro
+  doc.setLineWidth(0.75);
+  doc.line(20, 115, 190, 115);
+
+  // Encabezados de tabla
+  let yPos = 125;
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(255, 255, 255); // Color blanco
+  doc.setFillColor(0, 102, 204); // Color de fondo para encabezados
+  doc.rect(20, yPos - 10, 170, 10, 'F'); // Fondo de encabezados
+  doc.text('Nombre del Plato', 20, yPos);
+  doc.text('ID', 80, yPos);
+  doc.text('Cantidad', 120, yPos);
+  doc.text('$Unitario', 160, yPos);
+
+  yPos += 5;
+  doc.setTextColor(0, 0, 0); // Color negro
+  doc.line(20, yPos, 190, yPos);
+
+  // Filas de la tabla
+  doc.setFont("helvetica", "normal");
+  articulos.forEach((articulo) => {
+    yPos += 10;
+    doc.text(`${articulo.nombre_plato}`, 20, yPos);
+    doc.text(`${articulo.plato_id}`, 80, yPos);
+    doc.text(`${articulo.cantidad}`, 120, yPos);
+    doc.text(`$${articulo.price}`, 160, yPos);
+  });
+
+  // Total
+  const total = articulos.reduce((acc, item) => acc + (item.cantidad * item.price), 0);
+  yPos += 10;
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(0, 102, 204); // Color para el total
+  doc.text('Total:', 120, yPos);
+  doc.text(`$${total}`, 160, yPos);
+
+  // Guardar el PDF
+  doc.save('comprobante_compra.pdf');
+}
+
+// Función para convertir Blob a Base64
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+</script>
+
+
+   <style>
+    .box {
+        position: relative; /* Asegura que la etiqueta se posicione relativa a la caja del menú */
+    }
+
+    .promotion-tag {
+        position: absolute;
+        top: 90px; /* Aumenta el margen superior para bajar aún más la etiqueta */
+        left: 10px; /* Mueve la etiqueta a la esquina superior izquierda */
+        background-color: #28a745; /* Verde para la etiqueta */
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        z-index: 10; /* Asegura que la etiqueta esté encima del contenido */
+        font-size: 14px;
+        text-align: center;
+        transform: rotate(-45deg); /* Gira la etiqueta para darle un estilo dinámico */
+        transform-origin: top left; /* Ajusta el origen de la rotación */
+    }
+
+    .promotion-tag::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 100%; /* Ajusta para que la flecha apunte hacia la etiqueta */
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-left-color: #28a745; /* Color de la etiqueta */
+        border-right: 0;
+        border-top: 0;
+        margin-top: -10px;
+        margin-left: -10px;
+    }
+</style>
+
+
+
+
+
+
+</body>
+
+</html>

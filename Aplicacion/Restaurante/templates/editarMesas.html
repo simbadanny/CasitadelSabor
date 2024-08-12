@@ -1,0 +1,228 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <p>Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-info bubble-shadow-small">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Mesas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-success bubble-shadow-small">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Menús</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-secondary bubble-shadow-small">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Reservas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-8">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form class="" action="/procesarActualizacionMesas/" enctype="multipart/form-data" method="post" id="frm_nuevo_mesas">
+          {% csrf_token %}
+          <input type="hidden" name="id_mesa" value="{{ mesas.id_mesa }}">
+          <div class="card-header">
+            <h4 class="card-title"><i class="fas fa-utensils"></i> MESAS CASITA DEL SABOR</h4>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <b><i class="fas fa-table"></i> Numero Mesa:</b>
+              <input type="text" name="numero_mes" id="numero_mes" oninput="" onblur="convertirMayusculas(this)" placeholder="Ingrese el numero de mesa" value="{{ mesas.numero_mes }}" class="form-control" required>
+            </div>
+            <div class="form-group col-md-6">
+              <b><i class="fas fa-users"></i> Capacidad Usuarios:</b>
+              <input type="number" name="capacidad_mes" id="capacidad_mes" oninput="soloNumeros(this)" placeholder="Ingrese la capacidad de la mesa" value="{{ mesas.capacidad_mes }}" class="form-control" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <b><i class="fas fa-info-circle"></i> Estado:</b>
+              <select name="estado_mes" id="estado_mes" class="form-control" required>
+                <option value="Libre" {% if mesas.estado_mes == "Libre" %}selected{% endif %}>Libre</option>
+                <option value="Ocupada" {% if mesas.estado_mes == "Ocupada" %}selected{% endif %}>Ocupada</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" name="button" class="btn btn-warning">
+              &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
+            </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'listadoMesas' %}" class="btn btn-danger">
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group col-md-4">
+    <div class="card card-profile card-secondary">
+      <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+        <div class="profile-picture">
+          <div class="avatar avatar-xl">
+            <img src="{% static 'assets/img/logo.ico' %}" alt="Mesa" class="avatar-img rounded-circle">
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="user-profile text-center">
+          <div class="name">Mesa : {{ mesas.numero_mes }}</div>
+          <div class="job">Capacidad: {{ mesas.capacidad_mes }} personas</div>
+          <div class="desc">Estado actual: {{ mesas.estado_mes }}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="row user-stats text-center">
+          <div class="col">
+            <div class="number">125</div>
+            <div class="title">Reservas Hoy</div>
+          </div>
+          <div class="col">
+            <div class="number">25K</div>
+            <div class="title">Reservas Totales</div>
+          </div>
+          <div class="col">
+            <div class="number">134</div>
+            <div class="title">Clientes Frecuentes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $("#frm_nuevo_mesas").validate({
+      rules: {
+        "numero_mes": {
+          required: true,
+          minlength: 1,
+          maxlength: 10
+        },
+        "capacidad_mes": {
+          required: true,
+          minlength: 1,
+          maxlength: 3
+        },
+        "estado_mes": {
+          required: true
+        }
+      },
+      messages: {
+        "numero_mes": {
+          required: "Debe ingresar el número de mesa",
+          minlength: "El número de mesa debe tener al menos 1 carácter",
+          maxlength: "El número de mesa no puede tener más de 10 caracteres"
+        },
+        "capacidad_mes": {
+          required: "Debe ingresar la capacidad de la mesa",
+          minlength: "La capacidad debe tener al menos 1 carácter",
+          maxlength: "La capacidad no puede tener más de 3 caracteres"
+        },
+        "estado_mes": {
+          required: "Por favor seleccione el estado de la mesa"
+        }
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+</script>
+<script type="text/javascript">
+    function soloNumeros(input) {
+        input.value = input.value.replace(/\D/g, '');
+    }
+
+    function soloLetras(input) {
+        input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+    }
+</script>
+
+<script type="text/javascript">
+    function convertirMayusculas(input) {
+        input.value = input.value.toUpperCase();
+    }
+</script>
+{% endblock %}

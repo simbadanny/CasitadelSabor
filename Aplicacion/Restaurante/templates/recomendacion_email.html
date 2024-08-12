@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .highlight {
+            background-color: #e74c3c;
+            color: white;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+        }
+        .header-img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://scontent.fuio11-2.fna.fbcdn.net/v/t39.30808-6/427990885_897372799069348_2346240393185279234_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeH-PGmXsSzuinNwYjuZjw62zvpbGf-krIfO-lsZ_6Ssh_W_Ccj9TGnq_HPc6vHYfAOXGeEeUiB1SAyEWAmVn2ZG&_nc_ohc=MZ7FP3cMr5IQ7kNvgEbi_WG&_nc_ht=scontent.fuio11-2.fna&oh=00_AYCrVBl0U8p0lEhWebbZCUot4hJweWHlUzM5hvvAYOhCgQ&oe=66B5607D" alt="Imagen del Restaurante" class="header-img">
+        <h2>Hola {{ cliente_nombre }}, te recomendamos los siguientes menús basados en tus preferencias:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre del Menú</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for menu in menus %}
+                <tr class="{% if menu.id in menus_destacados %}highlight{% endif %}">
+                    <td>{{ menu.nombre_menu }}</td>
+                    <td>{{ menu.descripcion_menu }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>Visita nuestro <a href="{{ url_sitio }}">sitio</a> para más detalles.</p>
+        <div class="footer">
+            <p>&copy; {{ year }} Tu Restaurante. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

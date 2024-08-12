@@ -1,0 +1,104 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <p>Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-info bubble-shadow-small">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Mesas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-success bubble-shadow-small">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Menús</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-secondary bubble-shadow-small">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Reservas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="welcome-message mt-5">
+    <div class="jumbotron text-center" style="background-color: #f8f9fa; border-radius: 15px; padding: 2rem;">
+        <h1 class="display-4" style="color: #007bff; font-weight: bold;">¡Bienvenido, {{ user.username | upper }}!</h1>
+        <p class="lead" style="font-size: 1.2rem; color: #6c757d;">Nos alegra tenerte de vuelta. Aquí puedes gestionar todos los aspectos de tu negocio de manera fácil y rápida.</p>
+        <hr class="my-4" style="border-top: 1px solid #007bff;">
+    </div>
+</div>
+
+{% endblock %}

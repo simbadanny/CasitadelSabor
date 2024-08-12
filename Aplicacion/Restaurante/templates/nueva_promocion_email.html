@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Promoción Disponible</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            background-image: url(''); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            position: relative;
+            text-align: center;
+            transform: rotate(-3deg); /* Un pequeño giro para simular la tarjeta colgada */
+        }
+        .header h1 {
+            color: #D32F2F;
+            font-size: 24px;
+            margin: 0;
+        }
+        .content p {
+            color: #555;
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        .promotion-details p {
+            color: #333;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .ribbon {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: #D32F2F;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 14px;
+            line-height: 60px;
+            text-align: center;
+            font-weight: bold;
+            transform: rotate(-45deg);
+        }
+        .footer {
+            margin-top: 20px;
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ribbon">Promo</div>
+        <div class="header">
+            <h1>¡Nueva Promoción Disponible!</h1>
+        </div>
+        <div class="content">
+            <p>Nos complace anunciar una nueva promoción para el menú: <strong>{{ nombre_menu }}</strong></p>
+            <div class="promotion-details">
+                <p><strong>Descripción:</strong> {{ descripcion_pro }}</p>
+                <p><strong>Fecha de inicio:</strong> {{ fecha_inicio_pro }}</p>
+                <p><strong>Fecha de fin:</strong> {{ fecha_fin_pro }}</p>
+                <p><strong>Descuento:</strong> {{ descuento_pro }}%</p>
+            </div>
+            <p>¡Aprovecha esta oportunidad y visita nuestro restaurante!</p>
+        </div>
+        <div class="footer">
+            <p>Gracias por tu preferencia.</p>
+        </div>
+    </div>
+</body>
+</html>

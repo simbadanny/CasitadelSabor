@@ -1,0 +1,238 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <p>Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoClientes' %}" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-info bubble-shadow-small">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Mesas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMesas' %}" class="btn btn-info">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-success bubble-shadow-small">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Menús</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoMenus' %}" class="btn btn-success">Ver Menús</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon text-center">
+                        <div class="icon-big icon-secondary bubble-shadow-small">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats text-center">
+                        <div class="numbers">
+                            <p class="card-category">Administra</p>
+                            <h4 class="card-title">Reservas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'listadoReservas' %}" class="btn btn-secondary">Ver Reservas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-8">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form action="{% url 'procesarActualizacionDetalles_Reservas' %}" enctype="multipart/form-data" method="post" id="frm_nuevo_detallesr">
+          {% csrf_token %}
+          <input type="hidden" name="detalle_reserva_id" value="{{ detalle_Reservas.detalle_reserva_id }}">
+          <div class="modal-body">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="reserva_id_reserva"><i class="fas fa-calendar"></i> <b>FECHA RESERVA:</b></label>
+                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="reserva_id_reserva" id="reserva_id_reserva" required data-live-search-placeholder="Buscar categoría...">
+                  <option value="">Seleccione Total Ventas</option>
+                  {% for reserva in reservas %}
+                    <option value="{{ reserva.reserva_id }}" {% if detalle_Reservas.reserva.reserva_id == reserva.reserva_id %}selected{% endif %}>{{ reserva.fecha_reserva }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="menu_id_menu"><i class="fas fa-dollar-sign"></i> <b>PRECIO MENU:</b></label>
+                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu" id="menu_id_menu" required data-live-search-placeholder="Buscar proveedor...">
+                  <option value="">Seleccione Precio Menu</option>
+                  {% for menu in menus %}
+                    <option value="{{ menu.menu_id }}" {% if detalle_Reservas.menu.menu_id == menu.menu_id %}selected{% endif %}>{{ menu.precio_menu }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE MENU:</b></label>
+                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="nombre_menu" id="nombre_menu" required data-live-search-placeholder="Buscar proveedor...">
+                  <option value="">Seleccione El Nombre Menú</option>
+                  {% for menu in menus %}
+                    <option value="{{ menu.menu_id }}" {% if detalle_Reservas.menu.menu_id == menu.menu_id %}selected{% endif %}>{{ menu.nombre_menu }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="cantidad_personas"><i class="fas fa-users"></i> <b>CANTIDAD PERSONAS:</b></label>
+                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="numero_personas_reserva" id="numero_personas_reserva" required data-live-search-placeholder="Buscar categoría...">
+                  <option value="">Seleccione Total Personas</option>
+                  {% for reserva in reservas %}
+                    <option value="{{ reserva.reserva_id }}" {% if detalle_Reservas.reserva.reserva_id == reserva.reserva_id %}selected{% endif %}>{{ reserva.numero_personas_reserva }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="hora_reserva"><i class="fas fa-clock"></i> <b>HORA DE RESERVA:</b></label>
+                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="hora_reserva" id="hora_reserva" required data-live-search-placeholder="Buscar categoría...">
+                  <option value="">Seleccione la hora reserva</option>
+                  {% for reserva in reservas %}
+                    <option value="{{ reserva.reserva_id }}" {% if detalle_Reservas.reserva.reserva_id == reserva.reserva_id %}selected{% endif %}>{{ reserva.hora_reserva }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" name="button" class="btn btn-warning">
+              &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
+            </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'listadoDetalles_Reservas' %}" class="btn btn-danger">
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="form-group col-md-3">
+  <div class="card card-profile card-secondary">
+    <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+      <div class="profile-picture">
+        <div class="avatar avatar-xl">
+          <img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="user-profile text-center">
+        <div class="name">
+          <span>{{ clientes.nombre_cli }}</span>
+        </div>
+        <div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
+        <div class="">
+          <span>{{ clientes.email_cli }}</span>
+        </div>
+        <div class="job">
+          <p>"En esta sección, editarás los datos de <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli }}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
+        </div>
+        <!-- Emoji Animado -->
+        <div class="emoji-container text-center mt-3">
+          <img src="{% static 'assets/img/animated_emoji.gif' %}" alt="Emoji Animado" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#frm_nuevo_detallesr").validate({
+            rules: {
+                "reserva_id_reserva": {
+                    required: true
+                },
+                "menu_id_menu": {
+                    required: true
+                },
+                "nombre_menu": {
+                    required: true
+                },
+                "numero_personas_reserva": {
+                    required: true
+                },
+                "hora_reserva": {
+                    required: true
+                }
+            },
+            messages: {
+                "reserva_id_reserva": {
+                    required: "Debe seleccionar la reserva"
+                },
+                "menu_id_menu": {
+                    required: "Debe seleccionar el precio menú"
+                },
+                "nombre_menu": {
+                    required: "Debe seleccionar el nombre menú"
+                },
+                "numero_personas_reserva": {
+                    required: "Debe seleccionar la cantidad de personas"
+                },
+                "hora_reserva": {
+                    required: "Debe seleccionar la hora de reserva"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

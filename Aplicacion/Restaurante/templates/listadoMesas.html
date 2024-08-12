@@ -1,0 +1,214 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+	<i class="fas fa-plus"></i> Agregar Mesa
+</button>
+<br>
+<br>
+<div class="row">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<i class="fas fa-table"></i> MESAS CASITA DEL SABOR
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+										<table id="tbl_Mesas" class="display table table-striped table-hover" >
+                      <thead>
+                      <tr>
+                      <th>ID</th>
+                      <th>NUMERO-MESA</th>
+                      <th>CAPACIDAD-MESA</th>
+                      <th>ESTADO-MESA</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for mesa in mesas %}
+                    <tr>
+                      <td>{{ mesa.id_mesa }}</td>
+                      <td>{{ mesa.numero_mes }}</td>
+                      <td>{{ mesa.capacidad_mes }}</td>
+                      <td>{{ mesa.estado_mes }}</td>
+                      <td>
+
+												<a href="/editarMesas/{{mesa.id_mesa}}" class="btn btn-warning">
+												    <i class="fas fa-edit"></i>
+												</a>
+												<a href="javascript:void(0)" onclick="eliminarMesas('{{mesa.id_mesa}}');" class="btn btn-danger">
+												    <i class="fas fa-trash-alt"></i>
+												</a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ingresar Una Mesa</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+				<form action="/guardarMesas/" method="post" enctype="multipart/form-data" id="frm_nuevo_mesas">
+	  				{% csrf_token %}
+				  <div class="row">
+				    <div class="form-group col-md-6">
+				      <label for="numero_mes">
+				        <b><i class="fas fa-table"></i> Numero Mesa:</b>
+				      </label>
+				      <input type="text" name="numero_mes" id="numero_mes" oninput="" placeholder="Ingrese el numero de mesa" class="form-control" required>
+				    </div>
+				    <div class="form-group col-md-6">
+				      <label for="capacidad_mes">
+				        <b><i class="fas fa-users"></i> Capacida Usuarios:</b>
+				      </label>
+				      <input type="number" name="capacidad_mes" id="capacidad_mes" oninput="soloNumeros(this)" placeholder="Ingrese la capacidad Usuarios" class="form-control" required>
+				    </div>
+				  </div>
+				  <div class="row">
+				    <div class="form-group col-md-6">
+				      <label for="estado_mes">
+				        <b><i class="fas fa-info-circle"></i> Estado:</b>
+				      </label>
+				      <select name="estado_mes" id="estado_mes" class="form-control" required>
+								<option value="" disabled selected>Seleccione estado</option>
+				        <option value="Libre">Libre</option>
+				        <option value="Ocupada">Ocupada</option>
+				      </select>
+				    </div>
+				  </div>
+				</form>
+				</div>
+      <div class="modal-footer">
+        <button type="submit" form="frm_nuevo_mesas" class="btn btn-secondary">Guardar</button>
+				<button type="reset" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $("#frm_nuevo_mesas").validate({
+      rules: {
+        "numero_mes": {
+          required: true,
+          minlength: 1,
+          maxlength: 10
+        },
+        "capacidad_mes": {
+          required: true,
+          minlength: 1,
+          maxlength: 3
+        },
+        "estado_mes": {
+          required: true
+        }
+      },
+      messages: {
+        "numero_mes": {
+          required: "Debe ingresar el número de mesa",
+          minlength: "El número de mesa debe tener al menos 1 carácter",
+          maxlength: "El número de mesa no puede tener más de 10 caracteres"
+        },
+        "capacidad_mes": {
+          required: "Debe ingresar la capacidad de la mesa",
+          minlength: "La capacidad debe tener al menos 1 carácter",
+          maxlength: "La capacidad no puede tener más de 3 caracteres"
+        },
+        "estado_mes": {
+          required: "Por favor seleccione el estado de la mesa"
+        }
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+</script>
+<script type="text/javascript">
+    function soloNumeros(input) {
+        // Reemplaza cualquier carácter que no sea un dígito numérico con una cadena vacía
+        input.value = input.value.replace(/\D/g, '');
+    }
+
+    function soloLetras(input) {
+        // Reemplaza cualquier carácter que no sea una letra o espacio con una cadena vacía
+        input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+    }
+</script>
+<script>
+function eliminarMesas(cliente_id) {
+    swal({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        buttons: {
+            cancel: {
+                visible: true,
+                text: 'No, cancelar',
+                className: 'btn btn-secondary'
+            },
+            confirm: {
+                text: 'Sí, eliminarlo',
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((willDelete) => {
+        if (willDelete) {
+            window.location.href = '/eliminarClientes/' + cliente_id;
+        } else {
+            swal("¡El cliente está seguro!", {
+                icon: "info",
+                buttons: {
+                    confirm: {
+                        className: 'btn btn-success'
+                    }
+                }
+            });
+        }
+    });
+}
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tbl_Mesas').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+    });
+</script>
+
+{% endblock %}

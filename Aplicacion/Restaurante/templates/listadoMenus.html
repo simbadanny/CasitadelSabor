@@ -1,0 +1,722 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+{% load static %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <i class="fas fa-plus"></i> Agregar Menú
+</button>
+<br>
+<br>
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="almuerzos-tab" data-toggle="tab" href="#almuerzos" role="tab" aria-controls="almuerzos" aria-selected="true">Menu del Dia</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="platos_tradicionales-tab" data-toggle="tab" href="#platos_tradicionales" role="tab" aria-controls="platos_tradicionales" aria-selected="false">Platos Tradicionales</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="mariscos-tab" data-toggle="tab" href="#mariscos" role="tab" aria-controls="mariscos" aria-selected="false">Mariscos</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="parrilladas-tab" data-toggle="tab" href="#parrilladas" role="tab" aria-controls="parrilladas" aria-selected="false">Parrilladas</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="platos-tab" data-toggle="tab" href="#platos" role="tab" aria-controls="platos" aria-selected="false">Sección de Platos</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="bebidas-tab" data-toggle="tab" href="#bebidas" role="tab" aria-controls="bebidas" aria-selected="false">Bebidas</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content" id="myTabContent">
+          <div class="card-header">
+              <i class="fas fa-bars"></i> Menús
+          </div>
+            <div class="tab-pane fade show active" id="almuerzos" role="tabpanel" aria-labelledby="almuerzos-tab">
+                <div class="table-responsive">
+                    <table id="tbl_almuerzos" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>DESCRIPCION</th>
+                                <th>CATEGORIA</th>
+                                <th>DISPONIBILIDAD</th>
+                                <th>PRECIO</th>
+                                <th>FOTO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            {% if menu.categoria_menu == 'almuerzos' %}
+                            <tr>
+                                <td>{{ menu.menu_id }}</td>
+                                <td>{{ menu.nombre_menu }}</td>
+                                <td>{{ menu.descripcion_menu }}</td>
+                                <td>{{ menu.categoria_menu }}</td>
+                                <td>{{ menu.disponibilidad_menu }}</td>
+                                <td>{{ menu.precio_menu }}</td>
+                                <td>
+                                    {% if menu.fotos_menu %}
+                                        <a href="{{ menu.fotos_menu.url }}" target="_blank">
+                                            <img src="{{ menu.fotos_menu.url }}" alt="" height="50px">
+                                        </a>
+                                    {% else %}
+                                        <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarMenus/{{menu.menu_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarMenus('{{menu.menu_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Platos Tradicionales -->
+            <div class="tab-pane fade" id="platos_tradicionales" role="tabpanel" aria-labelledby="platos_tradicionales-tab">
+                <div class="table-responsive">
+                    <table id="tbl_platos_tradicionales" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>DESCRIPCION</th>
+                                <th>CATEGORIA</th>
+                                <th>DISPONIBILIDAD</th>
+                                <th>PRECIO</th>
+                                <th>FOTO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            {% if menu.categoria_menu == 'platos_tradicionales' %}
+                            <tr>
+                                <td>{{ menu.menu_id }}</td>
+                                <td>{{ menu.nombre_menu }}</td>
+                                <td>{{ menu.descripcion_menu }}</td>
+                                <td>{{ menu.categoria_menu }}</td>
+                                <td>{{ menu.disponibilidad_menu }}</td>
+                                <td>{{ menu.precio_menu }}</td>
+                                <td>
+                                    {% if menu.fotos_menu %}
+                                        <a href="{{ menu.fotos_menu.url }}" target="_blank">
+                                            <img src="{{ menu.fotos_menu.url }}" alt="" height="50px">
+                                        </a>
+                                    {% else %}
+                                        <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarMenus/{{menu.menu_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarMenus('{{menu.menu_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mariscos -->
+            <div class="tab-pane fade" id="mariscos" role="tabpanel" aria-labelledby="mariscos-tab">
+                <div class="table-responsive">
+                    <table id="tbl_mariscos" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>DESCRIPCION</th>
+                                <th>CATEGORIA</th>
+                                <th>DISPONIBILIDAD</th>
+                                <th>PRECIO</th>
+                                <th>FOTO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            {% if menu.categoria_menu == 'mariscos' %}
+                            <tr>
+                                <td>{{ menu.menu_id }}</td>
+                                <td>{{ menu.nombre_menu }}</td>
+                                <td>{{ menu.descripcion_menu }}</td>
+                                <td>{{ menu.categoria_menu }}</td>
+                                <td>{{ menu.disponibilidad_menu }}</td>
+                                <td>{{ menu.precio_menu }}</td>
+                                <td>
+                                    {% if menu.fotos_menu %}
+                                        <a href="{{ menu.fotos_menu.url }}" target="_blank">
+                                            <img src="{{ menu.fotos_menu.url }}" alt="" height="50px">
+                                        </a>
+                                    {% else %}
+                                        <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarMenus/{{menu.menu_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarMenus('{{menu.menu_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Parrilladas -->
+            <div class="tab-pane fade" id="parrilladas" role="tabpanel" aria-labelledby="parrilladas-tab">
+                <div class="table-responsive">
+                    <table id="tbl_parrilladas" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>DESCRIPCION</th>
+                                <th>CATEGORIA</th>
+                                <th>DISPONIBILIDAD</th>
+                                <th>PRECIO</th>
+                                <th>FOTO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            {% if menu.categoria_menu == 'parrilladas' %}
+                            <tr>
+                                <td>{{ menu.menu_id }}</td>
+                                <td>{{ menu.nombre_menu }}</td>
+                                <td>{{ menu.descripcion_menu }}</td>
+                                <td>{{ menu.categoria_menu }}</td>
+                                <td>{{ menu.disponibilidad_menu }}</td>
+                                <td>{{ menu.precio_menu }}</td>
+                                <td>
+                                    {% if menu.fotos_menu %}
+                                        <a href="{{ menu.fotos_menu.url }}" target="_blank">
+                                            <img src="{{ menu.fotos_menu.url }}" alt="" height="50px">
+                                        </a>
+                                    {% else %}
+                                        <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarMenus/{{menu.menu_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarMenus('{{menu.menu_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Platos -->
+            <div class="tab-pane fade" id="platos" role="tabpanel" aria-labelledby="platos-tab">
+                <div class="table-responsive">
+                    <table id="tbl_platos" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>DESCRIPCION</th>
+                                <th>CATEGORIA</th>
+                                <th>DISPONIBILIDAD</th>
+                                <th>PRECIO</th>
+                                <th>FOTO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            {% if menu.categoria_menu == 'platos' %}
+                            <tr>
+                                <td>{{ menu.menu_id }}</td>
+                                <td>{{ menu.nombre_menu }}</td>
+                                <td>{{ menu.descripcion_menu }}</td>
+                                <td>{{ menu.categoria_menu }}</td>
+                                <td>{{ menu.disponibilidad_menu }}</td>
+                                <td>{{ menu.precio_menu }}</td>
+                                <td>
+                                    {% if menu.fotos_menu %}
+                                        <a href="{{ menu.fotos_menu.url }}" target="_blank">
+                                            <img src="{{ menu.fotos_menu.url }}" alt="" height="50px">
+                                        </a>
+                                    {% else %}
+                                        <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarMenus/{{menu.menu_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarMenus('{{menu.menu_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bebidas -->
+            <div class="tab-pane fade" id="bebidas" role="tabpanel" aria-labelledby="bebidas-tab">
+                <div class="table-responsive">
+                    <table id="tbl_bebidas" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>DESCRIPCION</th>
+                                <th>CATEGORIA</th>
+                                <th>DISPONIBILIDAD</th>
+                                <th>PRECIO</th>
+                                <th>FOTO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            {% if menu.categoria_menu == 'bebidas' %}
+                            <tr>
+                                <td>{{ menu.menu_id }}</td>
+                                <td>{{ menu.nombre_menu }}</td>
+                                <td>{{ menu.descripcion_menu }}</td>
+                                <td>{{ menu.categoria_menu }}</td>
+                                <td>{{ menu.disponibilidad_menu }}</td>
+                                <td>{{ menu.precio_menu }}</td>
+                                <td>
+                                    {% if menu.fotos_menu %}
+                                        <a href="{{ menu.fotos_menu.url }}" target="_blank">
+                                            <img src="{{ menu.fotos_menu.url }}" alt="" height="50px">
+                                        </a>
+                                    {% else %}
+                                        <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarMenus/{{menu.menu_id}}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="eliminarMenus('{{menu.menu_id}}');" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ingrese el Menu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/guardarMenus/" method="post" enctype="multipart/form-data" id="frm_nuevo_menu">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-clipboard-list"></i> Registrar Menús</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE PLATO</b></label>
+                            <input type="text" class="form-control" id="nombre_menu" name="nombre_menu" oninput="soloLetras(this)" onblur="convertirMayusculas(this)" placeholder="Ingrese nombre Plato" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="categoria_menu"><i class="fas fa-tags"></i> <b>Categoría</b></label>
+                            <select class="form-control" id="categoria_menu" name="categoria_menu" required>
+                                <option value="" disabled selected>Seleccione categoría</option>
+                                <option value="almuerzos">Menu del Dia</option>
+                                <option value="platos_tradicionales">Platos Tradicionales</option>
+                                <option value="mariscos">Mariscos</option>
+                                <option value="parrilladas">Parrilladas</option>
+                                <option value="platos">Seccion de platos</option>
+                                <option value="bebidas">Bebidas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="descripcion_menu"><i class="far fa-comment-alt"></i><b>Descripción Plato</b></label>
+                            <textarea name="descripcion_menu" id="descripcion_menu"  rows="3" class="form-control" placeholder="Ingrese la Descripción" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                          <label for="disponibilidad_menu"><i class="fas fa-check-circle"></i><b>Disponibilidad o</b> <i class="fas fa-times-circle"></i> <b>No Disponible</b></label>
+                            <select class="form-control" id="disponibilidad_menu" name="disponibilidad_menu" required>
+                                <option value="" disabled selected>Seleccione disponibilidad</option>
+                                <option value="disponible">Disponible</option>
+                                <option value="no_disponible">No disponible</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="precio_menu"><i class="fas fa-dollar-sign"></i><b>Precio Plato</b></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="text" id="precio_menu" name="precio_menu" oninput="soloNumeros(this)" class="form-control" placeholder="Ingrese Precio Plato" required>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="fotos_menu"><b><i class="far fa-image"></i><b>FOTOGRAFIA PLATO</b></label>
+                            <input type="file" name="fotos_menu" id="fotos_menu" accept="image/*" value="" class="form-control">
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#fotos_menu").fileinput({
+                                // configuración adicional del plugin de file input
+                                language: 'es',
+                                // otras opciones según tus necesidades
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <div class="modal-footer">
+                <button type="submit" form="frm_nuevo_menu" class="btn btn-secondary">Guardar</button>
+                <button type="reset" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+            </div>
+        </form>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+  $("#frm_nuevo_menu").validate({
+  rules: {
+      "nombre_menu": {
+          required: true,
+          minlength: 3,
+          maxlength: 50
+      },
+      "descripcion_menu": {
+          required: true,
+          minlength: 10,
+          maxlength: 800
+      },
+      "categoria_menu": {
+          required: true
+      },
+      "disponibilidad_menu": {
+          required: true
+      },
+      "precio_menu": {
+          required: true,
+          number: true,
+          min: 0.01,
+          max: 10000
+      },
+      "fotos_menu": {
+          required: true,
+          extension: "jpg|jpeg|png|gif"
+      }
+  },
+  messages: {
+      "nombre_menu": {
+          required: "Debe ingresar el nombre del menú",
+          minlength: "El nombre del menú debe tener al menos 3 caracteres",
+          maxlength: "El nombre del menú no puede tener más de 50 caracteres"
+      },
+      "descripcion_menu": {
+          required: "Debe ingresar la descripción del menú",
+          minlength: "La descripción debe tener al menos 10 caracteres",
+          maxlength: "La descripción no puede tener más de 800 caracteres"
+      },
+      "categoria_menu": {
+          required: "Por favor, seleccione una categoría para el menú"
+      },
+      "disponibilidad_menu": {
+          required: "Por favor seleccione la disponibilidad del menú"
+      },
+      "precio_menu": {
+          required: "Debe ingresar el precio del menú",
+          number: "El precio debe ser un número válido",
+          min: "El precio debe ser al menos 0.01",
+          max: "El precio no puede exceder los 10000"
+      },
+      "fotos_menu": {
+          required: "Debe seleccionar una imagen para el menú",
+          extension: "Por favor seleccione un archivo con una extensión válida (jpg, jpeg, png, gif)"
+      }
+  },
+  submitHandler: function(form) {
+      form.submit(); // Si la validación es exitosa, el formulario se envía
+  }
+});
+</script>
+
+<script type="text/javascript">
+    function soloNumeros(input) {
+        input.value = input.value.replace(/[^0-9.,]/g, '');
+    }
+
+    function soloLetras(input) {
+        input.value = input.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
+    }
+
+    function validarCorreo(event) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(event.target.value)) {
+            event.target.setCustomValidity('Ingrese un correo válido.');
+        } else {
+            event.target.setCustomValidity('');
+        }
+    }
+</script>
+
+
+<script>
+    function eliminarMenus(menu_id) {
+        swal({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            buttons: {
+                cancel: {
+                    visible: true,
+                    text: 'No, cancelar',
+                    className: 'btn btn-secondary'
+                },
+                confirm: {
+                    text: 'Sí, eliminarlo',
+                    className: 'btn btn-danger'
+                }
+            }
+        }).then((willDelete) => {
+            if (willDelete) {
+                window.location.href = '/eliminarMenus/' + menu_id;
+            } else {
+                swal("¡El Menu está seguro!", {
+                    icon: "info",
+                    buttons: {
+                        confirm: {
+                            className: 'btn btn-success'
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tbl_almuerzos').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+
+        $('#tbl_platos_tradicionales').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+
+        $('#tbl_mariscos').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+
+        $('#tbl_parrilladas').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+
+        $('#tbl_platos').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+
+        $('#tbl_bebidas').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+    });
+</script>
+<script type="text/javascript">
+    function convertirMayusculas(input) {
+        input.value = input.value.toUpperCase();
+    }
+</script>
+{% endblock %}

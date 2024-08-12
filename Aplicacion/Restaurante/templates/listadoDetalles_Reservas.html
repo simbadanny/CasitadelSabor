@@ -1,0 +1,236 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Agregar Detalles Ventas
+</button>
+<br>
+<br>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-calendar-check"></i> Listado Detalles Reservas
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tbl_detalles_reservas" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>FECHA RESERVA</th>
+                                <th>PRECIO MENU</th>
+                                <th>NOMBRE MENU</th>
+                                <th>NUMERO PERSONAS</th>
+                                <th>HORA RESERVA</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detalle_Reserva in detalle_Reservas %}
+                            <tr>
+                                <td>{{ detalle_Reserva.detalle_reserva_id }}</td>
+                                <td>{{ detalle_Reserva.reserva.fecha_reserva}}</td>
+                                <td>{{detalle_Reserva.menu.precio_menu}}</td>
+                                <td>{{detalle_Reserva.menu.nombre_menu}}</td>
+                                <td>{{ detalle_Reserva.reserva.numero_personas_reserva}}</td>
+                                <td>{{ detalle_Reserva.reserva.hora_reserva }}</td>
+                                <td>
+                                  <a href="/editarDetalles_Reservas/{{detalle_Reserva.detalle_reserva_id}}" class="btn btn-warning">
+                                      <i class="fas fa-edit"></i>
+                                  </a>
+                                  <a href="javascript:void(0)" onclick="eliminarDetalles_Reservas('{{detalle_Reserva.detalle_reserva_id}}');" class="btn btn-danger">
+                                      <i class="fas fa-trash-alt"></i>
+                                  </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/guardarDetalles_Reservas/" method="post" enctype="multipart/form-data" id="frm_nuevo_detallesr">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ingresar Detalle de Ventas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                          <label for="reserva_id_reserva"><i class="fas fa-calendar"></i> <b>FECHA RESERVA:</b></label>
+                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="reserva_id_reserva" id="reserva_id_reserva" required data-live-search-placeholder="Buscar categoría...">
+                                <option value="">Seleccione Total Ventas</option>
+                                {% for reserva in reservas %}
+                                  <option value="{{ reserva.reserva_id }}">{{ reserva.fecha_reserva }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="menu_id_menu"><i class="fas fa-dollar-sign"></i> <b>PRECIO MENU:</b></label>
+                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu" id="menu_id_menu" required data-live-search-placeholder="Buscar proveedor...">
+                                <option value="">Seleccione Precio Menu</option>
+                                {% for menu in menus %}
+                                  <option value="{{ menu.menu_id }}">{{ menu.precio_menu }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                          <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE MENU:</b></label>
+                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu_nombre" id="menu_id_menu_nombre" required data-live-search-placeholder="Buscar proveedor...">
+                                <option value="">Seleccione El Nombre Menú</option>
+                                {% for menu in menus %}
+                                  <option value="{{ menu.menu_id }}">{{ menu.nombre_menu }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="cantidad_personas"><i class="fas fa-users"></i> <b>CANTIDAD PERSONAS:</b></label>
+                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="cantidad_personas" id="cantidad_personas" required data-live-search-placeholder="Buscar categoría...">
+                                <option value="">Seleccione Total Personas</option>
+                                {% for reserva in reservas %}
+                                  <option value="{{ reserva.reserva_id }}">{{ reserva.numero_personas_reserva}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                          <label for="hora_reserva"><i class="fas fa-clock"></i> <b>HORA DE RESERVA:</b></label>
+                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="hora_reserva" id="hora_reserva" required data-live-search-placeholder="Buscar categoría...">
+                                <option value="">Seleccione la hora reserva</option>
+                                {% for reserva in reservas %}
+                                  <option value="{{ reserva.reserva_id }}">{{ reserva.hora_reserva}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-secondary">Guardar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#frm_nuevo_detallesr").validate({
+            rules: {
+                "reserva_id_reserva": {
+                    required: true
+                },
+                "menu_id_menu": {
+                    required: true
+                },
+                "menu_id_menu_nombre": {
+                    required: true
+                },
+                "cantidad_personas": {
+                    required: true
+                },
+                "hora_reserva": {
+                    required: true
+                }
+            },
+            messages: {
+                "reserva_id_reserva": {
+                    required: "Debe seleccionar la reserva"
+                },
+                "menu_id_menu": {
+                    required: "Debe seleccionar el precio menú"
+                },
+                "menu_id_menu_nombre": {
+                    required: "Debe seleccionar el nombre menú"
+                },
+                "cantidad_personas": {
+                    required: "Debe seleccionar la cantidad de personas"
+                },
+                "hora_reserva": {
+                    required: "Debe seleccionar la hora de reserva"
+                }
+            }
+        });
+    });
+</script>
+<script>
+function eliminarDetalles_Reservas(detalle_reserva_id) {
+    swal({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        buttons: {
+            cancel: {
+                visible: true,
+                text: 'No, cancelar',
+                className: 'btn btn-secondary'
+            },
+            confirm: {
+                text: 'Sí, eliminarlo',
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((willDelete) => {
+        if (willDelete) {
+            window.location.href = '/eliminarDetalles_Reservas/' + detalle_reserva_id;
+        } else {
+            swal("¡El detalle Reserva de venta está seguro!", {
+                icon: "info",
+                buttons: {
+                    confirm: {
+                        className: 'btn btn-success'
+                    }
+                }
+            });
+        }
+    });
+}
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tbl_detalles_reservas').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'btn btn-secondary',
+                    messageTop: 'PDF creado por PDFMake con botones para DataTables.'
+                },
+                {
+                    extend: 'print',
+                    text: 'Imprimir',
+                    className: 'btn btn-secondary'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    className: 'btn btn-secondary'
+                }
+            ],
+            responsive: true
+        });
+    });
+</script>
+
+{% endblock %}

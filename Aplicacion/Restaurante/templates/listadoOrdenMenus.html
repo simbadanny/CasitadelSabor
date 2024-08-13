@@ -146,7 +146,14 @@
                           {% endif %}
                       </div>
                       <div class="options">
+                          {% if menu.tiene_promocion_activa %}
+                          <h6>
+                              <span style="text-decoration: line-through;">${{ menu.precio_menu }}</span>
+                              ${{ menu.precio_con_descuento }}
+                          </h6>
+                          {% else %}
                           <h6>${{ menu.precio_menu }}</h6>
+                          {% endif %}
                           <button type="button" class="btnProducto btn bg-info text-white"
                           data-id="{{menu.menu_id}}"
                           data-img="{{menu.fotos_menu}}"

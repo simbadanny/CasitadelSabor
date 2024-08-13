@@ -26,6 +26,101 @@ from django.core.mail import EmailMultiAlternatives
 
 
 
+def obtener_interacciones_cliente(cliente):
+    # Obtener reservas y ventas del cliente
+    reservas = Detalles_Reservas.objects.filter(reserva__cliente=cliente).select_related('menu')
+    ventas = Detalles_Ventas.objects.filter(venta__cliente=cliente).select_related('menu')
+
+    # Convertir a DataFrame
+    reservas_df = pd.DataFrame(list(reservas.values('reserva_id', 'menu__categoria_menu', 'menu_id')))
+    ventas_df = pd.DataFrame(list(ventas.values('venta_id', 'menu__categoria_menu', 'menu_id')))
+
+    # Concatenar DataFrames
+    datos = pd.concat([reservas_df, ventas_df], axis=0) if not reservas_df.empty or not ventas_df.empty else pd.DataFrame()
+
+    print("Datos de interacciones cliente:")
+    print(datos)  # Agregar impresión para verificar datos
+    return datos
+
+def recomendar_menus_por_categoria(cliente, datos_interacciones):
+    recomendaciones_por_categoria = {}
+
+    if not datos_interacciones.empty:
+        # Contar las interacciones por categoría
+        categorias_populares = datos_interacciones['menu__categoria_menu'].value_counts().index.tolist()
+
+        print("Categorías populares:")
+        print(categorias_populares)  # Agregar impresión para verificar categorías populares
+
+        for categoria in categorias_populares:
+            # Filtrar menús por categoría
+            menues_recomendados = Menus.objects.filter(categoria_menu=categoria).exclude(
+                detalles_reservas__reserva__cliente=cliente
+            ).distinct()
+
+            print(f"Menús recomendados para categoría '{categoria}':")
+            print(menues_recomendados)  # Agregar impresión para verificar menús recomendados por categoría
+
+            recomendaciones_por_categoria[categoria] = menues_recomendados
+    else:
+        # Si no hay interacciones, recomendar menús populares de todas las categorías
+        categorias = Menus.objects.values_list('categoria_menu', flat=True).distinct()
+
+        for categoria in categorias:
+            menues_recomendados = Menus.objects.filter(categoria_menu=categoria).distinct()
+
+            print(f"Menús recomendados para categoría '{categoria}' (sin interacciones previas):")
+            print(menues_recomendados)  # Agregar impresión para verificar menús recomendados por categoría
+
+            recomendaciones_por_categoria[categoria] = menues_recomendados
+
+    return recomendaciones_por_categoria
+
+def enviar_notificacion_recomendacion(usuario_email, recomendaciones_por_categoria, es_nuevo_cliente):
+    # Obtener el cliente
+    cliente = Clientes.objects.filter(email_cli=usuario_email).first()
+
+    if not cliente:
+        print(f"No se encontró el cliente con email {usuario_email}")
+        return
+
+    # Renderizar la plantilla con el contexto
+    context = {
+        'cliente_nombre': cliente.nombre_cli if cliente else 'Cliente',
+        'recomendaciones_por_categoria': recomendaciones_por_categoria,
+        'url_sitio': 'URL_DE_TU_SITIO',  # Asegúrate de reemplazar esto con la URL real de tu sitio
+        'year': timezone.now().year,
+        'es_nuevo_cliente': es_nuevo_cliente
+    }
+    mensaje_html = render_to_string('recomendacion_email.html', context)
+
+    # Enviar el correo
+    try:
+        email = EmailMessage(
+            subject="¡Tienes nuevas recomendaciones de menús!",
+            body=mensaje_html,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[usuario_email]
+        )
+        email.content_subtype = "html"  # Especificar que el contenido es HTML
+        email.send()
+        print(f"Correo enviado a {usuario_email}")
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}")
+
+def procesar_recomendaciones(usuario_email):
+    cliente = Clientes.objects.filter(email_cli=usuario_email).first()
+    if cliente:
+        datos_interacciones = obtener_interacciones_cliente(cliente)
+        recomendaciones_por_categoria = recomendar_menus_por_categoria(cliente, datos_interacciones)
+        es_nuevo_cliente = datos_interacciones.empty
+        enviar_notificacion_recomendacion(usuario_email, recomendaciones_por_categoria, es_nuevo_cliente)
+    else:
+        # Manejar el caso donde no se encuentra el cliente
+        print(f"No se encontró el cliente con email {usuario_email}")
+
+# Llama a la función de ejemplo con el email del usuario
+procesar_recomendaciones('ejemplo@correo.com')
 #############################################################################################################################################################
 
 def enviar_correo_nuevo_menu(nuevo_menu):
@@ -115,34 +210,6 @@ def plantillaCliente(request):
 def menus(request):
     return render(request, 'menus.html')
 #############################################################################################################################################
-def recomendar_menus(usuario_id, similarity_df, interaction_matrix, top_n=10):
-    if usuario_id not in similarity_df.index:
-        return []
-
-    # Similaridad del usuario con otros usuarios
-    usuario_similaridades = similarity_df.loc[usuario_id]
-    usuarios_similares = usuario_similaridades.sort_values(ascending=False).index
-
-    # Obtener menús ya vistos por el usuario
-    menus_vistos = set(interaction_matrix.columns[interaction_matrix.loc[usuario_id] > 0])
-
-    # Generar recomendaciones basadas en usuarios similares
-    recomendaciones = []
-    for usuario_similar in usuarios_similares:
-        if usuario_similar == usuario_id:
-            continue
-        # Menús reservados por usuarios similares que el usuario actual no ha visto
-        menus_reservados = set(interaction_matrix.columns[interaction_matrix.loc[usuario_similar] > 0])
-        nuevas_recomendaciones = menus_reservados - menus_vistos
-        recomendaciones.extend(nuevas_recomendaciones)
-        if len(recomendaciones) >= top_n:
-            break
-
-    # Filtrar duplicados y limitar a top_n
-    recomendaciones = list(set(recomendaciones))
-    return recomendaciones[:top_n]
-
-# Reemplaza la lógica existente en tu función `listadoOrdenMenus` con el siguiente código:
 
 def listadoOrdenMenus(request):
     menuBdd = Menus.objects.all()
@@ -158,35 +225,25 @@ def listadoOrdenMenus(request):
 
         if cliente:
             hoy = timezone.now().date()
-            if cliente.ultima_recomendacion != hoy:
-                usuario_id = cliente.cliente_id
 
-                reservas = Detalles_Reservas.objects.select_related('reserva', 'menu').all()
-                reservas_df = pd.DataFrame(list(reservas.values('reserva_id', 'menu_id')))
+            # Obtener las interacciones del cliente
+            datos_interacciones = obtener_interacciones_cliente(cliente)
+            es_nuevo_cliente = datos_interacciones.empty
 
-                ventas = Detalles_Ventas.objects.select_related('venta', 'menu').all()
-                ventas_df = pd.DataFrame(list(ventas.values('venta_id', 'menu_id')))
+            # Si el cliente es nuevo o si la recomendación no se ha enviado hoy
+            if es_nuevo_cliente or cliente.ultima_recomendacion != hoy:
+                if not datos_interacciones.empty:
+                    # Obtener recomendaciones basadas en categorías
+                    menues_recomendados = recomendar_menus_por_categoria(cliente, datos_interacciones)
 
-                if not reservas_df.empty or not ventas_df.empty:
-                    datos = pd.concat([reservas_df, ventas_df], axis=0)
-                    interaction_matrix = datos.pivot_table(index='reserva_id', columns='menu_id', aggfunc='size', fill_value=0)
+                # Enviar las recomendaciones por correo
+                enviar_notificacion_recomendacion(cliente.email_cli, menues_recomendados, es_nuevo_cliente)
 
-                    scaler = StandardScaler()
-                    interaction_matrix_scaled = scaler.fit_transform(interaction_matrix)
-                    similarity_matrix = cosine_similarity(interaction_matrix_scaled)
-                    similarity_df = pd.DataFrame(similarity_matrix, index=interaction_matrix.index, columns=interaction_matrix.index)
-
-                    recomendaciones = recomendar_menus(usuario_id, similarity_df, interaction_matrix)
-                    menues_recomendados = Menus.objects.filter(menu_id__in=recomendaciones)
-
-                    enviar_notificacion_recomendacion(cliente.email_cli, recomendaciones)
-
-                    cliente.ultima_recomendacion = hoy
-                    cliente.save()
-                else:
-                    # No hay datos, por lo que se permite continuar sin recomendaciones
-                    menues_recomendados = Menus.objects.none()
+                # Actualizar la última fecha de recomendación
+                cliente.ultima_recomendacion = hoy
+                cliente.save()
             else:
+                # Si ya se ha enviado una recomendación hoy, no recalcular
                 menues_recomendados = Menus.objects.none()
 
     # Obtener menús con promociones activas
@@ -205,37 +262,6 @@ def listadoOrdenMenus(request):
     }
 
     return render(request, 'listadoOrdenMenus.html', data)
-
-
-# Función para enviar notificación por correo (sin cambios)
-def enviar_notificacion_recomendacion(usuario_email, recomendaciones):
-    # Obtener el cliente
-    cliente = Clientes.objects.filter(email_cli=usuario_email).first()
-
-    # Obtener los menús recomendados
-    menues_recomendados = Menus.objects.filter(menu_id__in=recomendaciones)
-
-    # Renderizar la plantilla con el contexto
-    context = {
-        'cliente_nombre': cliente.nombre_cli if cliente else 'Cliente',
-        'menus': menues_recomendados,
-        'url_sitio': 'URL_DE_TU_SITIO',
-        'year': datetime.now().year,
-    }
-    mensaje_html = render_to_string('recomendacion_email.html', context)
-
-    # Enviar el correo
-    try:
-        email = EmailMessage(
-            subject="¡Tienes nuevas recomendaciones de menús!",
-            body=mensaje_html,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[usuario_email]
-        )
-        email.content_subtype = "html"  # Especificar que el contenido es HTML
-        email.send()
-    except Exception as e:
-        print(f"Error al enviar el correo: {e}")
 
 #################################################################################################################################################
 def reporte_semanal(request):

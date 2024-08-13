@@ -1,88 +1,121 @@
-{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Recomendaciones de Menús</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
         }
         .container {
-            width: 80%;
+            max-width: 800px;
             margin: auto;
-            overflow: hidden;
-            background: #fff;
+            background-color: #ffffff;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #000;
         }
         h2 {
-            color: #2c3e50;
+            color: #000;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .menu-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #ffeb3b; /* Color amarillo */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .menu-card h3 {
+            margin: 0 0 10px;
+            color: #000;
+        }
+        .menu-card p {
+            margin: 0;
+            color: #000;
+        }
+        .no-menus {
+            font-style: italic;
+            color: #000;
+            text-align: center;
             margin: 20px 0;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
+        .no-menus .message {
+            font-weight: bold;
         }
-        th {
-            background-color: #3498db;
-            color: white;
+        .restaurant-image {
+            width: 150px;
+            height: 150px;
+            margin: 20px 0;
+            border-radius: 50%;
+            border: 5px solid #007BFF;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .highlight {
-            background-color: #e74c3c;
-            color: white;
+        .restaurant-image:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
         a {
-            color: #3498db;
+            color: #007BFF;
             text-decoration: none;
         }
-        .footer {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #777;
+        a:hover {
+            text-decoration: underline;
         }
-        .header-img {
-            width: 100%;
-            max-width: 600px;
-            border-radius: 5px;
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="https://scontent.fuio11-2.fna.fbcdn.net/v/t39.30808-6/427990885_897372799069348_2346240393185279234_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeH-PGmXsSzuinNwYjuZjw62zvpbGf-krIfO-lsZ_6Ssh_W_Ccj9TGnq_HPc6vHYfAOXGeEeUiB1SAyEWAmVn2ZG&_nc_ohc=MZ7FP3cMr5IQ7kNvgEbi_WG&_nc_ht=scontent.fuio11-2.fna&oh=00_AYCrVBl0U8p0lEhWebbZCUot4hJweWHlUzM5hvvAYOhCgQ&oe=66B5607D" alt="Imagen del Restaurante" class="header-img">
-        <h2>Hola {{ cliente_nombre }}, te recomendamos los siguientes menús basados en tus preferencias:</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre del Menú</th>
-                    <th>Descripción</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for menu in menus %}
-                <tr class="{% if menu.id in menus_destacados %}highlight{% endif %}">
-                    <td>{{ menu.nombre_menu }}</td>
-                    <td>{{ menu.descripcion_menu }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <p>Visita nuestro <a href="{{ url_sitio }}">sitio</a> para más detalles.</p>
-        <div class="footer">
-            <p>&copy; {{ year }} Tu Restaurante. Todos los derechos reservados.</p>
-        </div>
+        {% if es_nuevo_cliente %}
+            <h1>¡Bienvenido {{ cliente_nombre }}!</h1>
+            <p>Como nuevo cliente, estamos emocionados de tenerte con nosotros. Te recomendamos los siguientes menús que podrían gustarte basados en nuestras categorías más populares:</p>
+        {% else %}
+            <h1>Hola {{ cliente_nombre }},</h1>
+            <p>Te recomendamos los siguientes menús basados en tus interacciones y preferencias:</p>
+        {% endif %}
+
+        {% if recomendaciones_por_categoria %}
+            {% for categoria, menues in recomendaciones_por_categoria.items %}
+                <h2>{{ categoria }}</h2>
+                {% if menues %}
+                    {% for menu in menues %}
+                        <div class="menu-card">
+                            <h3>{{ menu.nombre_menu }}</h3>
+                            <p>{{ menu.descripcion_menu }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-menus">No hay menús disponibles en esta categoría en este momento. <span class="message">Estamos trabajando en nuevas opciones personalizadas para ti. ¡Vuelve pronto!</span></p>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p class="no-menus">No hemos encontrado menús recomendados en esta ocasión. <span class="message">No te preocupes, estamos actualizando nuestras recomendaciones para ajustarnos mejor a tus gustos. ¡Visita nuestro sitio para explorar más opciones!</span></p>
+        {% endif %}
+
+        <img src="https://scontent.fuio11-2.fna.fbcdn.net/v/t39.30808-6/427990885_897372799069348_2346240393185279234_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeH-PGmXsSzuinNwYjuZjw62zvpbGf-krIfO-lsZ_6Ssh_W_Ccj9TGnq_HPc6vHYfAOXGeEeUiB1SAyEWAmVn2ZG&_nc_ohc=wuDHQT2FxRQQ7kNvgF54Nm6&_nc_ht=scontent.fuio11-2.fna&oh=00_AYCy2Tc-WbUZb-DH8BdZES-wb0dIZIAY93FrgC3zGCvfFg&oe=66C05CFD" alt="Imagen del Restaurante" class="restaurant-image">
+
+        <p>Visita nuestro sitio para ver más menús: <a href="https://casitadelsabor.onrender.com">{{ url_sitio }}</a></p>
+        <p>¡Gracias por ser parte de nuestra comunidad!</p>
+        <p>El equipo de {{ url_sitio }}</p>
     </div>
+
+    <footer>
+        <p>&copy; {{ year }}</p>
+    </footer>
 </body>
 </html>

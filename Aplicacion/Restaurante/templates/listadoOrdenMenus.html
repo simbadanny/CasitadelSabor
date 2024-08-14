@@ -266,73 +266,73 @@
 
 
 
-  <footer class="footer_section">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4 footer-col">
-          <div class="footer_contact">
-            <h4>
-              Contactos
-            </h4>
-            <div class="contact_link_box">
-              <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9">
-                <i class="fa fa-map-marker" aria-hidden="true"></i>
-                <span>
-                  Lugar
-                </span>
-              </a>
-              <a href="https://wa.me/593992217026">
-                <i class="fa fa-phone" aria-hidden="true"></i>
-                <span>
-                  Numero telefonico +593 99 221 7026
-                </span>
-              </a>
-              <a href="mailto:casitasabor823%40gmail.com">
-                <i class="fa fa-envelope" aria-hidden="true"></i>
-                <span>
-                  casitasabor823@gmail.com
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 footer-col">
-          <div class="footer_detail">
-            <a href="" class="footer-logo">
-              La Casita del Sabor
-            </a>
-            <p>
-              La felicidad es compartir en familia, ven y conose la nuestra por que aki comeras como en casa
-            </p>
-            <div class="footer_social">
-              <a href="https://www.facebook.com/profile.php?id=100063899085512&mibextid=ZbWKwL" target="_blank">
-                  <i class="fa fa-facebook" aria-hidden="true"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 footer-col">
+<footer class="footer_section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 footer-col">
+        <div class="footer_contact">
           <h4>
-            Horario de Atención
+            Contactos
           </h4>
-          <p>
-            Lunes - Domingo
-          </p>
-          <p>
-            08 Am - 07 Pm
-          </p>
+          <div class="contact_link_box">
+            <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9"target="_blank">
+              <i class="fa fa-map-marker" aria-hidden="true" ></i>
+              <span>
+                Lugar
+              </span>
+            </a>
+            <a href="https://wa.me/593992217026"target="_blank">
+              <i class="fa fa-phone" aria-hidden="true" ></i>
+              <span>
+                Numero telefonico +593 99 221 7026
+              </span>
+            </a>
+            <a href="mailto:casitasabor823%40gmail.com"target="_blank">
+              <i class="fa fa-envelope" aria-hidden="true" ></i>
+              <span>
+                casitasabor823@gmail.com
+              </span>
+            </a>
+          </div>
         </div>
       </div>
-      <div class="footer-info">
+      <div class="col-md-4 footer-col">
+        <div class="footer_detail">
+          <a href="" class="footer-logo">
+            La Casita del Sabor
+          </a>
+          <p>
+            La felicidad es compartir en familia, ven y conose la nuestra por que aki comeras como en casa
+          </p>
+          <div class="footer_social">
+            <a href="https://www.facebook.com/profile.php?id=100063899085512&mibextid=ZbWKwL" target="_blank">
+                <i class="fa fa-facebook" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 footer-col">
+        <h4>
+          Horario de Atención
+        </h4>
         <p>
-          &copy; <span id="displayYear"></span> Universidad Tecnica Cotopaxi
-          <a href="https://html.design/"></a><br><br>
-          &copy; <span id="displayYear"></span> La Casita
-          <a href="https://themewagon.com/" target="_blank">del Sabor</a>
+          Lunes - Domingo
+        </p>
+        <p>
+          08 Am - 07 Pm
         </p>
       </div>
     </div>
-  </footer>
+    <div class="footer-info">
+      <p>
+        &copy; <span id="displayYear"></span> Universidad Tecnica Cotopaxi
+        <a href="https://html.design/"></a><br><br>
+        &copy; <span id="displayYear"></span> La Casita
+        <a href="https://themewagon.com/" target="_blank">del Sabor</a>
+      </p>
+    </div>
+  </div>
+</footer>
   <!-- footer section -->
 
   <script src="{% static 'assetscli/js/jquery-3.4.1.min.js' %}"></script>
@@ -493,54 +493,53 @@
       }
 
       if (!mesa) {
-        mostrarError('Selecciona una mesa por favor.');
+        mostrarError('Selecciona una mesa, por favor 🪑🙏.');
         validar = false;
       }
 
       if (isNaN(personas) || personas <= 0) {
-        mostrarError('Tiene que estar mínimo una persona en la mesa.');
+        mostrarError('Debe haber al menos una persona en la mesa 👤🪑.');
         validar = false;
       }
 
       if (!fecha || !hora) {
-        mostrarError('Debe seleccionar una fecha y hora.');
+        mostrarError('Debe seleccionar una fecha 📅 y una hora 🕒.');
         validar = false;
       } else {
         let fechaHoy = new Date();
         let fechaReserva = new Date(fecha + 'T' + hora);
 
-        // Verifica que la fecha y hora no sean anteriores a dos horas desde ahora
-        let dosHorasDesdeAhora = new Date(fechaHoy.getTime() + 2 * 60 * 60 * 1000); // Dos horas en el futuro
+        
+        let dosHorasDesdeAhora = new Date(fechaHoy.getTime() + 2 * 60 * 60 * 1000); 
 
         if (fechaReserva < dosHorasDesdeAhora) {
-          mostrarError('La reserva debe hacerse con al menos dos horas de anticipación.');
+          mostrarError('La reserva debe hacerse con al menos dos horas de anticipación ⏳');
           validar = false;
         }
 
         if (fechaReserva < fechaHoy) {
-          mostrarError('Selecciona una fecha y hora válidas, con al menos dos horas de anticipación.');
+          mostrarError('Selecciona una fecha y hora válidas 📅🕒, con al menos dos horas de anticipación ⏳.');
           validar = false;
         }
 
         let horaReserva = fechaReserva.getHours();
         let minutosReserva = fechaReserva.getMinutes();
-        if (horaReserva < 8 || horaReserva > 19 || (horaReserva === 19 && minutosReserva > 0)) { // Verifica que la hora esté dentro del rango permitido
-          mostrarError('La hora de la reserva debe estar entre las 08:00 AM y las 07:00 PM.');
+        if (horaReserva < 8 || horaReserva > 19 || (horaReserva === 19 && minutosReserva > 0)) { 
+          mostrarError('La hora de la reserva debe estar entre las 08:00 AM 🕗 y las 07:00 PM 🕖.');
           validar = false;
         }
 
-        // Nueva validación para la misma hora en el mismo día
-        let fechaReservaSinHora = new Date(fechaReserva.toDateString()); // Solo la fecha sin la hora
-        let fechaHoySinHora = new Date(fechaHoy.toDateString()); // Solo la fecha sin la hora
+        let fechaReservaSinHora = new Date(fechaReserva.toDateString()); 
+        let fechaHoySinHora = new Date(fechaHoy.toDateString()); 
 
         if (fechaReservaSinHora.getTime() === fechaHoySinHora.getTime() && horaReserva <= fechaHoy.getHours()) {
-          mostrarError('No se puede reservar la mesa para la misma hora en el mismo día.');
+          mostrarError('No se puede reservar la mesa para la misma hora y fecha 📅⏰. Por favor, elige otro horario o fecha');
           validar = false;
         }
       }
 
       if (articulos.length <= 0) {
-        mostrarError('No podemos reservar una mesa sin órdenes antes.');
+        mostrarError('No podemos reservar una mesa sin una orden previa 📝🚫');
         validar = false;
       }
 
@@ -595,13 +594,13 @@
                   });
                 } else {
                   mostrarError(
-                    'No se puede reservar la mesa para la misma hora en el mismo día.'
+                    'No se puede reservar 😔: la mesa ya está ocupada a la misma hora y fecha 📅⏰. Elige otro horario o fecha 😊.'
                   );
                 }
               },
               error: function () {
                 mostrarError(
-                  'No se puede reservar la mesa para la misma hora en el mismo día..'
+                  'No se puede reservar 😔: la mesa ya está ocupada a la misma hora y fecha 📅⏰. Elige otro horario o fecha 😊.'
                 );
               }
             });

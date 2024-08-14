@@ -26,6 +26,7 @@ from django.core.mail import EmailMultiAlternatives
 
 
 
+#############################################################################################################################################################
 def obtener_interacciones_cliente(cliente):
     # Obtener reservas y ventas del cliente
     reservas = Detalles_Reservas.objects.filter(reserva__cliente=cliente).select_related('menu')
@@ -226,24 +227,17 @@ def listadoOrdenMenus(request):
         if cliente:
             hoy = timezone.now().date()
 
-            # Obtener las interacciones del cliente
             datos_interacciones = obtener_interacciones_cliente(cliente)
             es_nuevo_cliente = datos_interacciones.empty
 
-            # Si el cliente es nuevo o si la recomendación no se ha enviado hoy
             if es_nuevo_cliente or cliente.ultima_recomendacion != hoy:
                 if not datos_interacciones.empty:
-                    # Obtener recomendaciones basadas en categorías
                     menues_recomendados = recomendar_menus_por_categoria(cliente, datos_interacciones)
 
-                # Enviar las recomendaciones por correo
                 enviar_notificacion_recomendacion(cliente.email_cli, menues_recomendados, es_nuevo_cliente)
-
-                # Actualizar la última fecha de recomendación
                 cliente.ultima_recomendacion = hoy
                 cliente.save()
             else:
-                # Si ya se ha enviado una recomendación hoy, no recalcular
                 menues_recomendados = Menus.objects.none()
 
     # Obtener menús con promociones activas

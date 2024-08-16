@@ -232,13 +232,14 @@ def menus(request):
 def listadoOrdenMenus(request):
     menuBdd = Menus.objects.all()
     mesaBdd = Mesas.objects.filter(estado_mes='Libre')
-    user = ''
     login = False
     menues_recomendados = []
+    cliente = None  # Inicializa la variable cliente
 
     if request.user.is_authenticated:
         user = request.user
-        cliente = Clientes.objects.filter(nombre_cli=user.username).first()
+        # Buscar el cliente por correo electrónico
+        cliente = Clientes.objects.filter(email_cli=user.email).first()
         login = True
 
         if cliente:
@@ -266,7 +267,7 @@ def listadoOrdenMenus(request):
     data = {
         'menus': menuBdd,
         'mesas': mesaBdd,
-        'user': cliente,
+        'user': cliente,  # Asegúrate de pasar el cliente, no el User
         'login': login,
         'menus_con_promocion': menus_con_promocion,
         'menues_recomendados': menues_recomendados if login else []

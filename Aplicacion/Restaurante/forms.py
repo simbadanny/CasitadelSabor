@@ -28,14 +28,12 @@ class LoginForm(forms.Form):
         username = self.cleaned_data.get('username')
         if '@' in username:
             # Validar si el correo electrónico existe
-            from django.contrib.auth.models import User
             if not User.objects.filter(email=username).exists():
-                raise forms.ValidationError("El correo electrónico incorrecto o no está registrado.")
+                raise forms.ValidationError("El correo electrónico es incorrecto o no está registrado.")
         else:
             # Validar si el nombre de usuario existe
-            from django.contrib.auth.models import User
             if not User.objects.filter(username=username).exists():
-                raise forms.ValidationError("El nombre de usuario incorrecto o no está registrado.")
+                raise forms.ValidationError("El nombre de usuario es incorrecto o no está registrado.")
         return username
 
     def clean(self):
@@ -43,9 +41,17 @@ class LoginForm(forms.Form):
         username = cleaned_data.get('username')
         password = cleaned_data.get('password')
 
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user is None:
-                raise forms.ValidationError("La combinación de nombre de usuario/correo electrónico y contraseña es incorrecta.")
+        if '@' in username:
+            # Autenticar por correo electrónico
+            try:
+                user = User.objects.get(email=username)
+                username = user.username
+            except User.DoesNotExist:
+                raise forms.ValidationError("El correo electrónico no está registrado.")
+
+        # Ahora autenticar con el nombre de usuario
+        user = authenticate(username=username, password=password)
+        if user is None:
+            raise forms.ValidationError("La combinación de nombre de usuario/correo electrónico y contraseña es incorrecta.")
 
         return cleaned_data

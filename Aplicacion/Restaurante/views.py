@@ -23,7 +23,8 @@ import pandas as pd
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
-
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 #############################################################################################################################################################
@@ -169,40 +170,56 @@ def enviar_correo_nueva_promocion(nueva_promocion):
     # Enviar el correo
     msg.send()
 ##########################################################################################################################################################
+
 def registro(request):
 
-    data = {
-        'form': CustomUserCreationForm
-    }
-
-    if( request.method == 'POST' ):
-        formulario = CustomUserCreationForm(data = request.POST)
-        if(formulario.is_valid()):
-            formulario.save()
-            usuario = User.objects.get(username=formulario.cleaned_data['username'])
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            # Guardar el usuario si el formulario es válido
+            form.save()
+            # Crear cliente asociado
+            usuario = User.objects.get(username=form.cleaned_data['username'])
             fecha = date.today()
             nuevoClientes = Clientes.objects.create(
-                nombre_cli=formulario.cleaned_data['username'],
-                apellido_cli=formulario.cleaned_data['last_name'],
-                cedula_cli="0",
-                email_cli=formulario.cleaned_data['email'],
-                telefono_cli="09",
+                nombre_cli=form.cleaned_data['first_name'],
+                apellido_cli=form.cleaned_data['last_name'],
+                cedula_cli="0",  # Asignar un valor por defecto
+                email_cli=form.cleaned_data['email'],
+                telefono_cli="09",  # Asignar un valor por defecto
                 fecha_Reguistro_cli=fecha
             )
 
-
+            # Asignar el grupo "Clientes" al nuevo usuario
             grupo = Group.objects.filter(name='Clientes').first()
             if grupo:
                 usuario.groups.add(grupo)
 
-            user = authenticate(username = formulario.cleaned_data['username'], password=formulario.cleaned_data['password1'])
+            # Autenticar y hacer login al usuario
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
             login(request, user)
 
+            # Redirigir al usuario a la plantillaCliente después del registro exitoso
             return redirect('plantillaCliente')
+        else:
+            # Captura de errores personalizados si el formulario no es válido
+            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
+
+            if username and User.objects.filter(username=username).exists():
+                form.add_error('username', 'Este nombre de usuario ya está en uso.')
+
+            if email and User.objects.filter(email=email).exists():
+                form.add_error('email', 'Este correo electrónico ya está en uso.')
+
+    else:
+        form = CustomUserCreationForm()
+
+    data = {
+        'form': form
+    }
 
     return render(request, 'registration/registro.html', data)
-
-
 ##############################################################################################################################################
 def plantillaCliente(request):
     return render(request, 'plantillaCliente.html')

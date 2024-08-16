@@ -23,17 +23,31 @@
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/azzara.min.css' %}">
 </head>
-<body class="login" style="background-image: url('{% static 'assets\img\hero-bg.jpg' %}'); background-size: cover; background-position: center;">
+<body class="login" style="background-image: url('{% static 'assets/img/hero-bg.jpg' %}'); background-size: cover; background-position: center;">
 
     <div class="wrapper wrapper-login">
         <div class="container container-login animated fadeIn">
-            <h3 class="text-center">Iniciar sesión</h3>
+            <h3 class="text-center">Iniciar Sesión</h3>
             <div class="login-form">
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <div class="form-group">
-                        <label for="username" class="placeholder"><b>Usuario</b></label>
-                        <input id="username" name="username" type="text" class="form-control" required>
+                        <label for="username" class="placeholder"><b>Usuario/Email</b></label>
+                        <input id="username" name="username" type="text" class="form-control" value="{{ form.username.value }}" required>
                     </div>
                     <div class="form-group">
                         <label for="password" class="placeholder"><b>Contraseña</b></label>
@@ -53,7 +67,7 @@
                         <button type="submit" class="btn btn-primary col-md-5 float-right mt-3 mt-sm-0 fw-bold">Iniciar sesión</button>
                     </div>
                     <div class="form-group">
-                        <a href="{% url 'registro' %}" class="link float-right">Registrate</a>
+                        <a href="{% url 'registro' %}" class="link float-right">Regístrate</a>
                     </div>
                 </form>
             </div>

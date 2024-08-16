@@ -9,11 +9,12 @@
 
     <!-- Fonts and icons -->
     <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
-
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/azzara.min.css' %}">
     <script src="{% static 'library/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'assets/js/plugin/jquery.validate/jquery.validate.min.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 </head>
 <body class="login" style="background-image: url('{% static 'assets/img/hero-bg.jpg' %}'); background-size: cover; background-position: center;">
 
@@ -25,21 +26,12 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="{{ form.username.id_for_label }}">Primer Nombre:</label>
-                            {{ form.username }}
-                            <script>
-                                document.getElementById('{{ form.username.id_for_label }}').oninput = function() { convertirMayusculas(this); };
-                            </script>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="{{ form.first_name.id_for_label }}">Segundo Nombre:</label>
+                            <label for="{{ form.first_name.id_for_label }}">Nombre:</label>
                             {{ form.first_name }}
                             <script>
                                 document.getElementById('{{ form.first_name.id_for_label }}').oninput = function() { convertirMayusculas(this); };
                             </script>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="form-group col-md-6">
                             <label for="{{ form.last_name.id_for_label }}">Apellido:</label>
                             {{ form.last_name }}
@@ -47,10 +39,37 @@
                                 document.getElementById('{{ form.last_name.id_for_label }}').oninput = function() { convertirMayusculas(this); };
                             </script>
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="{{ form.email.id_for_label }}">Correo Electrónico:</label>
-                            {{ form.email }}
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="username" class="placeholder"><b>Usuario</b></label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="alert alert-danger mt-2">
+                                <i class="fas fa-exclamation-triangle"></i> {{ form.username.errors.0 }}
+                            </div>
+                        {% else %}
+                            {% if form.username.value %}
+                                <div class="alert alert-success mt-2">
+                                    <i class="fas fa-check-circle"></i> {{ form.username.value }} está disponible.
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="placeholder"><b>Correo Electrónico</b></label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="alert alert-danger mt-2">
+                                <i class="fas fa-exclamation-triangle"></i> {{ form.email.errors.0 }}
+                            </div>
+                        {% else %}
+                            {% if form.email.value %}
+                                <div class="alert alert-success mt-2">
+                                    <i class="fas fa-check-circle"></i> {{ form.email.value }} está disponible.
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
@@ -60,7 +79,6 @@
                         <div class="form-group col-md-6">
                             <label for="{{ form.password2.id_for_label }}">Confirmar Contraseña:</label>
                             {{ form.password2 }}
-                            <i class="flaticon-interface"></i>
                         </div>
                     </div>
                     <div class="row">
@@ -106,7 +124,7 @@
                 },
                 messages: {
                     "username": {
-                        required: "Por favor, ingrse el usuario",
+                        required: "Por favor, ingrese el usuario",
                         minlength: "El nombre de usuario debe tener al menos 4 caracteres"
                     },
                     "first_name": {
@@ -151,12 +169,11 @@
                 }
             });
         });
+
+        function convertirMayusculas(input) {
+            input.value = input.value.toUpperCase();
+        }
     </script>
-    <script type="text/javascript">
-    function convertirMayusculas(input) {
-        input.value = input.value.toUpperCase();
-    }
-  </script>
 
     <script src="{% static 'assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
     <script src="{% static 'assets/js/core/popper.min.js' %}"></script>

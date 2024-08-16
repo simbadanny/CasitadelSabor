@@ -75,7 +75,7 @@
             </ul>
             <div class="user_option">
               {% if user.is_authenticated %}
-                  <span class="username">Hola, {{ user.username }}!</span>
+                  <span class="username">Hola, {{ user.first_name }}!</span>
                   <a href="{% url 'logout' %}" class="order_online">Cerrar Sesión</a>
               {% else %}
                   <a href="{% url 'login' %}" class="order_online">Iniciar Sesión</a>

@@ -133,6 +133,10 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = reverse_lazy('bienvenida')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')
 
+AUTHENTICATION_BACKENDS = [
+    'Restaurante.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

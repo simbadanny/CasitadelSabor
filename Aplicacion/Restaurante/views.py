@@ -137,7 +137,8 @@ def enviar_correo_nuevo_menu(nuevo_menu):
         'nombre_menu': nuevo_menu.nombre_menu,
         'descripcion_menu': nuevo_menu.descripcion_menu,
         'categoria_menu': nuevo_menu.categoria_menu,
-        'precio_menu': nuevo_menu.precio_menu
+        'precio_menu': nuevo_menu.precio_menu,
+        'foto_menu_url': nuevo_menu.fotos_menu
     })
 
     # Crear el mensaje de correo electrónico con contenido HTML

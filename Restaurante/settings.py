@@ -88,7 +88,7 @@ ROOT_URLCONF = 'Restaurante.urls'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'restaurante_bdd',
+        'NAME': 'restaurante',
         'USER': 'postgres',
         'PASSWORD': '12345',
         'HOST': 'localhost',

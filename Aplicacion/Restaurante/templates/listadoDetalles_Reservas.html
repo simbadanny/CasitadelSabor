@@ -23,7 +23,7 @@
                                 <th>FECHA RESERVA</th>
                                 <th>PRECIO MENU</th>
                                 <th>NOMBRE MENU</th>
-                                <th>NUMERO PERSONAS</th>
+                                <th>CANTIDAD PLATOS</th>
                                 <th>HORA RESERVA</th>
                                 <th>ACCIONES</th>
                             </tr>
@@ -33,9 +33,9 @@
                             <tr>
                                 <td>{{ detalle_Reserva.detalle_reserva_id }}</td>
                                 <td>{{ detalle_Reserva.reserva.fecha_reserva}}</td>
-                                <td>{{ detalle_Reserva.menu.precio_menu}}</td>
+                                <td>{{detalle_Reserva.menu.precio_menu}}</td>
                                 <td>{{detalle_Reserva.menu.nombre_menu}}</td>
-                                <td>{{ detalle_Reserva.reserva.numero_personas_reserva}}</td>
+                                <td>{{detalle_Reserva.cantidad}}</td>
                                 <td>{{ detalle_Reserva.reserva.hora_reserva }}</td>
                                 <td>
                                   <a href="/editarDetalles_Reservas/{{detalle_Reserva.detalle_reserva_id}}" class="btn btn-warning">
@@ -99,14 +99,9 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                          <label for="cantidad_personas"><i class="fas fa-users"></i> <b>CANTIDAD PERSONAS:</b></label>
-                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="cantidad_personas" id="cantidad_personas" required data-live-search-placeholder="Buscar categoría...">
-                                <option value="">Seleccione Total Personas</option>
-                                {% for reserva in reservas %}
-                                  <option value="{{ reserva.reserva_id }}">{{ reserva.numero_personas_reserva}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+          				        <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
+          				        <input type="number" name="cantidad" id="cantidad" oninput="soloNumeros(this)" placeholder="Ingrese el número" class="form-control" required>
+          				      </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
@@ -142,7 +137,7 @@
                 "menu_id_menu_nombre": {
                     required: true
                 },
-                "cantidad_personas": {
+                "cantidad": {
                     required: true
                 },
                 "hora_reserva": {
@@ -159,8 +154,8 @@
                 "menu_id_menu_nombre": {
                     required: "Debe seleccionar el nombre menú"
                 },
-                "cantidad_personas": {
-                    required: "Debe seleccionar la cantidad de personas"
+                "cantidad": {
+                    required: "Debe seleccionar la cantidad de platos"
                 },
                 "hora_reserva": {
                     required: "Debe seleccionar la hora de reserva"

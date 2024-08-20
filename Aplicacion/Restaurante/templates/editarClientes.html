@@ -101,11 +101,11 @@
           <div class="row">
               <div class="form-group col-md-6">
                 <label for="nombre_cli"><i class="fas fa-user"></i> <b>Nombre:</b></label>
-                <input type="text" name="nombre_cli" id="nombre_cli" oninput="soloLetras(this)" value="{{ clientes.nombre_cli }}" placeholder="Ingrese el nombre del cliente" class="form-control" required>
+                <input type="text" name="nombre_cli" id="nombre_cli" oninput="soloLetras(this)" onblur="convertirMayusculas(this)" value="{{ clientes.nombre_cli }}" placeholder="Ingrese el nombre del cliente" class="form-control" required>
               </div>
               <div class="form-group col-md-6">
                 <label for="apellido_cli"><i class="fas fa-user"></i> <b>Apellido:</b></label>
-                <input type="text" name="apellido_cli" id="apellido_cli" oninput="soloLetras(this)" value="{{ clientes.apellido_cli }}" placeholder="Ingrese el apellido del cliente" class="form-control" required>
+                <input type="text" name="apellido_cli" id="apellido_cli" oninput="soloLetras(this)" onblur="convertirMayusculas(this)" value="{{ clientes.apellido_cli }}" placeholder="Ingrese el apellido del cliente" class="form-control" required>
               </div>
             </div>
             <div class="form-group">
@@ -256,4 +256,17 @@
           input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
       }
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtén la fecha actual
+        var today = new Date().toISOString().split('T')[0];
+        // Establece la fecha mínima en el campo de fecha
+        document.getElementById('fecha_Reguistro_cli').setAttribute('min', today);
+    });
+</script>
+<script type="text/javascript">
+    function convertirMayusculas(input) {
+        input.value = input.value.toUpperCase();
+    }
+</script>
 {% endblock %}

@@ -3,9 +3,9 @@
 <html lang="en">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Registro</title>
+    <title>Registro Casita del Sabor</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-    <link rel="icon" href="{% static 'assets/img/icon.ico' %}" type="image/x-icon"/>
+    <link rel="icon" href="{% static 'assets/img/logo.ico' %}" type="image/x-icon"/>
 
     <!-- Fonts and icons -->
     <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
@@ -20,6 +20,9 @@
 
     <div class="wrapper wrapper-login">
         <div class="container container-login animated fadeIn">
+            <a href="{% url 'login' %}" class="btn btn-link back-button">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
             <h3 class="text-center">Crear una cuenta</h3>
             <div class="login-form">
                 <form method="post" action="" id="frm_nuevo_cliente">
@@ -77,7 +80,7 @@
                             {{ form.password1 }}
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="{{ form.password2.id_for_label }}">Confirmar Contraseña:</label>
+                            <label for="{{ form.password2.id_for_label }}">Confirmar contraseña:</label>
                             {{ form.password2 }}
                         </div>
                     </div>

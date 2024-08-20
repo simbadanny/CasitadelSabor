@@ -1,6 +1,8 @@
 {% extends "./plantilla.html" %}
 {% block contenido %}
 <!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <title>Reporte Semanal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -14,10 +16,8 @@
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
 
-
     <script>
         function printReport() {
-            // Convert canvas charts to images and replace canvas with images in the print view
             const canvasElements = document.querySelectorAll('canvas');
             canvasElements.forEach(canvas => {
                 const img = document.createElement('img');
@@ -30,7 +30,7 @@
         }
 
         $(document).ready(function() {
-            // Initialize Charts
+            // Inicializar gráficos
             var ctx1 = document.getElementById('ventasChart').getContext('2d');
             new Chart(ctx1, {
                 type: 'line',
@@ -95,7 +95,7 @@
                 }
             });
 
-            // Initialize DataTables for ventasTable
+            // Inicializar DataTables
             $('#ventasTable').DataTable({
                 language: {
                     url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
@@ -122,35 +122,7 @@
                 responsive: true
             });
 
-            // Initialize DataTables for reservasTable
             $('#reservasTable').DataTable({
-                language: {
-                    url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-                },
-                dom: 'Bfrtip',
-                buttons: [
-                    {
-                        extend: 'pdfHtml5',
-                        text: 'PDF',
-                        className: 'btn btn-secondary',
-                        messageTop: 'PDF creado por PDFMake con botones para DataTables.'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Imprimir',
-                        className: 'btn btn-secondary'
-                    },
-                    {
-                        extend: 'csvHtml5',
-                        text: 'CSV',
-                        className: 'btn btn-secondary'
-                    }
-                ],
-                responsive: true
-            });
-
-            // Initialize DataTables for tbl_promociones
-            $('#tbl_promociones').DataTable({
                 language: {
                     url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
                 },
@@ -272,9 +244,9 @@
                 </tbody>
             </table>
 
-            <button class="btn btn-primary mt-3 no-print" onclick="printReport()"><i class="fas fa-print"></i> Imprimir Reporte</button>
+            <button class="btn btn-primary" onclick="printReport()">Imprimir Reporte</button>
         </div>
     </div>
 </body>
-
+</html>
 {% endblock %}

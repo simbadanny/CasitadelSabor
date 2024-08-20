@@ -12,7 +12,7 @@ from datetime import date
 from datetime import datetime
 from django.db.models import Sum, Count
 from django.utils.timezone import now
-from datetime import timedelta
+from datetime import datetime, timedelta
 from background_task import background
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -25,13 +25,13 @@ from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-
+from django.utils.dateparse import parse_datetime
 
 #############################################################################################################################################################
 def obtener_interacciones_cliente(cliente):
     # Obtener reservas y ventas del cliente
     reservas = Detalles_Reservas.objects.filter(reserva__cliente=cliente).select_related('menu')
-    ventas = Detalles_Ventas.objects.filter(venta__cliente=cliente).select_related('menu')
+    ventas = Ventas.objects.filter(cliente=cliente).select_related('menu')
 
     # Convertir a DataFrame
     reservas_df = pd.DataFrame(list(reservas.values('reserva_id', 'menu__categoria_menu', 'menu_id')))
@@ -228,7 +228,6 @@ def plantillaCliente(request):
 def menus(request):
     return render(request, 'menus.html')
 #############################################################################################################################################
-
 def listadoOrdenMenus(request):
     menuBdd = Menus.objects.all()
     mesaBdd = Mesas.objects.filter(estado_mes='Libre')
@@ -277,37 +276,31 @@ def listadoOrdenMenus(request):
 
 #################################################################################################################################################
 def reporte_semanal(request):
-    today = datetime.now().date()
-    start_date = today - timedelta(days=today.weekday())
-    end_date = start_date + timedelta(days=6)
+    # Obtener ventas por fecha
+    ventas_por_dia = Ventas.objects.values('fecha_venta').annotate(total_ventas=Count('venta_id')).order_by('fecha_venta')
+    # Obtener reservas por fecha
+    reservas_por_dia = Reservas.objects.values('fecha_reserva').annotate(total_reservas=Count('reserva_id')).order_by('fecha_reserva')
 
-    reservas = Reservas.objects.filter(fecha_reserva__range=[start_date, end_date])
-    ventas = Ventas.objects.filter(fecha_venta__range=[start_date, end_date])
-
-    # Preparar datos para gráficos
-    ventas_por_dia = ventas.values('fecha_venta').annotate(total_ventas=Sum('total_venta')).order_by('fecha_venta')
-    reservas_por_dia = reservas.values('fecha_reserva').annotate(total_reservas=Count('reserva_id')).order_by('fecha_reserva')
-
-    # Convertir datos a listas para gráficos
-    ventas_labels = [v['fecha_venta'].strftime('%d/%m') for v in ventas_por_dia]
-    ventas_data = [v['total_ventas'] for v in ventas_por_dia]
-    reservas_labels = [r['fecha_reserva'].strftime('%d/%m') for r in reservas_por_dia]
-    reservas_data = [r['total_reservas'] for r in reservas_por_dia]
+    # Preparar datos para los gráficos
+    ventas_labels = [venta['fecha_venta'].strftime('%Y-%m-%d') for venta in ventas_por_dia]
+    ventas_data = [venta['total_ventas'] for venta in ventas_por_dia]
+    reservas_labels = [reserva['fecha_reserva'].strftime('%Y-%m-%d') for reserva in reservas_por_dia]
+    reservas_data = [reserva['total_reservas'] for reserva in reservas_por_dia]
 
     context = {
-        'reservas': reservas,
-        'ventas': ventas,
-        'ventas_por_dia': ventas_por_dia,
-        'reservas_por_dia': reservas_por_dia,
-        'start_date': start_date,
-        'end_date': end_date,
         'ventas_labels': ventas_labels,
         'ventas_data': ventas_data,
         'reservas_labels': reservas_labels,
         'reservas_data': reservas_data,
+        'ventas_por_dia': ventas_por_dia,
+        'reservas_por_dia': reservas_por_dia,
+        'start_date': '2024-07-22',  # Reemplaza con la fecha real
+        'end_date': '2024-07-28'     # Reemplaza con la fecha real
     }
+
     return render(request, 'reporte_semanal.html', context)
 #######################################################################################################################################################
+
 def reservarMesaCliente(request):
     data = {
         'status': False,
@@ -325,50 +318,50 @@ def reservarMesaCliente(request):
             fecha = request.POST['fecha']
             hora = request.POST['hora']
 
+            # Crear una fecha y hora combinadas
             fecha_hora_reserva = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
 
+            # Verificar si ya existe una reserva para esa mesa en la misma fecha y hora
             reserva_existente = Reservas.objects.filter(
                 mesa=mesa,
-                fecha_reserva=fecha,
-                hora_reserva=hora
+                fecha_reserva=fecha_hora_reserva.date(),
+                hora_reserva=fecha_hora_reserva.time()
             ).exists()
 
             if reserva_existente:
                 data['message'] = 'La mesa ya está reservada para esa fecha y hora.'
                 return JsonResponse(data)
 
+            # Crear la nueva reserva
             nuevaReserva = Reservas.objects.create(
-                fecha_reserva=fecha,
-                hora_reserva=hora,
+                fecha_reserva=fecha_hora_reserva.date(),
+                hora_reserva=fecha_hora_reserva.time(),
                 numero_personas_reserva=personas,
                 estado_reserva='Pendiente',
                 mesa=mesa,
                 cliente=cliente
             )
 
-            reservaSeleccionado = Reservas.objects.get(reserva_id=nuevaReserva.reserva_id)
-
+            # Crear detalles de la reserva y ventas
             for item in articulos:
                 plato_id = item["plato_id"]
                 cantidad = item["cantidad"]
                 menuSeleccionado = Menus.objects.get(menu_id=plato_id)
 
+                # Crear detalles de la reserva con la cantidad de platos
                 Detalles_Reservas.objects.create(
-                    reserva=reservaSeleccionado,
-                    menu=menuSeleccionado
+                    reserva=nuevaReserva,
+                    menu=menuSeleccionado,
+                    cantidad=cantidad  # Guardar la cantidad en el detalle de la reserva
                 )
 
-            tiempo_de_aviso = fecha_hora_reserva - timedelta(minutes=5)
-            actualizar_estado_mesa(str(fecha_hora_reserva), nuevaReserva.reserva_id, schedule=tiempo_de_aviso)
+            data['status'] = True
+            data['message'] = 'Reserva realizada con éxito.'
+            return JsonResponse(data)
 
-            data = {
-                'status': True,
-                'message': "Tu reserva fue exitosa",
-            }
         except Exception as e:
-            data['message'] = f'Error: {str(e)}'
-
-    return JsonResponse(data)
+            data['message'] = str(e)
+            return JsonResponse(data)
 
 @background(schedule=60)
 def actualizar_estado_mesa(fecha_hora_reserva_str, reserva_id):
@@ -377,9 +370,9 @@ def actualizar_estado_mesa(fecha_hora_reserva_str, reserva_id):
     mesa = reserva.mesa
 
     if datetime.now() >= fecha_hora_reserva and reserva.estado_reserva == 'Pendiente':
-        mesa.estado_mes = 'Ocupado'
+        mesa.estado_mes = 'ocupado'
         mesa.save()
-        reserva.estado_reserva = 'Confirmada'
+        reserva.estado_reserva = 'confirmada'
         reserva.save()
 #################################################################################################################################
 def bienvenida(request):
@@ -541,46 +534,96 @@ def editarReservas(request,reserva_id):
     return render(request, 'editarReservas.html', {'reservas': reservaEditar,'clientes':clienteBdd,'mesas':mesaBdd })
 
 def procesarActualizacionReservas(request):
-    reserva_id=request.POST["reserva_id"]
+    if request.method == 'POST':
+        try:
+            reserva_id = request.POST.get("reserva_id")
+            cliente_id_cliente = request.POST.get("cliente_id_cliente")
+            id_mesa_mesa = request.POST.get("id_mesa_mesa")
+            fecha_reserva = request.POST.get("fecha_reserva")
+            hora_reserva = request.POST.get('hora_reserva', None)
+            numero_personas_reserva = request.POST.get("numero_personas_reserva")
+            estado_reserva = request.POST.get("estado_reserva")
+
+            # Validar los campos requeridos
+            if not all([reserva_id, cliente_id_cliente, id_mesa_mesa, fecha_reserva, numero_personas_reserva, estado_reserva]):
+                raise ValueError('Faltan campos requeridos en la solicitud.')
+
+            clienteSeleccionado = Clientes.objects.get(cliente_id=cliente_id_cliente)
+            mesaSeleccionado = Mesas.objects.get(id_mesa=id_mesa_mesa)
+
+            # Obtener y actualizar la reserva
+            reservaEditar = Reservas.objects.get(reserva_id=reserva_id)
+            reservaEditar.cliente = clienteSeleccionado
+            reservaEditar.mesa = mesaSeleccionado
+            reservaEditar.fecha_reserva = fecha_reserva
+            reservaEditar.hora_reserva = hora_reserva
+            reservaEditar.numero_personas_reserva = numero_personas_reserva
+            reservaEditar.estado_reserva = estado_reserva
+            reservaEditar.save()
+
+            # Si el estado de la reserva es 'confirmada', crear ventas basadas en los detalles de la reserva
+            if estado_reserva.lower() == 'confirmada':
+                # Obtener los detalles de la reserva
+                detalles = Detalles_Reservas.objects.filter(reserva=reservaEditar)
+                for detalle in detalles:
+                    menuSeleccionado = detalle.menu
+                    cantidad = detalle.cantidad
+
+                    # Crear una entrada en ventas
+                    Ventas.objects.create(
+                        menu=menuSeleccionado,
+                        reserva=reservaEditar,
+                        cliente=clienteSeleccionado,
+                        mesa=mesaSeleccionado,
+                        fecha_venta=fecha_reserva,  # Establecer la fecha de la venta igual a la fecha de la reserva
+                        cantidad=cantidad
+                    )
+
+            messages.success(request, 'Reserva actualizada exitosamente.')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar la reserva: {str(e)}')
+
+        return redirect('listadoReservas')
+##########################################################################################################################################################
+def listadoVentas(request):
+    # Obtener todas las ventas
+    ventas = Ventas.objects.all()
+
+    # Calcular el total de cada venta
+    for venta in ventas:
+        venta.total_venta = venta.menu.precio_menu * venta.cantidad
+        venta.save()
+
+    # Obtener los datos para el template
+    menuBdd = Menus.objects.all()
+    clienteBdd = Clientes.objects.all()
+    mesaBdd = Mesas.objects.all()
+
+    return render(request, 'listadoVentas.html', {
+        'ventas': ventas,
+        'menu': menuBdd,
+        'clientes': clienteBdd,
+        'mesas': mesaBdd
+    })
+
+def guardarVentas(request):
+    menu_id_menu=request.POST["menu_id_menu"]
+    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
     cliente_id_cliente=request.POST["cliente_id_cliente"]
     clienteSeleccionado=Clientes.objects.get(cliente_id=cliente_id_cliente)
     id_mesa_mesa=request.POST["id_mesa_mesa"]
     mesaSeleccionado=Mesas.objects.get(id_mesa=id_mesa_mesa)
-    fecha_reserva=request.POST["fecha_reserva"]
-    hora_reserva = request.POST.get('hora_reserva', None)
-    numero_personas_reserva=request.POST["numero_personas_reserva"]
-    estado_reserva=request.POST["estado_reserva"]
-    #Insertando datos mediante el ORM de DJANGO
-    reservaEditar=Reservas.objects.get(reserva_id=reserva_id)
-    reservaEditar.cliente=clienteSeleccionado
-    reservaEditar.mesa=mesaSeleccionado
-    reservaEditar.fecha_reserva=fecha_reserva
-    reservaEditar.hora_reserva=hora_reserva
-    reservaEditar.numero_personas_reserva=numero_personas_reserva
-    reservaEditar.estado_reserva=estado_reserva
-    reservaEditar.save()
-    messages.success(request,
-      'Reserva ACTUALIZADO Exitosamente')
-    return redirect('listadoReservas')
-
-##########################################################################################################################################################
-def listadoVentas(request):
-    clienteBdd = Clientes.objects.all()
-    ventaBdd = Ventas.objects.all()
-    return render(request, 'listadoVentas.html', {'ventas': ventaBdd,'clientes':clienteBdd})
-
-
-
-def guardarVentas(request):
-    cliente_id_cliente=request.POST["cliente_id_cliente"]
-    clienteSeleccionado=Clientes.objects.get(cliente_id=cliente_id_cliente)
     fecha_venta=request.POST["fecha_venta"]
     total_venta=request.POST["total_venta"]
+    cantidad = request.POST["cantidad"]
 
     nuevoVentas = Ventas.objects.create(
         fecha_venta=fecha_venta,
         total_venta=total_venta,
-        cliente=clienteSeleccionado
+        menu=menuSeleccionado,
+        mesa=mesaSeleccionado,
+        cliente=clienteSeleccionado,
+        cantidad=cantidad
     )
 
     messages.success(request, 'Venta guardada exitosamente')
@@ -598,22 +641,33 @@ def eliminarVentas(request, venta_id):
         messages.error(request, 'No se puede eliminar la Reserva porque hay Cliente relacionados.')
     return redirect('listadoVentas')
 
+
 def editarVentas(request,venta_id):
     ventaEditar=Ventas.objects.get(venta_id=venta_id)
+    menuBdd = Menus.objects.all()
     clienteBdd = Clientes.objects.all()
-    return render(request, 'editarVentas.html', {'ventas': ventaEditar,'clientes':clienteBdd})
+    mesaBdd = Mesas.objects.all()
+    return render(request, 'editarVentas.html', {'ventas': ventaEditar,'menu':menuBdd, 'clientes':clienteBdd, 'mesas':mesaBdd })
 
 def procesarActualizacionVentas(request):
     venta_id=request.POST["venta_id"]
+    menu_id_menu=request.POST["menu_id_menu"]
+    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
     cliente_id_cliente=request.POST["cliente_id_cliente"]
     clienteSeleccionado=Clientes.objects.get(cliente_id=cliente_id_cliente)
+    id_mesa_mesa=request.POST["id_mesa_mesa"]
+    mesaSeleccionado=Mesas.objects.get(id_mesa=id_mesa_mesa)
     fecha_venta=request.POST["fecha_venta"]
     total_venta=request.POST["total_venta"]
-    #Insertando datos mediante el ORM de DJANGO
+    cantidad = request.POST["cantidad"]
+
     ventaEditar=Ventas.objects.get(venta_id=venta_id)
     ventaEditar.cliente=clienteSeleccionado
+    ventaEditar.menu=menuSeleccionado
+    ventaEditar.mesa=mesaSeleccionado
     ventaEditar.fecha_venta=fecha_venta
     ventaEditar.total_venta=total_venta
+    ventaEditar.cantidad=cantidad
     ventaEditar.save()
     messages.success(request,
       'Venta ACTUALIZADO Exitosamente')
@@ -686,68 +740,6 @@ def procesarActualizacionMenus(request):
 
 #############################################################################################################################################
 
-def listadoDetalles_Ventas(request):
-    detalleBdd = Detalles_Ventas.objects.all()
-    ventaBdd = Ventas.objects.all()
-    menuBdd = Menus.objects.all()
-    return render(request, 'listadoDetalles_Ventas.html', {'detalles': detalleBdd, 'ventas': ventaBdd, 'menus': menuBdd})
-
-def guardarDetalles_Ventas(request):
-    venta_id_venta=request.POST["venta_id_venta"]
-    ventaSeleccionado=Ventas.objects.get(venta_id=venta_id_venta)
-    menu_id_menu=request.POST["menu_id_menu"]
-    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
-    cantidad_venta=request.POST["cantidad_venta"]
-    precio_unitario_venta=request.POST["precio_unitario_venta"]
-
-    nuevodetalle = Detalles_Ventas.objects.create(
-        cantidad_venta=cantidad_venta,
-        precio_unitario_venta=precio_unitario_venta,
-        venta=ventaSeleccionado,
-        menu=menuSeleccionado
-    )
-
-    messages.success(request, 'Detalles Reservas guardada exitosamente')
-    return redirect('listadoDetalles_Ventas')
-
-
-def eliminarDetalles_Ventas(request, detalle_venta_id):
-    try:
-        detalles = Detalles_Ventas.objects.get(pk=detalle_venta_id)
-        detalles.delete()
-        messages.success(request, 'Detalles Ventas eliminado correctamente.')
-    except Detalles_Ventas.DoesNotExist:
-        messages.error(request, 'Los Detalles Ventas que intentas eliminar no existe.')
-    except ProtectedError:
-        messages.error(request, 'No se puede eliminar el Detalles Ventas porque hay productos relacionados.')
-    return redirect('listadoDetalles_Ventas')
-
-def editarDetalles_Ventas(request,detalle_venta_id):
-    detalleEditar=Detalles_Ventas.objects.get(detalle_venta_id=detalle_venta_id)
-    ventaBdd = Ventas.objects.all()
-    menuBdd = Menus.objects.all()
-    return render(request, 'editarDetalles_Ventas.html', {'detalles': detalleEditar,'ventas':ventaBdd,'menus':menuBdd })
-
-def procesarActualizacionDetalles(request):
-    detalle_venta_id=request.POST["detalle_venta_id"]
-    venta_id_venta=request.POST["venta_id_venta"]
-    ventaSeleccionado=Ventas.objects.get(venta_id=venta_id_venta)
-    menu_id_menu=request.POST["menu_id_menu"]
-    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
-    cantidad_venta=request.POST["cantidad_venta"]
-    precio_unitario_venta=request.POST["precio_unitario_venta"]
-    #Insertando datos mediante el ORM de DJANGO
-    detalleEditar=Detalles_Ventas.objects.get(detalle_venta_id=detalle_venta_id)
-    detalleEditar.menu=menuSeleccionado
-    detalleEditar.venta=ventaSeleccionado
-    detalleEditar.cantidad_venta=cantidad_venta
-    detalleEditar.precio_unitario_venta=precio_unitario_venta
-    detalleEditar.save()
-    messages.success(request,
-      'Detalles Ventas ACTUALIZADO Exitosamente')
-    return redirect('listadoDetalles_Ventas')
-
-#############################################################################################################################
 def listadoDetalles_Reservas(request):
     detalle_ReservaBdd = Detalles_Reservas.objects.all()
     reservaBdd = Reservas.objects.all()
@@ -759,11 +751,13 @@ def guardarDetalles_Reservas(request):
     reservaSeleccionado=Reservas.objects.get(reserva_id=reserva_id_reserva)
     menu_id_menu=request.POST["menu_id_menu"]
     menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
+    cantidad = request.POST["cantidad"]
 
 
     nuevodetalle_Reserva = Detalles_Reservas.objects.create(
         reserva=reservaSeleccionado,
-        menu=menuSeleccionado
+        menu=menuSeleccionado,
+        cantidad=cantidad
     )
 
     messages.success(request, 'Detalles Reservas guardada exitosamente')
@@ -793,9 +787,11 @@ def procesarActualizacionDetalles_Reservas(request):
     reservaSeleccionado=Reservas.objects.get(reserva_id=reserva_id_reserva)
     menu_id_menu=request.POST["menu_id_menu"]
     menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
+    cantidad = request.POST["cantidad"]
 
     detalle_ReservaEditar=Detalles_Reservas.objects.get(detalle_reserva_id=detalle_reserva_id)
     detalle_ReservaEditar.menu=menuSeleccionado
+    detalle_ReservaEditar.cantidad=cantidad
     detalle_ReservaEditar.reserva=reservaSeleccionado
     detalle_ReservaEditar.save()
     messages.success(request,

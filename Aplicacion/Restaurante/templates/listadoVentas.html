@@ -18,9 +18,13 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>CLIENTE</th>
+                                <th>NUMERO-MESA</th>
+                                <th>NOMBRE-MENU</th>
+                                <th>PRCIO-MENU</th>
+                                <th>CANTIDAD-PL</th>
                                 <th>FECHA-VENTA</th>
                                 <th>TOTAL-VENTA</th>
-                                <th>CLIENTE</th>
                                 <th>ACCIONES</th>
                             </tr>
                         </thead>
@@ -28,9 +32,14 @@
                             {% for venta in ventas %}
                             <tr>
                                 <td>{{ venta.venta_id }}</td>
+                                <td>{{ venta.cliente.nombre_cli }}</td>
+                                <td>{{ venta.mesa.numero_mes }}</td>
+                                <td>{{ venta.menu.nombre_menu }}</td>
+                                <td>{{ venta.menu.precio_menu }}</td>
+                                <td>{{ venta.cantidad }}</td>
                                 <td>{{ venta.fecha_venta }}</td>
                                 <td>{{ venta.total_venta }}</td>
-                                <td>{{ venta.cliente.nombre_cli }} {{ venta.cliente.apellido_cli }}</td>
+
 
                                 <td>
                                     <a href="/editarVentas/{{venta.venta_id}}" class="btn btn-warning">
@@ -63,28 +72,75 @@
                 <div class="modal-body">
                     <form action="/guardarVentas/" method="post" enctype="multipart/form-data" id="frm_nuevo_ventas">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label for="cliente_id_cliente">
-                                <b><i class="fas fa-user"></i> CLIENTE:</b>
-                            </label>
-                            <select class="form-control selectpicker" data-live-search="true" name="cliente_id_cliente" id="cliente_id_cliente" required>
-                                <option value="">Seleccione el Cliente</option>
-                                {% for cliente in clientes %}
-                                <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <!-- CLIENTE -->
+                            <div class="form-group col-md-6">
+                                <label for="reserva_id_reserva">
+                                    <b><i class="fas fa-user"></i> CLIENTE:</b>
+                                </label>
+                                <select class="form-control selectpicker" data-live-search="true" name="cliente_id_cliente" id="cliente_id_cliente" required>
+                                    <option value="">Seleccione el Cliente</option>
+                                    {% for cliente in clientes %}
+                                    <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- MESA -->
+                            <div class="form-group col-md-6">
+              				        <label for="id_mesa_mesa">
+              				          <b><i class="fas fa-chair"></i> MESA</b>
+              				        </label>
+              				        <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="id_mesa_mesa" id="id_mesa_mesa" required data-live-search-placeholder="Buscar mesa...">
+              				          <option value="">Seleccione la Mesa</option>
+              				          {% for mesa in mesas %}
+              				          <option value="{{ mesa.id_mesa }}">{{ mesa.numero_mes }}</option>
+              				          {% endfor %}
+              				        </select>
+              				      </div>
                         </div>
-                        <div class="form-group">
-                            <label for="fecha_venta">
-                                <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
-                            </label>
-                            <input type="date" name="fecha_venta" id="fecha_venta" class="form-control" required>
+                        <div class="row">
+                            <!-- NOMBRE MENÚ -->
+                            <div class="form-group col-md-6">
+                                <label for="menu_id_menu">
+                                    <b><i class="fas fa-utensils"></i> NOMBRE MENÚ:</b>
+                                </label>
+                                <select class="form-control selectpicker" data-live-search="true" name="menu_id_menu" id="menu_id_menu" required onchange="calcularTotal()">
+                                    <option value="">Seleccione el nombre Menu</option>
+                                    {% for menus in menu %}
+                                    <option value="{{ menus.menu_id }}" data-precio="{{ menus.precio_menu }}">{{ menus.nombre_menu }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- PRECIO MENÚ -->
+                            <div class="form-group col-md-6">
+                                <label for="precio_menu">
+                                    <b><i class="fas fa-dollar-sign"></i> PRECIO MENÚ:</b>
+                                </label>
+                                <input type="text" id="precio_menu" class="form-control" readonly>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="total_venta">
-                                <b><i class="fas fa-dollar-sign"></i> Total de Ventas:</b>
-                            </label>
-                            <input type="number" name="total_venta" id="total_venta" class="form-control" oninput="soloNumeros(this)" placeholder="Ingrese el total de ventas" min="0" step="0.01" required>
+                        <div class="row">
+                            <!-- NUMERO PERSONAS -->
+                            <div class="form-group col-md-6">
+              				        <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
+              				        <input type="number" name="cantidad" id="cantidad" oninput="soloNumeros(this)" placeholder="Ingrese el número" class="form-control" required>
+              				      </div>
+                            <!-- FECHA VENTA -->
+                            <div class="form-group col-md-6">
+                                <label for="fecha_venta">
+                                    <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
+                                </label>
+                                <input type="date" name="fecha_venta" id="fecha_venta" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- TOTAL VENTA -->
+                            <div class="form-group col-md-12">
+                                <label for="total_venta">
+                                    <b><i class="fas fa-dollar-sign"></i> TOTAL VENTA:</b>
+                                </label>
+                                <input type="number" name="total_venta" id="total_venta" class="form-control" placeholder="Total automático" readonly>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -95,6 +151,27 @@
             </div>
         </div>
     </div>
+<script>
+  function calcularTotal() {
+      // Obtener el precio del menú seleccionado
+      var selectMenu = document.getElementById('menu_id_menu');
+      var precioMenu = parseFloat(selectMenu.options[selectMenu.selectedIndex].getAttribute('data-precio')) || 0;
+      document.getElementById('precio_menu').value = precioMenu.toFixed(2);
+
+      // Obtener la cantidad de platos
+      var cantidadPlatos = parseInt(document.getElementById('cantidad').value) || 0;
+
+      // Calcular el total
+      var totalVenta = precioMenu * cantidadPlatos;
+
+      // Mostrar el total en el campo correspondiente
+      document.getElementById('total_venta').value = totalVenta.toFixed(2);
+  }
+
+  // Asegurarse de que el total se recalcula cada vez que se cambia la cantidad
+  document.getElementById('cantidad').addEventListener('input', calcularTotal);
+  document.getElementById('menu_id_menu').addEventListener('change', calcularTotal);
+</script>
 </div>
 
 <script>
@@ -130,40 +207,7 @@
         });
     }
 
-    $(document).ready(function () {
-        $("#frm_nuevo_ventas").validate({
-            rules: {
-                "fecha_venta": {
-                    required: true,
-                    dateISO: true
-                },
-                "total_venta": {
-                    required: true,
-                    number: true,
-                    min: 0.01,
-                    max: 1000000 // Ajusta el máximo según tus requisitos
-                },
-                "cliente_id_cliente": {
-                    required: true
-                }
-            },
-            messages: {
-                "fecha_venta": {
-                    required: "Debe ingresar la fecha de la venta",
-                    dateISO: "Por favor, ingrese una fecha válida (ISO)"
-                },
-                "total_venta": {
-                    required: "Debe ingresar el total de la venta",
-                    number: "Ingrese un número válido para el total",
-                    min: "El total no puede ser menor que 0.01",
-                    max: "El total no puede ser mayor que 1,000,000" // Ajusta el mensaje según el máximo definido
-                },
-                "cliente_id_cliente": {
-                    required: "Debe seleccionar un cliente"
-                }
-            }
-        });
-    });
+
 
     function soloNumeros(input) {
         // Reemplaza cualquier carácter que no sea un dígito numérico con una cadena vacía
@@ -214,4 +258,7 @@
         document.getElementById('fecha_venta').setAttribute('min', today);
     });
 </script>
+
+
+
 {% endblock %}

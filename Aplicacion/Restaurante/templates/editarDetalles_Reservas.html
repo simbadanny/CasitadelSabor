@@ -130,13 +130,8 @@
                 </select>
               </div>
               <div class="form-group col-md-6">
-                <label for="cantidad_personas"><i class="fas fa-users"></i> <b>CANTIDAD PERSONAS:</b></label>
-                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="numero_personas_reserva" id="numero_personas_reserva" required data-live-search-placeholder="Buscar categoría...">
-                  <option value="">Seleccione Total Personas</option>
-                  {% for reserva in reservas %}
-                    <option value="{{ reserva.reserva_id }}" {% if detalle_Reservas.reserva.reserva_id == reserva.reserva_id %}selected{% endif %}>{{ reserva.numero_personas_reserva }}</option>
-                  {% endfor %}
-                </select>
+                <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
+                <input type="number" name="cantidad" id="cantidad" oninput="soloNumeros(this)" placeholder="Ingrese el número" value="{{detalle_Reservas.cantidad}}" class="form-control" required>
               </div>
             </div>
             <div class="row">

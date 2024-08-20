@@ -46,12 +46,6 @@ urlpatterns = [
     path('editarMenus/<int:menu_id>/', login_required(views.editarMenus), name='editarMenus'),
     path('procesarActualizacionMenus/', login_required(views.procesarActualizacionMenus), name='procesarActualizacionMenus'),
 
-    path('listadoDetalles_Ventas/', login_required(views.listadoDetalles_Ventas), name='listadoDetalles_Ventas'),
-    path('guardarDetalles_Ventas/', login_required(views.guardarDetalles_Ventas), name='guardarDetalles_Ventas'),
-    path('eliminarDetalles_Ventas/<int:detalle_venta_id>/', login_required(views.eliminarDetalles_Ventas), name='eliminarDetalles_Ventas'),
-    path('editarDetalles_Ventas/<int:detalle_venta_id>/', login_required(views.editarDetalles_Ventas), name='editarDetalles_Ventas'),
-    path('procesarActualizacionDetalles/', login_required(views.procesarActualizacionDetalles), name='procesarActualizacionDetalles'),
-
     path('listadoDetalles_Reservas/', login_required(views.listadoDetalles_Reservas), name='listadoDetalles_Reservas'),
     path('guardarDetalles_Reservas/', login_required(views.guardarDetalles_Reservas), name='guardarDetalles_Reservas'),
     path('eliminarDetalles_Reservas/<int:detalle_reserva_id>/', login_required(views.eliminarDetalles_Reservas), name='eliminarDetalles_Reservas'),

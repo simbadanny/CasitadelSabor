@@ -291,4 +291,12 @@
       }
     }
   </script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          // Obtén la fecha actual
+          var today = new Date().toISOString().split('T')[0];
+          // Establece la fecha mínima en el campo de fecha
+          document.getElementById('fecha_reserva').setAttribute('min', today);
+      });
+  </script>
 {% endblock %}

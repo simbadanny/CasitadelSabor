@@ -563,8 +563,15 @@ def procesarActualizacionReservas(request):
             clienteSeleccionado = Clientes.objects.get(cliente_id=cliente_id_cliente)
             mesaSeleccionado = Mesas.objects.get(id_mesa=id_mesa_mesa)
 
-            # Obtener y actualizar la reserva
+            # Obtener la reserva existente
             reservaEditar = Reservas.objects.get(reserva_id=reserva_id)
+
+            # Verificar si el estado actual es 'confirmada' y el nuevo estado es 'pendiente'
+            if reservaEditar.estado_reserva.lower() == 'confirmada' and estado_reserva.lower() == 'pendiente':
+                # Eliminar las ventas asociadas a la reserva
+                Ventas.objects.filter(reserva=reservaEditar).delete()
+
+            # Actualizar los campos de la reserva
             reservaEditar.cliente = clienteSeleccionado
             reservaEditar.mesa = mesaSeleccionado
             reservaEditar.fecha_reserva = fecha_reserva
@@ -573,9 +580,8 @@ def procesarActualizacionReservas(request):
             reservaEditar.estado_reserva = estado_reserva
             reservaEditar.save()
 
-            # Si el estado de la reserva es 'confirmada', crear ventas basadas en los detalles de la reserva
+            # Si el nuevo estado es 'confirmada', crear ventas basadas en los detalles de la reserva
             if estado_reserva.lower() == 'confirmada':
-                # Obtener los detalles de la reserva
                 detalles = Detalles_Reservas.objects.filter(reserva=reservaEditar)
                 for detalle in detalles:
                     menuSeleccionado = detalle.menu

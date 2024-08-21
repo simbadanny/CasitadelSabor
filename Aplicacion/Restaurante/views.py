@@ -506,23 +506,54 @@ def listadoReservas(request):
 
 
 def guardarReservas(request):
-    cliente_id_cliente=request.POST["cliente_id_cliente"]
-    clienteSeleccionado=Clientes.objects.get(cliente_id=cliente_id_cliente)
-    id_mesa_mesa=request.POST["id_mesa_mesa"]
-    mesaSeleccionado=Mesas.objects.get(id_mesa=id_mesa_mesa)
-    fecha_reserva=request.POST["fecha_reserva"]
-    hora_reserva = request.POST.get('hora_reserva', None)
-    numero_personas_reserva=request.POST["numero_personas_reserva"]
-    estado_reserva=request.POST["estado_reserva"]
+    try:
+        cliente_id_cliente = request.POST["cliente_id_cliente"]
+        clienteSeleccionado = Clientes.objects.get(cliente_id=cliente_id_cliente)
+        id_mesa_mesa = request.POST["id_mesa_mesa"]
+        mesaSeleccionado = Mesas.objects.get(id_mesa=id_mesa_mesa)
+        fecha_reserva = request.POST["fecha_reserva"]
+        hora_reserva = request.POST.get('hora_reserva', None)
+        numero_personas_reserva = request.POST["numero_personas_reserva"]
+        estado_reserva = request.POST["estado_reserva"]
 
-    nuevoReservas = Reservas.objects.create(
-        fecha_reserva=fecha_reserva,
-        hora_reserva=hora_reserva,
-        numero_personas_reserva=numero_personas_reserva,
-        estado_reserva=estado_reserva,
-        mesa=mesaSeleccionado,
-        cliente=clienteSeleccionado
-    )
+        # Crear una fecha y hora combinadas
+        fecha_hora_reserva = datetime.strptime(f"{fecha_reserva} {hora_reserva}", "%Y-%m-%d %H:%M")
+
+        # Verificar si ya existe una reserva para esa mesa en la misma fecha y hora
+        reserva_existente = Reservas.objects.filter(
+            mesa=mesaSeleccionado,
+            fecha_reserva=fecha_hora_reserva.date(),
+            hora_reserva=fecha_hora_reserva.time()
+        ).exists()
+
+        if reserva_existente:
+            raise ValueError('La mesa ya está reservada para esa fecha y hora.')
+
+        # Verificar si el cliente ya tiene otra reserva en la misma fecha y hora
+        reserva_cliente_existente = Reservas.objects.filter(
+            cliente=clienteSeleccionado,
+            fecha_reserva=fecha_hora_reserva.date(),
+            hora_reserva=fecha_hora_reserva.time()
+        ).exists()
+
+        if reserva_cliente_existente:
+            raise ValueError('El cliente ya tiene una reserva en la misma fecha y hora.')
+
+        # Crear la nueva reserva
+        nuevoReservas = Reservas.objects.create(
+            fecha_reserva=fecha_hora_reserva.date(),
+            hora_reserva=fecha_hora_reserva.time(),
+            numero_personas_reserva=numero_personas_reserva,
+            estado_reserva=estado_reserva,
+            mesa=mesaSeleccionado,
+            cliente=clienteSeleccionado
+        )
+
+        messages.success(request, 'Reserva creada exitosamente.')
+    except Exception as e:
+        messages.error(request, f'Error al crear la reserva: {str(e)}')
+
+    return redirect('listadoReservas')
 
     messages.success(request, 'Reserva guardada exitosamente')
     return redirect('listadoReservas')
@@ -566,6 +597,29 @@ def procesarActualizacionReservas(request):
             # Obtener la reserva existente
             reservaEditar = Reservas.objects.get(reserva_id=reserva_id)
 
+            # Crear una fecha y hora combinadas
+            fecha_hora_reserva = datetime.strptime(f"{fecha_reserva} {hora_reserva}", "%Y-%m-%d %H:%M")
+
+            # Verificar si ya existe una reserva para esa mesa en la misma fecha y hora, excluyendo la reserva actual
+            reserva_existente = Reservas.objects.filter(
+                mesa=mesaSeleccionado,
+                fecha_reserva=fecha_hora_reserva.date(),
+                hora_reserva=fecha_hora_reserva.time()
+            ).exclude(reserva_id=reserva_id).exists()
+
+            if reserva_existente:
+                raise ValueError('La mesa ya está reservada para esa fecha y hora.')
+
+            # Verificar si el cliente ya tiene otra reserva en la misma fecha y hora, excluyendo la reserva actual
+            reserva_cliente_existente = Reservas.objects.filter(
+                cliente=clienteSeleccionado,
+                fecha_reserva=fecha_hora_reserva.date(),
+                hora_reserva=fecha_hora_reserva.time()
+            ).exclude(reserva_id=reserva_id).exists()
+
+            if reserva_cliente_existente:
+                raise ValueError('El cliente ya tiene una reserva en la misma fecha y hora.')
+
             # Verificar si el estado actual es 'confirmada' y el nuevo estado es 'pendiente'
             if reservaEditar.estado_reserva.lower() == 'confirmada' and estado_reserva.lower() == 'pendiente':
                 # Eliminar las ventas asociadas a la reserva
@@ -574,8 +628,8 @@ def procesarActualizacionReservas(request):
             # Actualizar los campos de la reserva
             reservaEditar.cliente = clienteSeleccionado
             reservaEditar.mesa = mesaSeleccionado
-            reservaEditar.fecha_reserva = fecha_reserva
-            reservaEditar.hora_reserva = hora_reserva
+            reservaEditar.fecha_reserva = fecha_hora_reserva.date()
+            reservaEditar.hora_reserva = fecha_hora_reserva.time()
             reservaEditar.numero_personas_reserva = numero_personas_reserva
             reservaEditar.estado_reserva = estado_reserva
             reservaEditar.save()
@@ -593,7 +647,7 @@ def procesarActualizacionReservas(request):
                         reserva=reservaEditar,
                         cliente=clienteSeleccionado,
                         mesa=mesaSeleccionado,
-                        fecha_venta=fecha_reserva,  # Establecer la fecha de la venta igual a la fecha de la reserva
+                        fecha_venta=fecha_hora_reserva.date(),  # Establecer la fecha de la venta igual a la fecha de la reserva
                         cantidad=cantidad
                     )
 

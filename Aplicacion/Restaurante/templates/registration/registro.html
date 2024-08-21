@@ -3,9 +3,9 @@
 <html lang="en">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Registro Casita del Sabor</title>
+    <title>Registro</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-    <link rel="icon" href="{% static 'assets/img/logo.ico' %}" type="image/x-icon"/>
+    <link rel="icon" href="{% static 'assets/img/icon.ico' %}" type="image/x-icon"/>
 
     <!-- Fonts and icons -->
     <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
@@ -14,15 +14,13 @@
     <script src="{% static 'library/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'assets/js/plugin/jquery.validate/jquery.validate.min.js' %}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 </head>
 <body class="login" style="background-image: url('{% static 'assets/img/hero-bg.jpg' %}'); background-size: cover; background-position: center;">
 
     <div class="wrapper wrapper-login">
         <div class="container container-login animated fadeIn">
-            <a href="{% url 'login' %}" class="btn btn-link back-button">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
             <h3 class="text-center">Crear una cuenta</h3>
             <div class="login-form">
                 <form method="post" action="" id="frm_nuevo_cliente">
@@ -75,15 +73,43 @@
                         {% endif %}
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="{{ form.password1.id_for_label }}">Contraseña:</label>
-                            {{ form.password1 }}
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="{{ form.password2.id_for_label }}">Confirmar contraseña:</label>
-                            {{ form.password2 }}
-                        </div>
-                    </div>
+                      <div class="form-group col-md-12">
+                          <label for="{{ form.password1.id_for_label }}">Contraseña:</label>
+                          <div class="position-relative">
+                              {{ form.password1 }}
+                              <div class="show-password" onclick="togglePasswordVisibility('id_password1')">
+                                  <i class="flaticon-interface"></i>
+                              </div>
+                          </div>
+                          <div id="password-feedback" class="password-requirements">
+                              <div class="requirement" id="length" class="invalid">
+                                  <i class="fas fa-times"></i> <span>Al menos 12 caracteres</span>
+                              </div>
+                              <div class="requirement" id="uppercase" class="invalid">
+                                  <i class="fas fa-times"></i> <span>Una letra mayúscula</span>
+                              </div>
+                              <div class="requirement" id="lowercase" class="invalid">
+                                  <i class="fas fa-times"></i> <span>Una letra minúscula</span>
+                              </div>
+                              <div class="requirement" id="number" class="invalid">
+                                  <i class="fas fa-times"></i> <span>Al menos 3 números</span>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                      <div class="form-group col-md-12">
+                          <label for="{{ form.password2.id_for_label }}">Confirmar Contraseña:</label>
+                          <div class="position-relative">
+                              {{ form.password2 }}
+                              <div class="show-password" onclick="togglePasswordVisibility('id_password2')">
+                                  <i class="flaticon-interface"></i>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
                     <div class="row">
                         <div class="form-group col-md-6">
                             <input type="submit" value="Registrar" class="btn btn-primary btn-block">
@@ -177,7 +203,85 @@
             input.value = input.value.toUpperCase();
         }
     </script>
+    <script>
+        WebFont.load({
+            google: {"families":["Open+Sans:300,400,600,700"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ["{% static 'assets/css/fonts.css' %}"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+    <script>
+    const passwordInput = document.querySelector('#id_password1');
+    const lengthRequirement = document.querySelector('#length');
+    const uppercaseRequirement = document.querySelector('#uppercase');
+    const lowercaseRequirement = document.querySelector('#lowercase');
+    const numberRequirement = document.querySelector('#number');
 
+    function validatePassword() {
+     const password = passwordInput.value;
+
+     // Check length
+     const lengthCheck = password.length >= 12;
+     lengthRequirement.classList.toggle('valid', lengthCheck);
+     lengthRequirement.classList.toggle('invalid', !lengthCheck);
+     lengthRequirement.querySelector('i').className = lengthCheck ? 'fas fa-check' : 'fas fa-times';
+
+     // Check uppercase
+     const uppercaseCheck = /[A-Z]/.test(password);
+     uppercaseRequirement.classList.toggle('valid', uppercaseCheck);
+     uppercaseRequirement.classList.toggle('invalid', !uppercaseCheck);
+     uppercaseRequirement.querySelector('i').className = uppercaseCheck ? 'fas fa-check' : 'fas fa-times';
+
+     // Check lowercase
+     const lowercaseCheck = /[a-z]/.test(password);
+     lowercaseRequirement.classList.toggle('valid', lowercaseCheck);
+     lowercaseRequirement.classList.toggle('invalid', !lowercaseCheck);
+     lowercaseRequirement.querySelector('i').className = lowercaseCheck ? 'fas fa-check' : 'fas fa-times';
+
+     // Check number (at least 3)
+     const numberCount = (password.match(/[0-9]/g) || []).length;
+     const numberCheck = numberCount >= 3;
+     numberRequirement.classList.toggle('valid', numberCheck);
+     numberRequirement.classList.toggle('invalid', !numberCheck);
+     numberRequirement.querySelector('i').className = numberCheck ? 'fas fa-check' : 'fas fa-times';
+    }
+
+    passwordInput.addEventListener('input', validatePassword);
+   </script>
+       <style>
+       .password-requirements {
+           font-size: 0.8em; /* Reduce el tamaño del texto */
+           color: #666;
+           margin-top: 10px;
+        }
+
+        .requirement {
+           display: flex;
+           align-items: center;
+           margin-bottom: 5px;
+        }
+
+        .requirement i {
+           margin-right: 10px;
+           font-size: 1.2em; /* Ajusta el tamaño del icono si es necesario */
+        }
+
+        .requirement span {
+           margin-left: 5px;
+           font-size: 0.8em; /* Ajusta el tamaño del texto del requisito */
+        }
+
+        .valid i {
+           color: green;
+        }
+
+        .invalid i {
+           color: red;
+        }
+
+    </style>
     <script src="{% static 'assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
     <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
     <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>

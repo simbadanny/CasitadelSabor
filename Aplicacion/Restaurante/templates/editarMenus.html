@@ -266,6 +266,27 @@
                       required: "Debe seleccionar una imagen para el menú",
                       extension: "Por favor seleccione un archivo con una extensión válida (jpg, jpeg, png, gif)"
                   }
+              },
+              submitHandler: function (form) {
+                  swal({
+                      title: '¿Estás seguro?',
+                      text: "Una vez actualizado, no podrás deshacer esta acción.",
+                      icon: 'warning',
+                      buttons: {
+                          cancel: 'Cancelar',
+                          confirm: {
+                              text: 'Sí, actualizar',
+                              value: true,
+                              visible: true,
+                              className: 'btn btn-primary',
+                              closeModal: true
+                          }
+                      }
+                  }).then((result) => {
+                      if (result) {
+                          form.submit();
+                      }
+                  });
               }
           });
       });

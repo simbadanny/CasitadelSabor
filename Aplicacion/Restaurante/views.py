@@ -26,7 +26,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.dateparse import parse_datetime
-from django.contrib.auth.decorators import login_required
 
 #############################################################################################################################################################
 def obtener_interacciones_cliente(cliente):
@@ -230,7 +229,6 @@ def plantillaCliente(request):
 def menus(request):
     return render(request, 'menus.html')
 #############################################################################################################################################
-@login_required
 def listadoOrdenMenus(request):
     menuBdd = Menus.objects.all()
     mesaBdd = Mesas.objects.filter(estado_mes='Libre')
@@ -323,6 +321,17 @@ def reservarMesaCliente(request):
 
             # Crear una fecha y hora combinadas
             fecha_hora_reserva = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
+
+            # Verificar si el cliente ya tiene una reserva en la misma fecha y hora
+            reserva_cliente_existente = Reservas.objects.filter(
+                cliente=cliente,
+                fecha_reserva=fecha_hora_reserva.date(),
+                hora_reserva=fecha_hora_reserva.time()
+            ).exists()
+
+            if reserva_cliente_existente:
+                data['message'] = 'Ya tienes una reserva en la misma fecha y hora.'
+                return JsonResponse(data)
 
             # Verificar si ya existe una reserva para esa mesa en la misma fecha y hora
             reserva_existente = Reservas.objects.filter(
@@ -785,21 +794,37 @@ def editarDetalles_Reservas(request,detalle_reserva_id):
     return render(request, 'editarDetalles_Reservas.html', {'detalle_Reservas': detalle_ReservaEditar,'reservas':reservaBdd,'menus':menuBdd })
 
 def procesarActualizacionDetalles_Reservas(request):
-    detalle_reserva_id=request.POST["detalle_reserva_id"]
-    reserva_id_reserva=request.POST["reserva_id_reserva"]
-    reservaSeleccionado=Reservas.objects.get(reserva_id=reserva_id_reserva)
-    menu_id_menu=request.POST["menu_id_menu"]
-    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
-    cantidad = request.POST["cantidad"]
+    try:
+        # Obtener los datos del POST
+        detalle_reserva_id = request.POST["detalle_reserva_id"]
+        reserva_id_reserva = request.POST["reserva_id_reserva"]
+        menu_id_menu = request.POST["menu_id_menu"]
+        cantidad = request.POST["cantidad"]
 
-    detalle_ReservaEditar=Detalles_Reservas.objects.get(detalle_reserva_id=detalle_reserva_id)
-    detalle_ReservaEditar.menu=menuSeleccionado
-    detalle_ReservaEditar.cantidad=cantidad
-    detalle_ReservaEditar.reserva=reservaSeleccionado
-    detalle_ReservaEditar.save()
-    messages.success(request,
-      'Detalles Ventas ACTUALIZADO Exitosamente')
+        # Obtener los objetos relacionados
+        reservaSeleccionado = Reservas.objects.get(reserva_id=reserva_id_reserva)
+        menuSeleccionado = Menus.objects.get(menu_id=menu_id_menu)
+        detalle_ReservaEditar = Detalles_Reservas.objects.get(detalle_reserva_id=detalle_reserva_id)
+
+        # Actualizar el detalle de reserva
+        detalle_ReservaEditar.menu = menuSeleccionado
+        detalle_ReservaEditar.cantidad = cantidad
+        detalle_ReservaEditar.reserva = reservaSeleccionado
+        detalle_ReservaEditar.save()
+
+        # Actualizar la venta correspondiente, si existe
+        venta = Ventas.objects.filter(reserva=reservaSeleccionado, menu=menuSeleccionado).first()
+        if venta:
+            venta.cantidad = cantidad
+            venta.save()
+
+        messages.success(request, 'Detalles de Reserva ACTUALIZADO Exitosamente')
+
+    except Exception as e:
+        messages.error(request, f'Error al actualizar los detalles de la reserva: {str(e)}')
+
     return redirect('listadoDetalles_Reservas')
+
 ########################################################################################################################################################
 
 def listadoPromociones(request):

@@ -20,6 +20,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>NOMBRE-CLIENTE</th>
                                 <th>FECHA RESERVA</th>
                                 <th>PRECIO MENU</th>
                                 <th>NOMBRE MENU</th>
@@ -32,6 +33,7 @@
                             {% for detalle_Reserva in detalle_Reservas %}
                             <tr>
                                 <td>{{ detalle_Reserva.detalle_reserva_id }}</td>
+                                <td>{{detalle_Reserva.reserva.cliente.nombre_cli}} {{detalle_Reserva.reserva.cliente.apellido_cli}}</td>
                                 <td>{{ detalle_Reserva.reserva.fecha_reserva}}</td>
                                 <td>{{detalle_Reserva.menu.precio_menu}}</td>
                                 <td>{{detalle_Reserva.menu.nombre_menu}}</td>

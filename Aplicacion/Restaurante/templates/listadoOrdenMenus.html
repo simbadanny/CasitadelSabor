@@ -275,19 +275,19 @@
             Contactos
           </h4>
           <div class="contact_link_box">
-            <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9" target="_blank">
+            <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9"target="_blank">
               <i class="fa fa-map-marker" aria-hidden="true" ></i>
               <span>
                 Lugar
               </span>
             </a>
-            <a href="https://wa.me/593992217026" target="_blank">
+            <a href="https://wa.me/593992217026"target="_blank">
               <i class="fa fa-phone" aria-hidden="true" ></i>
               <span>
-                Número telefónico +593 99 221 7026
+                Numero telefonico +593 99 221 7026
               </span>
             </a>
-            <a href="mailto:casitasabor823%40gmail.com" target="_blank">
+            <a href="mailto:casitasabor823%40gmail.com"target="_blank">
               <i class="fa fa-envelope" aria-hidden="true" ></i>
               <span>
                 casitasabor823@gmail.com
@@ -302,7 +302,7 @@
             La Casita del Sabor
           </a>
           <p>
-            "La felicidad es compartir en familia. Ven y conoce la nuestra, porque aquí comerás como en casa."
+            La felicidad es compartir en familia, ven y conose la nuestra por que aki comeras como en casa
           </p>
           <div class="footer_social">
             <a href="https://www.facebook.com/profile.php?id=100063899085512&mibextid=ZbWKwL" target="_blank">
@@ -325,7 +325,7 @@
     </div>
     <div class="footer-info">
       <p>
-        &copy; <span id="displayYear"></span> Universidad Técnica de Cotopaxi
+        &copy; <span id="displayYear"></span> Universidad Tecnica Cotopaxi
         <a href="https://html.design/"></a><br><br>
         &copy; <span id="displayYear"></span> La Casita
         <a href="https://themewagon.com/" target="_blank">del Sabor</a>
@@ -509,8 +509,8 @@
         let fechaHoy = new Date();
         let fechaReserva = new Date(fecha + 'T' + hora);
 
-        
-        let dosHorasDesdeAhora = new Date(fechaHoy.getTime() + 2 * 60 * 60 * 1000); 
+
+        let dosHorasDesdeAhora = new Date(fechaHoy.getTime() + 2 * 60 * 60 * 1000);
 
         if (fechaReserva < dosHorasDesdeAhora) {
           mostrarError('La reserva debe hacerse con al menos dos horas de anticipación ⏳');
@@ -524,13 +524,13 @@
 
         let horaReserva = fechaReserva.getHours();
         let minutosReserva = fechaReserva.getMinutes();
-        if (horaReserva < 8 || horaReserva > 19 || (horaReserva === 19 && minutosReserva > 0)) { 
+        if (horaReserva < 8 || horaReserva > 19 || (horaReserva === 19 && minutosReserva > 0)) {
           mostrarError('La hora de la reserva debe estar entre las 08:00 AM 🕗 y las 07:00 PM 🕖.');
           validar = false;
         }
 
-        let fechaReservaSinHora = new Date(fechaReserva.toDateString()); 
-        let fechaHoySinHora = new Date(fechaHoy.toDateString()); 
+        let fechaReservaSinHora = new Date(fechaReserva.toDateString());
+        let fechaHoySinHora = new Date(fechaHoy.toDateString());
 
         if (fechaReservaSinHora.getTime() === fechaHoySinHora.getTime() && horaReserva <= fechaHoy.getHours()) {
           mostrarError('No se puede reservar la mesa para la misma hora y fecha 📅⏰. Por favor, elige otro horario o fecha');

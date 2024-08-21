@@ -246,7 +246,6 @@
               }
           });
       }
-
       $(document).ready(function() {
       $("#frm_nuevo_ventas").validate({
           rules: {
@@ -260,17 +259,19 @@
                   min: 0.01,
                   max: 1000000
               },
-              "reserva_id_reserva": {
+              "cliente_id_cliente": {  // Corrected from "reserva_id_reserva"
                   required: true
               },
               "menu_id_menu": {
                   required: true
               },
-              "mesa_id_reserva": {
+              "id_mesa_mesa": {  // Corrected from "mesa_id_reserva"
                   required: true
               },
-              "numero_personas": {
-                  required: true
+              "cantidad": {  // Corrected from "numero_personas"
+                  required: true,
+                  number: true, // Add this rule if the quantity should be numeric
+                  min: 1 // Ensure the quantity is at least 1
               }
           },
           messages: {
@@ -284,22 +285,44 @@
                   min: "El total no puede ser menor que 0.01",
                   max: "El total no puede ser mayor que 1,000,000"
               },
-              "reserva_id_reserva": {
+              "cliente_id_cliente": {  // Corrected from "reserva_id_reserva"
                   required: "Debe seleccionar un cliente"
               },
               "menu_id_menu": {
-                  required: "Debe seleccionar un Munú"
+                  required: "Debe seleccionar un menú"
               },
-              "mesa_id_reserva": {
-                  required: "Debe seleccionar un Mesa"
+              "id_mesa_mesa": {  // Corrected from "mesa_id_reserva"
+                  required: "Debe seleccionar una mesa"
               },
-              "numero_personas": {
-                  required: "Debe seleccionar la Cantidad"
+              "cantidad": {  // Corrected from "numero_personas"
+                  required: "Debe ingresar la cantidad de platos",
+                  number: "Ingrese un número válido",
+                  min: "La cantidad debe ser al menos 1"
               }
+          },
+          submitHandler: function (form) {
+              swal({
+                  title: '¿Estás seguro?',
+                  text: "Una vez actualizado, no podrás deshacer esta acción.",
+                  icon: 'warning',
+                  buttons: {
+                      cancel: 'Cancelar',
+                      confirm: {
+                          text: 'Sí, actualizar',
+                          value: true,
+                          visible: true,
+                          className: 'btn btn-primary',
+                          closeModal: true
+                      }
+                  }
+              }).then((result) => {
+                  if (result) {
+                      form.submit();
+                  }
+              });
           }
       });
   });
-
       function soloNumeros(input) {
           // Reemplaza cualquier carácter que no sea un dígito numérico con una cadena vacía
           input.value = input.value.replace(/\D/g, '');

@@ -203,7 +203,7 @@
                 "nombre_menu": {
                     required: true
                 },
-                "numero_personas_reserva": {
+                "cantidad": {
                     required: true
                 },
                 "hora_reserva": {
@@ -220,12 +220,33 @@
                 "nombre_menu": {
                     required: "Debe seleccionar el nombre menú"
                 },
-                "numero_personas_reserva": {
-                    required: "Debe seleccionar la cantidad de personas"
+                "cantidad": {
+                    required: "Debe ingresar la cantidad de platos"
                 },
                 "hora_reserva": {
                     required: "Debe seleccionar la hora de reserva"
                 }
+            },
+            submitHandler: function (form) {
+                swal({
+                    title: '¿Estás seguro?',
+                    text: "Una vez actualizado, no podrás deshacer esta acción.",
+                    icon: 'warning',
+                    buttons: {
+                        cancel: 'Cancelar',
+                        confirm: {
+                            text: 'Sí, actualizar',
+                            value: true,
+                            visible: true,
+                            className: 'btn btn-primary',
+                            closeModal: true
+                        }
+                    }
+                }).then((result) => {
+                    if (result) {
+                        form.submit();
+                    }
+                });
             }
         });
     });

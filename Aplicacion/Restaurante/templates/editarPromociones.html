@@ -238,6 +238,27 @@
                   required: "Debe seleccionar un Menu",
 
               }
+          },
+          submitHandler: function (form) {
+              swal({
+                  title: '¿Estás seguro?',
+                  text: "Una vez actualizado, no podrás deshacer esta acción.",
+                  icon: 'warning',
+                  buttons: {
+                      cancel: 'Cancelar',
+                      confirm: {
+                          text: 'Sí, actualizar',
+                          value: true,
+                          visible: true,
+                          className: 'btn btn-primary',
+                          closeModal: true
+                      }
+                  }
+              }).then((result) => {
+                  if (result) {
+                      form.submit();
+                  }
+              });
           }
       });
   });
@@ -261,20 +282,5 @@
     }
   }
 </script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      // Obtén la fecha actual
-      var today = new Date().toISOString().split('T')[0];
-      // Establece la fecha mínima en el campo de fecha
-      document.getElementById('fecha_inicio_pro').setAttribute('min', today);
-  });
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      // Obtén la fecha actual
-      var today = new Date().toISOString().split('T')[0];
-      // Establece la fecha mínima en el campo de fecha
-      document.getElementById('fecha_fin_pro').setAttribute('min', today);
-  });
-</script>
+
 {% endblock %}

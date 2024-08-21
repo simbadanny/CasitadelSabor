@@ -26,6 +26,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.dateparse import parse_datetime
+from django.contrib.auth.decorators import login_required
 
 #############################################################################################################################################################
 def obtener_interacciones_cliente(cliente):
@@ -229,6 +230,7 @@ def plantillaCliente(request):
 def menus(request):
     return render(request, 'menus.html')
 #############################################################################################################################################
+@login_required
 def listadoOrdenMenus(request):
     menuBdd = Menus.objects.all()
     mesaBdd = Mesas.objects.filter(estado_mes='Libre')

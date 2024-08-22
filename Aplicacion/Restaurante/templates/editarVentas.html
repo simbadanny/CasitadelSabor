@@ -160,11 +160,16 @@
                 </div>
                 <!-- FECHA VENTA -->
                 <div class="form-group col-md-6">
-                    <label for="fecha_venta">
-                        <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
-                    </label>
-                    <input type="date" name="fecha_venta" id="fecha_venta" value="{{ ventas.fecha_venta|date:'Y-m-d' }}" class="form-control" required>
-                </div>
+                  <label for="fecha_venta">
+                      <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
+                  </label>
+                  <input type="date" name="fecha_venta" id="fecha_venta" class="form-control"
+                         value="{{ventas.fecha_venta|date:'Y-m-d'}}" readonly>
+                  <small>
+                      <a href="{% url 'editarReservas' reserva_id=ventas.reserva.reserva_id %}"  class="btn btn-link">Modificar</a>
+                      <span class="text-muted">Si desea actualizar la fecha, el nombre del cliente y la mesa, debe ir a la sección de reservas.</span>
+                  </small>
+              </div>
             </div>
             <div class="row">
                 <!-- TOTAL VENTA -->
@@ -251,7 +256,7 @@
           rules: {
               "fecha_venta": {
                   required: true,
-                  dateISO: true
+
               },
               "total_venta": {
                   required: true,
@@ -277,7 +282,7 @@
           messages: {
               "fecha_venta": {
                   required: "Debe ingresar la fecha de la venta",
-                  dateISO: "Por favor, ingrese una fecha válida (ISO)"
+
               },
               "total_venta": {
                   required: "Debe ingresar el total de la venta",

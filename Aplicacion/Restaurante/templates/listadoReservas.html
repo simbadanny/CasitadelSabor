@@ -36,7 +36,17 @@
                       <td>{{ reserva.fecha_reserva }}</td>
                       <td>{{ reserva.hora_reserva }}</td>
 											<td>{{ reserva.numero_personas_reserva }}</td>
-                      <td>{{ reserva.estado_reserva }}</td>
+											<td>
+											    {% if reserva.estado_reserva == "confirmada" %}
+											        <span style="color: green;">{{ reserva.estado_reserva }}</span>
+											    {% elif reserva.estado_reserva == "pendiente" %}
+											        <span style="color: orange;">{{ reserva.estado_reserva }}</span>
+											    {% elif reserva.estado_reserva == "cancelada" %}
+											        <span style="color: red;">{{ reserva.estado_reserva }}</span>
+											    {% else %}
+											        {{ reserva.estado_reserva }}
+											    {% endif %}
+											</td>
                       <td>{{ reserva.mesa.numero_mes}}</td>
                       <td>
 
@@ -59,7 +69,7 @@
             <!-- Button trigger modal -->
 
 
-				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

@@ -101,33 +101,16 @@
           <div class="modal-body">
             <div class="row">
               <div class="form-group col-md-6">
-                <label for="reserva_id_reserva"><i class="fas fa-calendar"></i> <b>FECHA RESERVA:</b></label>
-                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="reserva_id_reserva" id="reserva_id_reserva" required data-live-search-placeholder="Buscar categoría...">
-                  <option value="">Seleccione Total Ventas</option>
-                  {% for reserva in reservas %}
-                    <option value="{{ reserva.reserva_id }}" {% if detalle_Reservas.reserva.reserva_id == reserva.reserva_id %}selected{% endif %}>{{ reserva.fecha_reserva }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="form-group col-md-6">
-                <label for="menu_id_menu"><i class="fas fa-dollar-sign"></i> <b>PRECIO MENU:</b></label>
-                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu" id="menu_id_menu" required data-live-search-placeholder="Buscar proveedor...">
-                  <option value="">Seleccione Precio Menu</option>
-                  {% for menu in menus %}
-                    <option value="{{ menu.menu_id }}" {% if detalle_Reservas.menu.menu_id == menu.menu_id %}selected{% endif %}>{{ menu.precio_menu }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE MENU:</b></label>
-                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="nombre_menu" id="nombre_menu" required data-live-search-placeholder="Buscar proveedor...">
-                  <option value="">Seleccione El Nombre Menú</option>
-                  {% for menu in menus %}
-                    <option value="{{ menu.menu_id }}" {% if detalle_Reservas.menu.menu_id == menu.menu_id %}selected{% endif %}>{{ menu.nombre_menu }}</option>
-                  {% endfor %}
-                </select>
+                  <label for="reserva_id_reserva">
+                      <i class="fas fa-calendar"></i> <b>FECHA RESERVA:</b>
+                  </label>
+                  <input type="text" class="form-control" value="{{ detalle_Reservas.reserva.fecha_reserva|date:'d M Y' }}" readonly>
+                  <input type="hidden" name="reserva_id_reserva" id="reserva_id_reserva" value="{{ detalle_Reservas.reserva.reserva_id }}">
+                  <small class="form-text text-muted">
+                      La fecha mostrada no puede ser cambiada directamente.
+                      <a href="{% url 'listadoReservas' %}" class="btn btn-link">Actualizar Reserva</a>
+                      para cambiar la fecha.
+                  </small>
               </div>
               <div class="form-group col-md-6">
                 <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
@@ -136,15 +119,32 @@
             </div>
             <div class="row">
               <div class="form-group col-md-6">
-                <label for="hora_reserva"><i class="fas fa-clock"></i> <b>HORA DE RESERVA:</b></label>
-                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="hora_reserva" id="hora_reserva" required data-live-search-placeholder="Buscar categoría...">
-                  <option value="">Seleccione la hora reserva</option>
-                  {% for reserva in reservas %}
-                    <option value="{{ reserva.reserva_id }}" {% if detalle_Reservas.reserva.reserva_id == reserva.reserva_id %}selected{% endif %}>{{ reserva.hora_reserva }}</option>
-                  {% endfor %}
-                </select>
+                  <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE MENU:</b></label>
+                  <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="nombre_menu" id="nombre_menu" required data-live-search-placeholder="Buscar proveedor...">
+                      <option value="">Seleccione El Nombre Menú</option>
+                      {% for menu in menus %}
+                          <option value="{{ menu.menu_id }}" data-precio="{{ menu.precio_menu }}" {% if detalle_Reservas.menu.menu_id == menu.menu_id %}selected{% endif %}>{{ menu.nombre_menu }}</option>
+                      {% endfor %}
+                  </select>
               </div>
-            </div>
+              <div class="form-group col-md-6">
+                  <label for="menu_id_menu"><i class="fas fa-dollar-sign"></i> <b>PRECIO MENU:</b></label>
+                  <select class="form-control" id="menu_id_menu" name="menu_id_menu" readonly>
+                      <option value="">Seleccione Precio Menu</option>
+                  </select>
+              </div>
+          </div>
+
+          <div class="row">
+          <div class="form-group col-md-6">
+              <label for="hora_reserva"><i class="fas fa-clock"></i> <b>HORA DE RESERVA:</b></label>
+              <select class="form-control selectpicker" name="hora_reserva" id="hora_reserva" disabled>
+                  <option value="{{ detalle_Reservas.reserva.reserva_id }}" selected>
+                      {{ detalle_Reservas.reserva.hora_reserva }}
+                  </option>
+              </select>
+          </div>
+        </div>
           </div>
           <div class="modal-footer">
             <button type="submit" name="button" class="btn btn-warning">
@@ -276,5 +276,25 @@
       // Establece la fecha mínima en el campo de fecha
       document.getElementById('fecha_reserva').setAttribute('min', today);
   });
+</script>
+<script>
+    function updatePrice() {
+        var nombreMenuSelect = document.getElementById('nombre_menu');
+        var selectedOption = nombreMenuSelect.options[nombreMenuSelect.selectedIndex];
+        var precio = selectedOption.getAttribute('data-precio');
+
+        var precioSelect = document.getElementById('menu_id_menu');
+        precioSelect.innerHTML = '<option value="' + selectedOption.value + '">' + precio + '</option>';
+    }
+
+    // Event listener for when the user selects a new menu
+    document.getElementById('nombre_menu').addEventListener('change', function() {
+        updatePrice();
+    });
+
+    // Initial call to update the price when the page loads (for existing selections)
+    window.addEventListener('DOMContentLoaded', (event) => {
+        updatePrice();
+    });
 </script>
 {% endblock %}

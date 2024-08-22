@@ -3,7 +3,7 @@
 {% load static %}
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Agregar Detalles Ventas
+    Agregar Detalles Reserva
 </button>
 <br>
 <br>
@@ -81,30 +81,27 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                          <label for="menu_id_menu"><i class="fas fa-dollar-sign"></i> <b>PRECIO MENU:</b></label>
-                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu" id="menu_id_menu" required data-live-search-placeholder="Buscar proveedor...">
-                                <option value="">Seleccione Precio Menu</option>
-                                {% for menu in menus %}
-                                  <option value="{{ menu.menu_id }}">{{ menu.precio_menu }}</option>
-                                {% endfor %}
-                            </select>
+                          <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
+                          <input type="number" name="cantidad" id="cantidad" oninput="soloNumeros(this)" placeholder="Ingrese el número" class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-6">
+                      <div class="form-group col-md-6">
                           <label for="nombre_menu"><i class="fas fa-utensils"></i> <b>NOMBRE MENU:</b></label>
-                            <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu_nombre" id="menu_id_menu_nombre" required data-live-search-placeholder="Buscar proveedor...">
-                                <option value="">Seleccione El Nombre Menú</option>
-                                {% for menu in menus %}
-                                  <option value="{{ menu.menu_id }}">{{ menu.nombre_menu }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6">
-          				        <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
-          				        <input type="number" name="cantidad" id="cantidad" oninput="soloNumeros(this)" placeholder="Ingrese el número" class="form-control" required>
-          				      </div>
-                    </div>
+                          <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="nombre_menu" id="nombre_menu" required data-live-search-placeholder="Buscar proveedor...">
+                              <option value="">Seleccione El Nombre Menú</option>
+                              {% for menu in menus %}
+                                  <option value="{{ menu.menu_id }}" data-precio="{{ menu.precio_menu }}" {% if detalle_Reservas.menu.menu_id == menu.menu_id %}selected{% endif %}>{{ menu.nombre_menu }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label for="menu_id_menu"><i class="fas fa-dollar-sign"></i> <b>PRECIO MENU:</b></label>
+                          <select class="form-control" id="menu_id_menu" name="menu_id_menu" readonly>
+                              <option value="">Seleccione Precio Menu</option>
+                          </select>
+                      </div>
+                  </div>
                     <div class="row">
                         <div class="form-group col-md-6">
                           <label for="hora_reserva"><i class="fas fa-clock"></i> <b>HORA DE RESERVA:</b></label>
@@ -246,5 +243,46 @@ function eliminarDetalles_Reservas(detalle_reserva_id) {
             event.target.setCustomValidity('');
         }
     }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nombreMenuSelect = document.getElementById('menu_id_menu_nombre');
+    const precioMenuSelect = document.getElementById('menu_id_menu');
+
+    nombreMenuSelect.addEventListener('change', function() {
+        const selectedMenuId = nombreMenuSelect.value;
+
+        // Vaciar el campo de precio
+        precioMenuSelect.innerHTML = '<option value="">Seleccione Precio Menu</option>';
+
+        // Buscar el precio del menú seleccionado
+        {% for menu in menus %}
+        if ('{{ menu.menu_id }}' === selectedMenuId) {
+            const option = document.createElement('option');
+            option.value = '{{ menu.menu_id }}';
+            option.textContent = '{{ menu.precio_menu }}';
+            precioMenuSelect.appendChild(option);
+        }
+        {% endfor %}
+    });
+});
+</script>
+<script>
+  document.getElementById('nombre_menu').addEventListener('change', function() {
+      var selectedOption = this.options[this.selectedIndex];
+      var precio = selectedOption.getAttribute('data-precio');
+
+      var precioSelect = document.getElementById('menu_id_menu');
+      precioSelect.innerHTML = ''; // Limpia las opciones actuales
+
+      // Añade la opción del precio al segundo select
+      var option = document.createElement('option');
+      option.value = selectedOption.value;
+      option.textContent = precio ? `$${precio}` : 'Seleccione Precio Menu';
+      option.selected = true;
+      precioSelect.appendChild(option);
+  });
+
+</script>
 </script>
 {% endblock %}

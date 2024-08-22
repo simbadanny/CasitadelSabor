@@ -98,33 +98,33 @@
         <form class="" action="/procesarActualizacionVentas/"  enctype="multipart/form-data" method="post" id="frm_nuevo_ventas" >
           {% csrf_token %}
           <input type="hidden" name="venta_id"  value="{{ventas.venta_id}}">
-            <div class="row">
-                <!-- CLIENTE -->
-                <div class="form-group col-md-6">
-                    <label for="reserva_id_reserva">
-                        <b><i class="fas fa-user"></i> CLIENTE:</b>
-                    </label>
-                    <select class="form-control selectpicker" data-live-search="true" name="cliente_id_cliente" id="cliente_id_cliente" required>
-                        <option value="">Seleccione el Cliente</option>
-                        {% for cliente in clientes %}
-                        <option value="{{ cliente.cliente_id }}">{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+          <div class="row">
+    <!-- CLIENTE -->
+    <div class="form-group col-md-6">
+        <label for="cliente_id_cliente">
+            <b><i class="fas fa-user"></i> CLIENTE:</b>
+        </label>
+        <select class="form-control selectpicker" data-live-search="true" name="cliente_id_cliente" id="cliente_id_cliente" required>
+            <option value="">Seleccione el Cliente</option>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.cliente_id }}" {% if cliente.cliente_id == valor_cliente_actual %}selected{% endif %}>{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-                <!-- MESA -->
-                <div class="form-group col-md-6">
-                  <label for="id_mesa_mesa">
-                    <b><i class="fas fa-chair"></i> MESA</b>
-                  </label>
-                  <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="id_mesa_mesa" id="id_mesa_mesa" required data-live-search-placeholder="Buscar mesa...">
-                    <option value="">Seleccione la Mesa</option>
-                    {% for mesa in mesas %}
-                    <option value="{{ mesa.id_mesa }}">{{ mesa.numero_mes }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-            </div>
+    <!-- MESA -->
+    <div class="form-group col-md-6">
+      <label for="id_mesa_mesa">
+        <b><i class="fas fa-chair"></i> MESA</b>
+      </label>
+      <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="id_mesa_mesa" id="id_mesa_mesa" required data-live-search-placeholder="Buscar mesa...">
+        <option value="">Seleccione la Mesa</option>
+        {% for mesa in mesas %}
+        <option value="{{ mesa.id_mesa }}" {% if mesa.id_mesa == valor_mesa_actual %}selected{% endif %}>{{ mesa.numero_mes }}</option>
+        {% endfor %}
+      </select>
+    </div>
+</div>
             <script type="text/javascript">
                 document.getElementById("cliente_id_cliente").value = "{{ ventas.cliente.cliente_id }}";
                 document.getElementById("id_mesa_mesa").value = "{{ ventas.mesa.id_mesa }}";
@@ -141,6 +141,11 @@
                         <option value="{{ menus.menu_id }}" data-precio="{{ menus.precio_menu }}" {% if menus.menu_id == ventas.menu.menu_id %} selected {% endif %}>{{ menus.nombre_menu }}</option>
                         {% endfor %}
                     </select>
+                    <small class="form-text text-muted">
+                        El menú no puede ser cambiado directamente.
+                        <a href="{% url 'listadoDetalles_Reservas' %}" class="btn btn-link">Actualizar Detalle de Reserva</a>
+                        Para cambiar el menú.
+                    </small>
                 </div>
                 <!-- PRECIO MENÚ -->
                 <div class="form-group col-md-6">
@@ -150,7 +155,6 @@
                     <input type="text" id="precio_menu" class="form-control" readonly>
                 </div>
             </div>
-
 
             <div class="row">
                 <!-- NUMERO PERSONAS -->
@@ -385,6 +389,19 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 </script>
-
-
+<style media="screen">
+  .readonly {
+    pointer-events: none;
+    background-color: #e9ecef; /* Cambia el color si lo deseas */
+    color: #6c757d; /* Cambia el color del texto si lo deseas */
+}
+</style>
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    // Añadir la clase readonly a los selects que se deben bloquear
+    document.querySelectorAll('#cliente_id_cliente, #id_mesa_mesa, #menu_id_menu').forEach(function(select) {
+        select.classList.add('readonly');
+    });
+});
+</script>
 {% endblock %}

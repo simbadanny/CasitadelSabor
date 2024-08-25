@@ -1,585 +1,364 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>La casita del Sabor </title>
-	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-	<link rel="icon" href="{% static 'assets/img/logo.ico' %}" type="image/x-icon"/>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="{% static 'assetscli/images/logo.ico' %}" type="">
 
-	<!-- Fonts and icons -->
-	<script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
-	<script>
-		WebFont.load({
-			google: {"families":["Open+Sans:300,400,600,700"]},
-			custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ["{% static 'assets/css/fonts.css' %}"]},
-			active: function() {
-				sessionStorage.fonts = true;
-			}
-		});
-	</script>
-	<!-- Importar jQuery y otras dependencias -->
-	<script src="{% static 'library/jquery/jquery.min.js' %}"></script>
+  <title> La Casita del Sabor </title>
 
-	<!-- Bootstrap Select CSS -->
-	<link href="{% static 'library/bootstrap-select/bootstrap-select.css' %}" rel="stylesheet">
-	<!-- Bootstrap Select JS -->
-	<script src="{% static 'library/bootstrap-select/bootstrap-select.js' %}"></script>
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'assetscli/css/bootstrap.css' %}" />
 
-	<!-- Insertar las validaciones -->
-	<script src="{% static 'assets/js/plugin/jquery.validate/jquery.validate.min.js' %}"></script>
+  <!--owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <!-- nice select  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" />
 
-	<!-- Datatables -->
-	<script src="{% static 'assets/js/plugin/datatables/datatables.min.js' %}"></script>
-	<!-- DataTables Buttons -->
-	<script type="text/javascript" src="{% static 'library/data-table/data-botones.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'library/data-table/data-print.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'library/data-table/data-pdf.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'library/data-table/data-pdf-make.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'library/data-table/data-botones-html.min.js' %}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-ZKss5MhA14d2fZ7k1T5X00b2J6h9b0B36kHaWfqLky4uPthF08zG/vyMwS9qZY2nYbOyfKwGfKU1Q6nI9t+eyA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-	<!-- Izitoast CSS -->
-	<link rel="stylesheet" href="{% static 'library/izitoast/iziToast.min.css' %}"   />
-	<!-- Izitoast JS -->
-	<script src="{% static 'library/izitoast/iziToast.min.js' %}" ></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-	<!-- CSS Files -->
-	<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/azzara.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/demo.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
-	<!-- Incluye Font Awesome CSS -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-bEh6V8gHC4P5+oA9wo/2rdJZ7JGp8aRv8EV5q4x5EYJbU0bwkIuTFcYKX9b57nmEgpVhRt5GR/8Z+4SPH3r7PQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- font awesome style -->
+  <link href="{% static 'assetscli/css/font-awesome.min.css' %}" rel="stylesheet" />
 
-	<!-- Bootstrap Fileinput CSS -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/css/fileinput.min.css">
-
-   <!-- Bootstrap Fileinput JS -->
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/fileinput.min.js"></script>
-   <!-- español fileinput -->
-
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/locales/es.min.js"></script>
-
-   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-
-	 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom styles for this template -->
+  <link href="{% static 'assetscli/css/style.css' %}" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="{% static 'assetscli/css/responsive.css' %}" rel="stylesheet" />
 
 </head>
+
 <body>
-	<div class="wrapper">
-		<!--
-			Tip 1: You can change the background color of the main header using: data-background-color="blue | purple | light-blue | green | orange | red"
-		-->
-		<div class="main-header" data-background-color="purple">
-			<!-- Logo Header -->
-			<div class="logo-header">
 
-				<a href="index.html" class="logo">
-					<img src="{% static 'assets/img/logoazzara.svg' %}" alt="navbar brand" class="navbar-brand">
-				</a>
-				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon">
-						<i class="fa fa-bars"></i>
-					</span>
-				</button>
-				<button class="topbar-toggler more"><i class="fa fa-ellipsis-v"></i></button>
-				<div class="navbar-minimize">
-					<button class="btn btn-minimize btn-rounded">
-						<i class="fa fa-bars"></i>
-					</button>
-				</div>
-			</div>
-			<!-- End Logo Header -->
+  <div class="hero_area">
+    <div class="bg-box">
+      <img src="{% static 'assetscli/images/hero-bg.jpg' %}" alt="">
+    </div>
+    <!-- header section strats -->
+    <header class="header_section">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+          <a class="navbar-brand" href="index.html">
+            <span>
+              La Casita del Sabor
+            </span>
+          </a>
 
-			<!-- Navbar Header -->
-			<nav class="navbar navbar-header navbar-expand-lg">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class=""> </span>
+          </button>
 
-				<div class="container-fluid">
-					<div class="collapse" id="search-nav">
-						<form class="navbar-left navbar-form nav-search mr-md-3">
-							<div class="input-group">
-								<div class="input-group-prepend">
-									<button type="submit" class="btn btn-search pr-1">
-										<i class="fa fa-search search-icon"></i>
-									</button>
-								</div>
-								<input type="text" placeholder="Search ..." class="form-control">
-							</div>
-						</form>
-					</div>
-					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
-						<li class="nav-item toggle-nav-search hidden-caret">
-							<a class="nav-link" data-toggle="collapse" href="#search-nav" role="button" aria-expanded="false" aria-controls="search-nav">
-								<i class="fa fa-search"></i>
-							</a>
-						</li>
-						<li class="nav-item dropdown hidden-caret">
-							<a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="fa fa-envelope"></i>
-							</a>
-							<ul class="dropdown-menu messages-notif-box animated fadeIn" aria-labelledby="messageDropdown">
-								<li>
-									<div class="dropdown-title d-flex justify-content-between align-items-center">
-										Mensajes
-										<a href="#" class="small">Mark all as read</a>
-									</div>
-								</li>
-								<li>
-									<div class="message-notif-scroll scrollbar-outer">
-										<div class="notif-center">
-											<a href="#">
-												<div class="notif-img">
-													<img src="{% static 'assets/img/jm_denis.jpg' %}" alt="Img Profile">
-												</div>
-												<div class="notif-content">
-													<span class="subject">Jimmy Denis</span>
-													<span class="block">
-														How are you ?
-													</span>
-													<span class="time">5 minutes ago</span>
-												</div>
-											</a>
-											<a href="#">
-												<div class="notif-img">
-													<img src="{% static 'assets/img/chadengle.jpg' %}" alt="Img Profile">
-												</div>
-												<div class="notif-content">
-													<span class="subject">Chad</span>
-													<span class="block">
-														Ok, Thanks !
-													</span>
-													<span class="time">12 minutes ago</span>
-												</div>
-											</a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav  mx-auto ">
+              <li class="nav-item active">
+                <a class="nav-link" href="">Inicio <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'listadoOrdenMenus'%}">Menú</a>
+              </li>
 
-											<a href="#">
-												<div class="notif-img">
-													<img src="{% static 'assets/img/mlane.jpg' %}" alt="Img Profile">
-												</div>
-												<div class="notif-content">
-													<span class="subject">Jhon Doe</span>
-													<span class="block">
-														Ready for the meeting today...
-													</span>
-													<span class="time">12 minutes ago</span>
-												</div>
-											</a>
-											<a href="#">
-												<div class="notif-img">
-													<img src="{% static 'assets/img/talha.jpg' %}" alt="Img Profile">
-												</div>
-												<div class="notif-content">
-													<span class="subject">Talha</span>
-													<span class="block">
-														Hi, Apa Kabar ?
-													</span>
-													<span class="time">17 minutes ago</span>
-												</div>
-											</a>
-										</div>
-									</div>
-								</li>
-								<li>
-									<a class="see-all" href="javascript:void(0);">See all messages<i class="fa fa-angle-right"></i> </a>
-								</li>
-							</ul>
-						</li>
-						<li class="nav-item dropdown hidden-caret">
-							<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="fa fa-bell"></i>
-								<span class="notification">4</span>
-							</a>
-							<ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
-								<li>
-									<div class="dropdown-title">Tienes cuatro notificaciones</div>
-								</li>
-								<li>
-									<div class="notif-scroll scrollbar-outer">
-										<div class="notif-center">
-											<a href="#">
-												<div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i> </div>
-												<div class="notif-content">
-													<span class="block">
-														New user registered
-													</span>
-													<span class="time">5 minutes ago</span>
-												</div>
-											</a>
-											<a href="#">
-												<div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
-												<div class="notif-content">
-													<span class="block">
-														Rahmad commented on Admin
-													</span>
-													<span class="time">12 minutes ago</span>
-												</div>
-											</a>
-											<a href="#">
-												<div class="notif-img">
-													<img src="{% static '/img/profile2.jpg' %}" alt="Img Profile">
-												</div>
-												<div class="notif-content">
-													<span class="block">
-														Reza send messages to you
-													</span>
-													<span class="time">12 minutes ago</span>
-												</div>
-											</a>
-											<a href="#">
-												<div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
-												<div class="notif-content">
-													<span class="block">
-														Farrah liked Admin
-													</span>
-													<span class="time">17 minutes ago</span>
-												</div>
-											</a>
-										</div>
-									</div>
-								</li>
-								<li>
-									<a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i> </a>
-								</li>
-							</ul>
-						</li>
-						<li class="nav-item dropdown hidden-caret">
-							<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
-								<div class="avatar-sm">
-									<img src="{% static 'assets/img/profile.jpg' %}" alt="..." class="avatar-img rounded-circle">
-								</div>
-							</a>
-							<ul class="dropdown-menu dropdown-user animated fadeIn">
-								<li>
-									<div class="user-box">
-										<div class="u-text">
-											<h4>{{ user.username | upper }} {{ user.last_name | upper }}</h4>
-											<p class="text-muted">{{ user.email | upper }}</p><a href="profile.html" class="btn btn-rounded btn-danger btn-sm"></a>
-										</div>
-									</div>
-								</li>
-								<li>
-									<a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sección</a>
-								</li>
-							</ul>
-						</li>
+              <!-- <li class="nav-item">
+                <a class="nav-link" href="book.html">Mesas</a>
+              </li> -->
+            </ul>
+            <div class="user_option">
+              {% if user.is_authenticated %}
+                  <span class="username">Hola, {{ user.first_name }}!</span>
+                  <a href="{% url 'logout' %}" class="order_online">Cerrar Sesión</a>
+              {% else %}
+                  <a href="{% url 'login' %}" class="order_online">Iniciar Sesión</a>
+                  <a href="{% url 'registro' %}" class="order_online">Regístrate</a>
+              {% endif %}
+          </div>
+            <style>
+              .username {
+                color: #ffffff;
+                font-weight: bold;
+              }
+            </style>
 
-					</ul>
-				</div>
-			</nav>
-			<!-- End Navbar -->
-		</div>
-
-		<!-- Sidebar -->
-		<div class="sidebar">
-
-			<div class="sidebar-background"></div>
-			<div class="sidebar-wrapper scrollbar-inner">
-				<div class="sidebar-content">
-					<div class="user">
-						<div class="avatar-sm float-left mr-2">
-							<img src="{% static 'assets/img/profile.jpg' %}" alt="..." class="avatar-img rounded-circle">
-						</div>
-						<div class="info">
-							<a data-toggle="collapse" href="#collapseExa" aria-expanded="true">
-								<span>
-									<span class="user-level">Administrator</span>
-									<span class="caret"></span>
-								</span>
-							</a>
-							<div class="clearfix"></div>
-						</div>
-					</div>
-					<ul class="nav">
-						<li class="nav-item active">
-							<a href="{% url 'bienvenida'%}">
-								<i class="fas fa-home"></i>
-								<p>Inicio</p>
-								<span class="badge badge-count"></span>
-							</a>
-						</li>
-						<li class="nav-section">
-							<span class="sidebar-mini-icon">
-								<i class="fa fa-ellipsis-h"></i>
-							</span>
-							<h4 class="text-section">Administra</h4>
-						</li>
-						<li class="nav-item">
-							<a data-toggle="collapse" href="#base">
-								<i class="fas fa-users"></i>
-								<p>Cliente</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="base">
-								<ul class="nav nav-collapse">
-									<li>
-									    <a href="{% url 'listadoClientes' %}">
-									        <span class="sub-item">Listado Clientes</span>
-									    </a>
-									</li>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="nav-item">
-							<a data-toggle="collapse" href="#forms">
-								<i class="fas fa-table"></i>
-								<p>MESAS-ADMIN</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="forms">
-								<ul class="nav nav-collapse">
-									<li>
-										<a href="{% url 'listadoMesas'%}">
-											<span class="sub-item">LISTA DE MESAS</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="nav-item">
-							<a data-toggle="collapse" href="#tables">
-								<i class="fas fa-calendar-alt"></i>
-								<p>RESERVAS</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="tables">
-								<ul class="nav nav-collapse">
-									<li>
-										<a href="{% url 'listadoReservas' %}">
-											<span class="sub-item">Listado Reservas</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="nav-item">
-							<a data-toggle="collapse" href="#custompages">
-								<i class="far fa-calendar-check"></i>
-								<p>DETALLES DE RESERVA</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="custompages">
-								<ul class="nav nav-collapse">
-									<li>
-										<a href="{% url 'listadoDetalles_Reservas' %}">
-											<span class="sub-item">Listado Detalles Reservas</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="nav-item">
-							<a data-toggle="collapse" href="#maps">
-								<i class="fas fa-chart-line"></i>
-								<p>VENTAS</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="maps">
-								<ul class="nav nav-collapse">
-									<li>
-										<a href="{% url 'listadoVentas' %}">
-											<span class="sub-item">LISTADO VENTAS</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="nav-item">
-							<a data-toggle="collapse" href="#charts">
-								<i class="fas fa-concierge-bell"></i>
-								<p>MENUS</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="charts">
-								<ul class="nav nav-collapse">
-
-									<li>
-										<a href="{% url 'listadoMenus'%}">
-											<span class="sub-item">Listado Menu</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="nav-item">
-					    <a data-toggle="collapse" href="#promocionesCollapse">
-					        <i class="fas fa-utensils"></i>
-					        <p>PROMOCIONES</p>
-					        <span class="caret"></span>
-					    </a>
-					    <div class="collapse" id="promocionesCollapse">
-					        <ul class="nav nav-collapse">
-					            <li>
-					                <a href="{% url 'listadoPromociones' %}">
-					                    <span class="sub-item">Listado Promociones</span>
-					                </a>
-					            </li>
-					        </ul>
-					    </div>
-					</li>
-					<li class="nav-item">
-							<a data-toggle="collapse" href="#reciboReservas">
-									<i class="fas fa-receipt"></i>
-									<p>RECIBO RESERVAS</p>
-									<span class="caret"></span>
-							</a>
-							<div class="collapse" id="reciboReservas">
-									<ul class="nav nav-collapse">
-											<li>
-													<a href="{% url 'listadoRecibo_Reserva' %}">
-															<span class="sub-item">listado Recibo </span>
-													</a>
-											</li>
-									</ul>
-							</div>
-						</li>
-							<li class="nav-item">
-							    <a data-toggle="collapse" href="#reporte_semanal">
-							        <i class="fas fa-chart-line"></i>
-							        <p>REPORTE SEMANAL</p>
-							        <span class="caret"></span>
-							    </a>
-							    <div class="collapse" id="reporte_semanal">
-							        <ul class="nav nav-collapse">
-							            <li>
-							                <a href="{% url 'reporte_semanal' %}">
-							                    <i class="fas fa-chart-line"></i>
-							                    <span class="sub-item">Reportes Semanales</span>
-							                </a>
-							            </li>
-							        </ul>
-							    </div>
-							</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<!-- End Sidebar -->
-
-		<div class="main-panel">
-			<div class="content">
-				<div class="page-inner">
-					<div class="page-header">
-
-						<div class="btn-group btn-group-page-header ml-auto">
-							<button type="button" class="btn btn-light btn-round btn-page-header-dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="fa fa-ellipsis-h"></i>
-							</button>
-							<div class="dropdown-menu">
-								<div class="arrow"></div>
-								<a class="dropdown-item" href="{% url 'listadoClientes' %}">Ver Clientes</a>
-								<a class="dropdown-item" href="{% url 'listadoPromociones' %}">Ver Promociones</a>
-								<a class="dropdown-item" href="{% url 'listadoReservas' %}">Ver Reservas</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="{% url 'reporte_semanal' %}">Ver Reporte Semanal</a>
-							</div>
-						</div>
-					</div>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <!-- end header section -->
+    <!-- slider section -->
+    <section class="slider_section ">
+      <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-7 col-lg-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      Tenemos Promociones
+                    </h1>
+                    <p style="text-align: justify;">
+                      ¡Explora el placer de sabores únicos con nuestras increíbles promociones en platos deliciosos! 🍝🍔 Desde pastas artesanales hasta hamburguesas gourmet, ¡cada bocado es una experiencia inolvidable! No esperes más para disfrutar momentos deliciosos en nuestro restaurante. ¡Ven y déjate cautivar por la magia de nuestros sabores! ✨
+                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'login'%}" class="btn1">
+                        ¡Ordena ahora!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item ">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-7 col-lg-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      Lo Mejor en Parrilladas
+                    </h1>
+                    <p style="text-align: justify;">
+                      ¡Disfruta de las mejores parrilladas con nuestras promociones imperdibles! 🍖 Saborea jugosas carnes asadas y acompañamientos irresistibles en nuestro restaurante. ¡Ven y déjate cautivar por la magia de nuestros sabores! ✨                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'login'%}" class="btn1">
+                        ¡Ordena ahora!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-7 col-lg-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      Reserva tu Mesa Para tu Familia
+                    </h1>
+                    <p style="text-align: justify;">
+                      ¡Reserva tu mesa para disfrutar de momentos especiales en familia! 🍽️ Déjate sorprender por nuestros sabores únicos y nuestro cálido servicio. ¡Haz de cada comida una experiencia inolvidable con nosotros! 🎉                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'login'%}" class="btn1">
+                        ¡Ordena ahora!
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <ol class="carousel-indicators">
+            <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
+            <li data-target="#customCarousel1" data-slide-to="1"></li>
+            <li data-target="#customCarousel1" data-slide-to="2"></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+<br>
+<br>
 
 
-					{% block contenido  %}
-						{% endblock %}
+  <div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="bg-light p-4 rounded">
+                <h2 class="mb-4">La Mision</h2>
+                <p style="text-align: justify;">🍽️ La misión de La Casita del Sabor es ofrecer una experiencia culinaria única, preservando la comida tradicional con un enfoque en el cuidado de la salud. Nos esforzamos por innovar continuamente, incorporando las opiniones de nuestros clientes para garantizar su máxima satisfacción. 💡</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div>
+                <img src="{% static 'assetscli/images/mi.jpg' %}" class="img-fluid" alt="">
+            </div>
+        </div>
+    </div>
+  </div>
+<br>
+<br>
+<br>
+<br>
+    <section class="about_section layout_padding">
+      <div class="container  ">
 
-				</div>
-			</div>
+        <div class="row">
+          <div class="col-md-6 ">
+            <div class="img-box">
+              <img src="{% static 'assetscli/images/mi.jpg' %}" class="img-fluid" alt="">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-box">
+              <div class="heading_container">
+                <h2>
+                  LA Vision
+                </h2>
+              </div>
+              <p style="text-align: justify;">
+                "🌟 Nuestro objetivo es ser reconocidos como el restaurante líder en la preservación de la comida tradicional, adaptándola a un estilo de vida saludable. 💚 Aspiramos a crear un espacio donde cada cliente se sienta valorado y donde la innovación y la calidad sean nuestras principales características, logrando así una experiencia culinaria inigualable y memorable. 🍴✨"
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <br>
+    <br>
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="mb-4">Historia del Restaurante</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card history-card p-3 mb-4">
+                    <div class="card-body">
+                        <p style="text-align: justify;">La Casita del Sabor es un emprendimiento familiar que comenzó en 2016 en el Cantón Píllaro, en la parroquia San Miguelito. Inicialmente, se abrió en un pequeño local con solo cuatro mesas, ofreciendo almuerzos caseros. La propietaria, con la ayuda de sus hijas, se encargaba de la preparación de los almuerzos.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card history-card p-3 mb-4">
+                    <div class="card-body">
+                        <p style="text-align: justify;">A raíz de la pandemia, debido a la distancia de su domicilio en otro cantón y la falta de transporte, se tomó la decisión de trasladar el restaurante a la localidad donde se ubicaba su domicilió en el Cantón Patate Parroquia Los Andes. Este cambio llevó a la adaptación del espacio para instalar el restaurante en el nuevo domicilio. En un principio, el negocio se enfocó en ofrecer almuerzos para llevar, pero la falta de publicidad y el reducido número de habitantes en la nueva ubicación representaron un desafío significativo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card history-card p-3 mb-4">
+                    <div class="card-body">
+                        <p style="text-align: justify;">Sin embargo, con el tiempo, el esfuerzo dio frutos y comenzaron a llegar clientes conocidos. Con el control de la pandemia y el crecimiento del área en el ámbito turístico, la clientela aumentó notablemente. El restaurante, ahora bien establecido, se ha convertido en un negocio familiar donde cada miembro de la familia desempeña una función específica dentro del local.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		</div>
+    <style>
+        .history-card {
+            border: 2px solid #f1c40f; /* Bordes amarillos */
+            border-radius: 15px; /* Bordes redondeados */
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .history-card:hover {
+            transform: scale(1.05); /* Escalado al pasar el ratón */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra al pasar el ratón */
+        }
+    </style>
 
-				{% if messages %}
-		    {% for mensaje in messages %}
-		        <script type="text/javascript">
-		            iziToast.success({
-		                title: 'OK',
-		                message: '{{ mensaje }}',
-		                position: 'topRight',
-		                progressBarColor: 'rgb(245, 247, 248)',
-		                backgroundColor: '#F5F7F8'
-		            });
-		        </script>
-		    {% endfor %}
-		{% endif %}
-		<!-- Custom template | don't include it in your project! -->
-		<div class="custom-template">
-			<div class="title">Configuración</div>
-			<div class="custom-content">
-				<div class="switcher">
-					<div class="switch-block">
-						<h4>Topbar</h4>
-						<div class="btnSwitch">
-							<button type="button" class="changeMainHeaderColor" data-color="blue"></button>
-							<button type="button" class="selected changeMainHeaderColor" data-color="purple"></button>
-							<button type="button" class="changeMainHeaderColor" data-color="light-blue"></button>
-							<button type="button" class="changeMainHeaderColor" data-color="green"></button>
-							<button type="button" class="changeMainHeaderColor" data-color="orange"></button>
-							<button type="button" class="changeMainHeaderColor" data-color="red"></button>
-						</div>
-					</div>
-					<div class="switch-block">
-						<h4>Background</h4>
-						<div class="btnSwitch">
-							<button type="button" class="changeBackgroundColor" data-color="bg2"></button>
-							<button type="button" class="changeBackgroundColor selected" data-color="bg1"></button>
-							<button type="button" class="changeBackgroundColor" data-color="bg3"></button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="custom-toggle">
-				<i class="flaticon-settings"></i>
-			</div>
-		</div>
-		<!-- End Custom template -->
-	</div>
-</div>
+    <section class="client_section layout_padding-bottom">
+     <div class="container">
+       <div class="heading_container heading_center psudo_white_primary mb_45">
+         <h2>
+          "En cada plato 🍽️, servimos una experiencia única ✨. ¡Gracias por acompañarnos y permitirnos ser parte de sus momentos especiales 🎉!"
+         </h2>
+       </div>
+     </div>
+   </section>
+  <footer class="footer_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 footer-col">
+          <div class="footer_contact">
+            <h4>
+              Contactos
+            </h4>
+            <div class="contact_link_box">
+              <a href="https://maps.app.goo.gl/Zf1dj3XX6W28UrWC9" target="_blank">
+                <i class="fa fa-map-marker" aria-hidden="true" ></i>
+                <span>
+                  Lugar
+                </span>
+              </a>
+              <a href="https://wa.me/593992217026" target="_blank">
+                <i class="fa fa-phone" aria-hidden="true" ></i>
+                <span>
+                  Numero telefonico +593 99 221 7026
+                </span>
+              </a>
+              <a href="mailto:casitasabor823%40gmail.com" target="_blank">
+                <i class="fa fa-envelope" aria-hidden="true" ></i>
+                <span>
+                  casitasabor823@gmail.com
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 footer-col">
+          <div class="footer_detail">
+            <a href="" class="footer-logo">
+              La Casita del Sabor
+            </a>
+            <p>
+              La felicidad es compartir en familia, ven y conose la nuestra por que aki comeras como en casa
+            </p>
+            <div class="footer_social">
+              <a href="https://www.facebook.com/profile.php?id=100063899085512&mibextid=ZbWKwL" target="_blank">
+                  <i class="fa fa-facebook" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 footer-col">
+          <h4>
+            Horario de Atención
+          </h4>
+          <p>
+            Lunes - Domingo
+          </p>
+          <p>
+            08 Am - 07 Pm
+          </p>
+        </div>
+      </div>
+      <div class="footer-info">
+        <p>
+          &copy; <span id="displayYear"></span> Universidad Tecnica Cotopaxi
+          <a href="https://html.design/"></a><br><br>
+          &copy; <span id="displayYear"></span> La Casita
+          <a href="https://themewagon.com/" target="_blank">del Sabor</a>
+        </p>
+      </div>
+    </div>
+  </footer>
 
-
-
-
-
-
-
-<script src="{% static 'assets/js/core/popper.min.js' %}"></script>
-<script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
-
-<!-- jQuery UI -->
-<script src="{% static 'assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
-<script src="{% static 'assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js' %}"></script>
-
-<!-- jQuery Scrollbar -->
-<script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
-
-<!-- Moment JS -->
-<script src="{% static 'assets/js/plugin/moment/moment.min.js' %}"></script>
-
-<!-- Chart JS -->
-<script src="{% static 'assets/js/plugin/chart.js/chart.min.js' %}"></script>
-
-<!-- jQuery Sparkline -->
-<script src="{% static 'assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
-
-<!-- Chart Circle -->
-<script src="{% static 'assets/js/plugin/chart-circle/circles.min.js' %}"></script>
-
-<!-- Bootstrap Toggle -->
-<script src="{% static 'assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js' %}"></script>
-
-<!-- jQuery Vector Maps -->
-<script src="{% static 'assets/js/plugin/jqvmap/jquery.vmap.min.js' %}"></script>
-<script src="{% static 'assets/js/plugin/jqvmap/maps/jquery.vmap.world.js' %}"></script>
-
-<!-- Google Maps Plugin -->
-<script src="{% static 'assets/js/plugin/gmaps/gmaps.js' %}"></script>
-
-<!-- Sweet Alert -->
-<script src="{% static 'assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
-
-<!-- Azzara JS -->
-<script src="{% static 'assets/js/ready.min.js' %}"></script>
-
-<!-- Azzara DEMO methods, don't include it in your project! -->
-<script src="{% static 'assets/js/setting-demo.js' %}"></script>
-<script src="{% static 'assets/js/demo.js' %}"></script>
+  <script src="{% static 'assetscli/js/jquery-3.4.1.min.js' %}"></script>
+  <!-- popper js -->
+  <script src="{% static 'assetscli/https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js' %}" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+  <!-- bootstrap js -->
+  <script src="{% static 'assetscli/js/bootstrap.js' %}"></script>
+  <!-- owl slider -->
+  <script src="{% static 'assetscli/https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js' %}">
+  </script>
+  <!-- isotope js -->
+  <script src="{% static 'assetscli/https://unpkg.com/isotope-layout@3.0.4/dist/isotope.pkgd.min.js' %}"></script>
+  <!-- nice select -->
+  <script src="{% static 'assetscli/https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js' %}"></script>
+  <!-- custom js -->
+  <script src="{% static 'assetscli/js/custom.js' %}"></script>
+  <!-- Google Map -->
+  <script src="{% static 'assetscli/https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap' %}">
+  </script>
+  <!-- End Google Map -->
 
 </body>
+
 </html>

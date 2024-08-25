@@ -119,54 +119,54 @@
       </ul>
 
       <div class="row menu-items">
-          {% for menu in menus %}
-          <div class="col-sm-6 col-lg-4 menu-item {{ menu.categoria_menu|lower }}">
-              <div class="box">
-                  <!-- Etiqueta de Promoción -->
-                  {% if menu in menus_con_promocion %}
-                  <div class="promotion-tag">¡En Promoción!</div>
-                  {% endif %}
-                  <div class="img-box">
-                      {% if menu.fotos_menu %}
-                      <img src="{{ menu.fotos_menu.url }}" alt="{{ menu.nombre_menu }}">
-                      {% else %}
-                      <img src="{% static 'placeholder.jpg' %}" alt="No Image">
-                      {% endif %}
-                  </div>
-                  <div class="detail-box">
-                      <h5>{{ menu.nombre_menu }}</h5>
-                      <p style="text-align: justify;">{{ menu.descripcion_menu }}</p>
-                      <div class="availability">
-                          {% if menu.disponibilidad_menu == "disponible" %}
-                          <span class="badge badge-success">Disponible</span>
-                          {% elif menu.disponibilidad_menu == "no_disponible" %}
-                          <span class="badge badge-danger">No Disponible</span>
-                          {% else %}
-                          <span class="badge badge-warning">Indeterminate</span>
-                          {% endif %}
-                      </div>
-                      <div class="options">
-                          {% if menu.tiene_promocion_activa %}
-                          <h6>
-                              <span style="text-decoration: line-through;">${{ menu.precio_menu }}</span>
-                              ${{ menu.precio_con_descuento }}
-                          </h6>
-                          {% else %}
-                          <h6>${{ menu.precio_menu }}</h6>
-                          {% endif %}
-                          <button type="button" class="btnProducto btn bg-info text-white"
-                          data-id="{{menu.menu_id}}"
-                          data-img="{{menu.fotos_menu}}"
-                          data-name="{{menu.nombre_menu}}"
-                          data-price="{{menu.precio_menu}}"
-                          data-toggle="modal" data-target="#exampleModal"
-                          {% if menu.disponibilidad_menu != "disponible" %}disabled{% endif %}>
-                          Ordenar
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          </div>
+            {% for menu in menus %}
+            <div class="col-sm-6 col-lg-4 menu-item {{ menu.categoria_menu|lower }}">
+                <div class="box">
+                    <!-- Etiqueta de Promoción -->
+                    {% if menu in menus_con_promocion %}
+                    <div class="promotion-tag">¡En Promoción!</div>
+                    {% endif %}
+                    <div class="img-box">
+                        {% if menu.fotos_menu %}
+                        <img src="{{ menu.fotos_menu.url }}" alt="{{ menu.nombre_menu }}">
+                        {% else %}
+                        <img src="{% static 'placeholder.jpg' %}" alt="No Image">
+                        {% endif %}
+                    </div>
+                    <div class="detail-box">
+                        <h5>{{ menu.nombre_menu }}</h5>
+                        <p style="text-align: justify;">{{ menu.descripcion_menu }}</p>
+                        <div class="availability">
+                            {% if menu.disponibilidad_menu == "disponible" %}
+                            <span class="badge badge-success">Disponible</span>
+                            {% elif menu.disponibilidad_menu == "no_disponible" %}
+                            <span class="badge badge-danger">No Disponible</span>
+                            {% else %}
+                            <span class="badge badge-warning">Indeterminate</span>
+                            {% endif %}
+                        </div>
+                        <div class="options">
+                            {% if menu.tiene_promocion_activa %}
+                            <h6>
+                                <span style="text-decoration: line-through;">${{ menu.precio_menu }}</span>
+                                ${{ menu.precio_con_descuento }}
+                            </h6>
+                            {% else %}
+                            <h6>${{ menu.precio_menu }}</h6>
+                            {% endif %}
+                            <button type="button" class="btnProducto btn bg-info text-white"
+                            data-id="{{ menu.menu_id }}"
+                            data-img="{{ menu.fotos_menu }}"
+                            data-name="{{ menu.nombre_menu }}"
+                            data-price="{% if menu.tiene_promocion_activa %}{{ menu.precio_con_descuento }}{% else %}{{ menu.precio_menu }}{% endif %}"
+                            data-toggle="modal" data-target="#exampleModal"
+                            {% if menu.disponibilidad_menu != "disponible" %}disabled{% endif %}>
+                            Ordenar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
           {% endfor %}
       </div>
     </div>
@@ -354,268 +354,273 @@
   </script>
 
   <input type="hidden" name="user" id="user" value="{{ user.cliente_id }}">
+  <input type="hidden" name="nombre" id="nombre" value="{{ user.nombre_cli }}">
+  <input type="hidden" name="apellido" id="apellido" value="{{ user.apellido_cli }}">
+
   <!-- <input type="hidden" name="url" id="url" value="{% url 'plantillaCliente' %}"> -->
   <!-- carrito de compras -->
   <script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', (event) => {
-      const fechaCompraInput = document.getElementById('fecha-compra');
-      const horaCompraInput = document.getElementById('hora-compra');
+      document.addEventListener('DOMContentLoaded', () => {
+        const fechaCompraInput = document.getElementById('fecha-compra');
+        const horaCompraInput = document.getElementById('hora-compra');
 
-      let today = new Date();
-      let day = String(today.getDate()).padStart(2, '0');
-      let month = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0
-      let year = today.getFullYear();
-      let hours = String(today.getHours()).padStart(2, '0');
-      let minutes = String(today.getMinutes()).padStart(2, '0');
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0
+        const year = today.getFullYear();
+        const hours = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
 
-      // Define la hora mínima y máxima permitida
-      let minAllowedHours = 8;
-      let maxAllowedHours = 19;
-      let minAllowedTime = `${String(minAllowedHours).padStart(2, '0')}:${String(0).padStart(2, '0')}`; // 08:00 AM
-      let maxAllowedTime = `${String(maxAllowedHours).padStart(2, '0')}:${String(0).padStart(2, '0')}`; // 07:00 PM
+        const minAllowedHours = 8;
+        const maxAllowedHours = 19;
+        const minAllowedTime = `${String(minAllowedHours).padStart(2, '0')}:${String(0).padStart(2, '0')}`; // 08:00 AM
+        const maxAllowedTime = `${String(maxAllowedHours).padStart(2, '0')}:${String(0).padStart(2, '0')}`; // 07:00 PM
 
-      let todayDate = `${year}-${month}-${day}`;
+        const todayDate = `${year}-${month}-${day}`;
 
-      // Establece la fecha mínima en el input de fecha
-      fechaCompraInput.setAttribute('min', todayDate);
-      // Establece la hora mínima y máxima en el input de hora
-      horaCompraInput.setAttribute('min', minAllowedTime);
-      horaCompraInput.setAttribute('max', maxAllowedTime);
+        // Establece la fecha mínima en el input de fecha
+        fechaCompraInput.setAttribute('min', todayDate);
 
-      // Actualiza la hora mínima y máxima cuando se cambia la fecha
-      fechaCompraInput.addEventListener('change', () => {
-        let selectedDate = new Date(fechaCompraInput.value);
-        if (selectedDate.toDateString() === today.toDateString()) {
-          horaCompraInput.setAttribute('min', minAllowedTime);
-          horaCompraInput.setAttribute('max', maxAllowedTime);
-        } else {
-          horaCompraInput.removeAttribute('min');
-          horaCompraInput.removeAttribute('max');
-        }
-      });
-
-      // Verifica la hora mínima y máxima al cargar la página si la fecha actual es seleccionada
-      if (fechaCompraInput.value === todayDate) {
+        // Establece la hora mínima y máxima en el input de hora
         horaCompraInput.setAttribute('min', minAllowedTime);
         horaCompraInput.setAttribute('max', maxAllowedTime);
-      }
-    });
 
-    $('.btnProducto').click(function (e) {
-      let plato = $(this).attr('data-id');
-      let name = $(this).attr('data-name');
-      let price = $(this).attr('data-price');
-      let img = $(this).attr('data-img');
-      let cuerpoCarritoDB = localStorage.getItem('cuerpoCarrito');
-      $('#cuerpo-carrito').html(cuerpoCarritoDB);
-
-      let buscarPlato = $(".carrito-nombre-plato[data-id=" + plato + "]");
-
-      if (!buscarPlato.length) {
-        let html = `
-          <div class="row" articulo-id="${plato}">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <img src="/media/${img}" class="img-fluid" alt="Imagen del producto">
-                    </div>
-                    <div class="col-md-8">
-                      <p class="card-title"><b>${name}</b></p>
-                      <p class="card-text"><strong>Precio:</strong> $${price}</p>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <input type="number" class="carrito-nombre-plato form-control w-25"
-                        value="1" min="1"
-                        data-id="${plato}"
-                        data-price="${price}"
-                        data-name="${name}">
-                        <button class="btn btn-danger btn-reserva-eliminar" data-id="${plato}">Eliminar</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        $('#cuerpo-carrito').append(html);
-      }
-
-      $(this).removeClass('bg-info');
-      $(this).addClass('bg-danger');
-      $(this).text('Ordenado');
-
-      let cuerpoCarrito = $('#cuerpo-carrito').html();
-      localStorage.setItem('cuerpoCarrito', cuerpoCarrito);
-    });
-
-    $("#cuerpo-carrito").on('click', '.btn-reserva-eliminar', function (e) {
-      e.preventDefault();
-      let id = $(this).attr('data-id');
-      $('div[articulo-id="' + id + '"]').remove();
-
-      $('.btnProducto[data-id="' + id + '"]').removeClass('bg-danger');
-      $('.btnProducto[data-id="' + id + '"]').addClass('bg-info');
-      $('.btnProducto[data-id="' + id + '"]').text('Ordenar');
-
-      let cuerpoCarrito = $('#cuerpo-carrito').html();
-
-      localStorage.setItem('cuerpoCarrito', cuerpoCarrito);
-    });
-
-    async function comprar() {
-      let user = $('#user').val();
-      let mesa = $('#mesa-select').val();
-      let personas = parseInt($("#personas").val(), 10);
-      let fecha = $('#fecha-compra').val();
-      let hora = $('#hora-compra').val();
-      let validar = true;
-
-      var inputs = $('input.carrito-nombre-plato');
-      let articulos = [];
-
-      // Recorre cada input y añade su valor a la lista
-      inputs.each(function () {
-        articulos.push({
-          plato_id: $(this).attr('data-id'),
-          nombre_plato: $(this).attr('data-name'), // Incluye el nombre del plato
-          cantidad: $(this).val(),
-          price: $(this).attr('data-price')
+        // Actualiza la hora mínima y máxima cuando se cambia la fecha
+        fechaCompraInput.addEventListener('change', () => {
+            const selectedDate = new Date(fechaCompraInput.value);
+            if (selectedDate.toDateString() === today.toDateString()) {
+                horaCompraInput.setAttribute('min', minAllowedTime);
+                horaCompraInput.setAttribute('max', maxAllowedTime);
+            } else {
+                horaCompraInput.removeAttribute('min');
+                horaCompraInput.removeAttribute('max');
+            }
         });
-      });
 
-      // Validaciones aquí...
-      if (!user) {
+        // Verifica la hora mínima y máxima al cargar la página si la fecha actual es seleccionada
+        if (fechaCompraInput.value === todayDate) {
+            horaCompraInput.setAttribute('min', minAllowedTime);
+            horaCompraInput.setAttribute('max', maxAllowedTime);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    $('.btnProducto').click(function () {
+        const plato = $(this).data('id');
+        const name = $(this).data('name');
+        const price = $(this).data('price');
+        const img = $(this).data('img');
+        let cuerpoCarritoDB = localStorage.getItem('cuerpoCarrito');
+        $('#cuerpo-carrito').html(cuerpoCarritoDB);
+
+        const buscarPlato = $(`.carrito-nombre-plato[data-id=${plato}]`);
+
+        if (!buscarPlato.length) {
+            const html = `
+                <div class="row" articulo-id="${plato}">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="/media/${img}" class="img-fluid" alt="Imagen del producto">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p class="card-title"><b>${name}</b></p>
+                                        <p class="card-text"><strong>Precio:</strong> $${price}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <input type="number" class="carrito-nombre-plato form-control w-25"
+                                            value="1" min="1"
+                                            data-id="${plato}"
+                                            data-price="${price}"
+                                            data-name="${name}">
+                                            <button class="btn btn-danger btn-reserva-eliminar" data-id="${plato}">Eliminar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $('#cuerpo-carrito').append(html);
+        }
+
+        $(this).removeClass('bg-info');
+        $(this).addClass('bg-danger');
+        $(this).text('Ordenado');
+
+        const cuerpoCarrito = $('#cuerpo-carrito').html();
+        localStorage.setItem('cuerpoCarrito', cuerpoCarrito);
+        });
+
+        $("#cuerpo-carrito").on('click', '.btn-reserva-eliminar', function (e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            $(`div[articulo-id="${id}"]`).remove();
+
+            const button = $(`.btnProducto[data-id="${id}"]`);
+            button.removeClass('bg-danger');
+            button.addClass('bg-info');
+            button.text('Ordenar');
+
+            const cuerpoCarrito = $('#cuerpo-carrito').html();
+            localStorage.setItem('cuerpoCarrito', cuerpoCarrito);
+        });
+    });
+    async function comprar() {
+    let user = $('#user').val();
+    let mesa = $('#mesa-select').val();
+    let personas = parseInt($("#personas").val(), 10);
+    let fecha = $('#fecha-compra').val();
+    let hora = $('#hora-compra').val();
+    let validar = true;
+
+    var inputs = $('input.carrito-nombre-plato');
+    let articulos = [];
+
+    // Recorre cada input y añade su valor a la lista
+    inputs.each(function () {
+        // Asegúrate de que el precio con descuento esté disponible en algún lugar
+        // Aquí se asume que el precio con descuento está en un atributo `data-discount-price`
+        // Si no está disponible, este ejemplo usa el precio actual como alternativa
+        let precio = $(this).data('discount-price') || $(this).attr('data-price');
+
+        articulos.push({
+            plato_id: $(this).attr('data-id'),
+            nombre_plato: $(this).attr('data-name'),
+            cantidad: $(this).val(),
+            price: precio // Usa el precio con descuento si está disponible
+        });
+    });
+
+    // Validaciones aquí...
+    if (!user) {
         mostrarError('Perdón, pero necesitas iniciar sesión.');
         validar = false;
-      }
+    }
 
-      if (!mesa) {
+    if (!mesa) {
         mostrarError('Selecciona una mesa, por favor 🪑🙏.');
         validar = false;
-      }
+    }
 
-      if (isNaN(personas) || personas <= 0) {
+    if (isNaN(personas) || personas <= 0) {
         mostrarError('Debe haber al menos una persona en la mesa 👤🪑.');
         validar = false;
-      }
+    }
 
-      if (!fecha || !hora) {
+    if (!fecha || !hora) {
         mostrarError('Debe seleccionar una fecha 📅 y una hora 🕒.');
         validar = false;
-      } else {
+    } else {
         let fechaHoy = new Date();
         let fechaReserva = new Date(fecha + 'T' + hora);
-
 
         let dosHorasDesdeAhora = new Date(fechaHoy.getTime() + 2 * 60 * 60 * 1000);
 
         if (fechaReserva < dosHorasDesdeAhora) {
-          mostrarError('La reserva debe hacerse con al menos dos horas de anticipación ⏳');
-          validar = false;
+            mostrarError('La reserva debe hacerse con al menos dos horas de anticipación ⏳');
+            validar = false;
         }
 
         if (fechaReserva < fechaHoy) {
-          mostrarError('Selecciona una fecha y hora válidas 📅🕒, con al menos dos horas de anticipación ⏳.');
-          validar = false;
+            mostrarError('Selecciona una fecha y hora válidas 📅🕒, con al menos dos horas de anticipación ⏳.');
+            validar = false;
         }
 
         let horaReserva = fechaReserva.getHours();
         let minutosReserva = fechaReserva.getMinutes();
         if (horaReserva < 8 || horaReserva > 19 || (horaReserva === 19 && minutosReserva > 0)) {
-          mostrarError('La hora de la reserva debe estar entre las 08:00 AM 🕗 y las 07:00 PM 🕖.');
-          validar = false;
+            mostrarError('La hora de la reserva debe estar entre las 08:00 AM 🕗 y las 07:00 PM 🕖.');
+            validar = false;
         }
 
         let fechaReservaSinHora = new Date(fechaReserva.toDateString());
         let fechaHoySinHora = new Date(fechaHoy.toDateString());
 
         if (fechaReservaSinHora.getTime() === fechaHoySinHora.getTime() && horaReserva <= fechaHoy.getHours()) {
-          mostrarError('No se puede reservar la mesa para la misma hora y fecha 📅⏰. Por favor, elige otro horario o fecha');
-          validar = false;
+            mostrarError('No se puede reservar la mesa para la misma hora y fecha 📅⏰. Por favor, elige otro horario o fecha');
+            validar = false;
         }
-      }
+    }
 
-      if (articulos.length <= 0) {
+    if (articulos.length <= 0) {
         mostrarError('No podemos reservar una mesa sin una orden previa 📝🚫');
         validar = false;
-      }
+    }
 
-      if (validar) {
+    if (validar) {
         Swal.fire({
-          title: '¿Confirmar compra?',
-          text: "Una vez confirmada, no podrás cancelarla.",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Sí, confirmar',
-          cancelButtonText: 'Cancelar'
+            title: '¿Confirmar compra?',
+            text: "Una vez confirmada, no podrás cancelarla.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
-          if (result.isConfirmed) {
-            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            if (result.isConfirmed) {
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-            $.ajaxSetup({
-              beforeSend: function (xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                  xhr.setRequestHeader("X-CSRFToken", csrfToken);
-                }
-              }
-            });
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                        }
+                    }
+                });
 
-            let data = {
-              cliente: user,
-              mesa,
-              articulos: JSON.stringify(articulos),
-              personas,
-              fecha,
-              hora
-            };
+                let data = {
+                    cliente: user,
+                    mesa,
+                    articulos: JSON.stringify(articulos),
+                    personas,
+                    fecha,
+                    hora
+                };
 
-            $.ajax({
-              type: "POST",
-              url: "{% url 'reservarMesaCliente' %}",
-              data,
-              headers: {
-                'X-CSRFToken': csrfToken
-              },
-              success: function (response) {
-                if (response.status) {
-                  localStorage.removeItem('cuerpoCarrito');
-                  $('.btnCloseModal').trigger('click');
-                  Swal.fire(
-                    '¡Gracias!',
-                    'Tu compra se realizó con éxito! Recuerda llevar tu recibo 🎉🛒✨',
-                    'success'
-                  ).then(() => {
-                    generarComprobante(user, mesa, articulos);
-                  });
-                } else {
-                  mostrarError(
-                    'No se puede reservar 😔: la mesa ya está ocupada a la misma hora y fecha 📅⏰. Elige otro horario o fecha 😊.'
-                  );
-                }
-              },
-              error: function () {
-                mostrarError(
-                  'No se puede reservar 😔: la mesa ya está ocupada a la misma hora y fecha 📅⏰. Elige otro horario o fecha 😊.'
-                );
-              }
-            });
-          }
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'reservarMesaCliente' %}",
+                    data,
+                    headers: {
+                      'X-CSRFToken': csrfToken
+                    },
+                    success: function (response) {
+                      if (response.status) {
+                        localStorage.removeItem('cuerpoCarrito');
+                        $('.btnCloseModal').trigger('click');
+                        Swal.fire(
+                          '¡Gracias!',
+                          'Tu compra se realizó con éxito! Recuerda llevar tu recibo 🎉🛒✨',
+                          'success'
+                        ).then(() => {
+                          generarComprobante(user, mesa, articulos);
+                        });
+                        } else {
+                            mostrarError(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error al enviar la solicitud:", status, error);
+                        mostrarError('Ocurrió un error al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde.');
+                    }
+                });
+            }
         });
-      }
     }
+}
 
-    function mostrarError(mensaje) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: mensaje
-      });
-    }
+function mostrarError(mensaje) {
+    Swal.fire(
+        '¡Oops!',
+        mensaje,
+        'error'
+    );
+}
 async function generarComprobante(nombreUsuario, nombreMesa, articulos) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -629,15 +634,20 @@ async function generarComprobante(nombreUsuario, nombreMesa, articulos) {
   }
 
   // URL de la imagen
-  const imgUrl = 'https://scontent.fuio11-2.fna.fbcdn.net/v/t39.30808-6/427990885_897372799069348_2346240393185279234_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeH-PGmXsSzuinNwYjuZjw62zvpbGf-krIfO-lsZ_6Ssh_W_Ccj9TGnq_HPc6vHYfAOXGeEeUiB1SAyEWAmVn2ZG&_nc_ohc=0qN-fyyXmowQ7kNvgHhMyzD&_nc_ht=scontent.fuio11-2.fna&oh=00_AYAsccqXPWqCz7KL151Sx8dCTHjEyr6lxgL2QkFDx5awlg&oe=66B8AC3D';
+  const imgUrl = 'https://cdn-icons-png.flaticon.com/512/1515/1515835.png';
 
   // Descargar la imagen y agregarla al PDF
-  const img = await fetch(imgUrl);
-  const imgBlob = await img.blob();
-  const imgBase64 = await blobToBase64(imgBlob);
+  try {
+    const imgResponse = await fetch(imgUrl);
+    if (!imgResponse.ok) throw new Error('No se pudo cargar la imagen.');
+    const imgBlob = await imgResponse.blob();
+    const imgBase64 = await blobToBase64(imgBlob);
 
-  // Añadir imagen al PDF
-  doc.addImage(imgBase64, 'JPEG', 20, 10, 50, 30); // Posición (x, y), ancho, alto
+    // Añadir imagen al PDF
+    doc.addImage(imgBase64, 'PNG', 20, 10, 50, 30);
+  } catch (error) {
+    console.error('Error al descargar o agregar la imagen:', error);
+  }
 
   // Título
   doc.setFontSize(24);
@@ -652,20 +662,23 @@ async function generarComprobante(nombreUsuario, nombreMesa, articulos) {
   doc.setFontSize(14);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(0, 0, 0); // Color negro
-  const instructions = 'Debes llevar este comprobante para que puedas retirar o pedir tu reserva de alimentos';
+  const instructions = 'Debes llevar este comprobante para retirar o pedir tu reserva de alimentos.';
   const instructionsWidth = doc.getTextWidth(instructions);
   doc.text(instructions, (pageWidth - instructionsWidth) / 2, 60);
 
   // Información del cliente y reserva
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(0, 51, 102); // Color más oscuro
-  doc.text(`Cliente: ${nombreUsuario}`, 20, 80);
-  doc.text(`Mesa: ${nombreMesa}`, 20, 90);
-
-  doc.setFontSize(14);
+  doc.setFontSize(12); // Tamaño de fuente más pequeño
   doc.setFont("helvetica", "normal");
   doc.setTextColor(0, 0, 0); // Color negro
+
+  // Obtener nombre y apellido del cliente
+  const nombreCliente = document.getElementById('nombre').value;
+  const apellidoCliente = document.getElementById('apellido').value;
+
+  doc.text(`CLIENTE: ${nombreCliente} ${apellidoCliente}`, 20, 80);
+  doc.text(`Mesa: ${nombreMesa}`, 20, 90);
+
+  doc.setFontSize(12); // Tamaño de fuente más pequeño
   doc.text(`Fecha de Reserva: ${fechaReserva}`, 20, 100);
   doc.text(`Hora de Reserva: ${horaReserva}`, 20, 110);
 
@@ -674,39 +687,58 @@ async function generarComprobante(nombreUsuario, nombreMesa, articulos) {
   doc.setLineWidth(0.75);
   doc.line(20, 115, 190, 115);
 
-  // Encabezados de tabla
+  // Encabezado de la tabla
   let yPos = 125;
-  doc.setFontSize(14);
+  const headerHeight = 7;
+  const headerWidth = 170; // Ajusta el ancho del encabezado aquí
+
+  doc.setFontSize(12); // Tamaño de fuente para encabezados
   doc.setFont("helvetica", "bold");
   doc.setTextColor(255, 255, 255); // Color blanco
-  doc.setFillColor(0, 102, 204); // Color de fondo para encabezados
-  doc.rect(20, yPos - 10, 170, 10, 'F'); // Fondo de encabezados
-  doc.text('Nombre del Plato', 20, yPos);
-  doc.text('ID', 80, yPos);
-  doc.text('Cantidad', 120, yPos);
-  doc.text('$Unitario', 160, yPos);
+  doc.setFillColor(0, 102, 204); // Color de fondo para encabezado
+  doc.rect(20, yPos - headerHeight, headerWidth, headerHeight, 'F'); // Fondo de encabezados
 
-  yPos += 5;
-  doc.setTextColor(0, 0, 0); // Color negro
-  doc.line(20, yPos, 190, yPos);
+  // Ajusta las posiciones del texto dentro del encabezado
+  doc.text('Nombre del Plato', 25, yPos - 2);
+  doc.text('ID', 80, yPos - 2);
+  doc.text('Cantidad', 120, yPos - 2);
+  doc.text('$ Unitario', 160, yPos - 2);
+
+  // Línea debajo de encabezados
+  yPos += headerHeight;
+  doc.setDrawColor(0, 102, 204); // Color azul
+  doc.setLineWidth(1);
+  doc.line(20, yPos, headerWidth + 20, yPos);
 
   // Filas de la tabla
+  doc.setFontSize(10); // Tamaño de fuente para las filas
   doc.setFont("helvetica", "normal");
   articulos.forEach((articulo) => {
+    const cantidad = $(`input[data-id="${articulo.plato_id}"]`).val(); // Capturar la cantidad directamente desde el input
+
     yPos += 10;
-    doc.text(`${articulo.nombre_plato}`, 20, yPos);
+    doc.setFillColor(255, 255, 255); // Fondo blanco para las filas
+    doc.rect(20, yPos - 10, headerWidth, 10, 'F'); // Fondo de la fila
+    doc.setTextColor(0, 0, 0); // Color negro
+    doc.text(`${articulo.nombre_plato}`, 25, yPos);
     doc.text(`${articulo.plato_id}`, 80, yPos);
-    doc.text(`${articulo.cantidad}`, 120, yPos);
+    doc.text(`${cantidad}`, 120, yPos); // Mostrar la cantidad capturada
     doc.text(`$${articulo.price}`, 160, yPos);
   });
 
+  // Línea inferior de la tabla
+  yPos += 10;
+  doc.setDrawColor(0, 0, 0); // Color negro
+  doc.setLineWidth(0.75);
+  doc.line(20, yPos, headerWidth + 20, yPos);
+
   // Total
-  const total = articulos.reduce((acc, item) => acc + (item.cantidad * item.price), 0);
+  const total = articulos.reduce((acc, item) => acc + (parseInt($(`input[data-id="${item.plato_id}"]`).val()) * item.price), 0);
   yPos += 10;
   doc.setFont("helvetica", "bold");
   doc.setTextColor(0, 102, 204); // Color para el total
   doc.text('Total:', 120, yPos);
-  doc.text(`$${total}`, 160, yPos);
+  doc.text(`$${total.toFixed(2)}`, 160, yPos); // Asegurarse de mostrar dos decimales
 
   // Guardar el PDF
   doc.save('comprobante_compra.pdf');

@@ -1,11 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-# from django.contrib.auth.models import User
 
-
-
-# Relaciones Clientes esta relaciona de 1 a muchos a reservas y ventas
 class Clientes(models.Model):
     cliente_id = models.AutoField(primary_key=True)
     nombre_cli = models.CharField(max_length=50)
@@ -27,7 +23,18 @@ class Mesas(models.Model):
     numero_mes = models.CharField(max_length=50, null=True, blank=True)
     capacidad_mes = models.IntegerField()
     estado_mes = models.CharField(max_length=20, null=True, blank=True)
+    def actualizar_estado(self):
+        # Check if this table has any confirmed reservations for today or the future
+        reservas_activas = Reservas.objects.filter(
+            mesa=self,
+            fecha_reserva__gte=datetime.today().date(),
+            estado_reserva='confirmada'
+        )
+        self.estado_mes = 'ocupada' if reservas_activas.exists() else 'libre'
+        self.save()
 
+    def __str__(self):
+        return f"Mesa {self.numero_mes} - {self.estado_mes}"
 
 
 class Reservas(models.Model):
@@ -91,6 +98,20 @@ class Detalles_Reservas(models.Model):
         fila = "{0}: {1} - {2} x {3}"
         return fila.format(self.detalle_reserva_id, self.reserva, self.menu.nombre_plato, self.cantidad)
 
+    @property
+    def precio_con_descuento(self):
+        if self.menu.promociones_set.exists():
+            # Asume que la primera promoción es la aplicable
+            promocion = self.menu.promociones_set.first()
+            descuento = promocion.descuento_pro
+            precio_original = self.menu.precio_menu
+            precio_descuento = precio_original * (1 - descuento / 100)
+            return round(precio_descuento, 2)
+        return self.menu.precio_menu
+
+    @property
+    def total_con_descuento(self):
+        return round(self.precio_con_descuento * self.cantidad, 2)
 
 
 
@@ -104,9 +125,23 @@ class Ventas(models.Model):
     cliente = models.ForeignKey(Clientes, null=True, blank=True, on_delete=models.PROTECT)
     mesa = models.ForeignKey(Mesas, null=True, blank=True, on_delete=models.PROTECT)
 
-
     def __str__(self):
         return f"{self.venta_id}: {self.fecha_venta}"
+
+    @property
+    def precio_con_descuento(self):
+        if self.menu.promociones_set.exists():
+            # Asume que la primera promoción es la aplicable
+            promocion = self.menu.promociones_set.first()
+            descuento = promocion.descuento_pro
+            precio_original = self.menu.precio_menu
+            precio_descuento = precio_original * (1 - descuento / 100)
+            return round(precio_descuento, 2)
+        return self.menu.precio_menu
+
+    @property
+    def total_con_descuento(self):
+        return round(self.precio_con_descuento * self.cantidad, 2)
 
 
 

@@ -26,7 +26,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.dateparse import parse_datetime
-
+from decimal import Decimal
 #############################################################################################################################################################
 def obtener_interacciones_cliente(cliente):
     # Obtener reservas y ventas del cliente
@@ -310,21 +310,51 @@ def reservarMesaCliente(request):
 
     if request.method == 'POST':
         try:
-            cliente_id = int(request.POST['cliente'])
-            cliente = Clientes.objects.filter(cliente_id=cliente_id).first()
-            mesa_id = request.POST['mesa']
-            mesa = Mesas.objects.filter(id_mesa=mesa_id).first()
+            cliente_id = int(request.POST.get('cliente'))
+            mesa_id = request.POST.get('mesa')
             articulos = json.loads(request.POST.get('articulos', '[]'))
-            personas = int(request.POST['personas'])
-            fecha = request.POST['fecha']
-            hora = request.POST['hora']
+            personas = int(request.POST.get('personas', 0))
+            fecha = request.POST.get('fecha')
+            hora = request.POST.get('hora')
 
-            # Crear una fecha y hora combinadas
+            if not cliente_id:
+                data['message'] = 'Perdón, pero necesitas iniciar sesión.'
+                return JsonResponse(data)
+
+            if not mesa_id:
+                data['message'] = 'Selecciona una mesa, por favor 🪑🙏.'
+                return JsonResponse(data)
+
+            if personas <= 0:
+                data['message'] = 'Debe haber al menos una persona en la mesa 👤🪑.'
+                return JsonResponse(data)
+
+            if not fecha or not hora:
+                data['message'] = 'Debe seleccionar una fecha 📅 y una hora 🕒.'
+                return JsonResponse(data)
+
             fecha_hora_reserva = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
 
-            # Verificar si el cliente ya tiene una reserva en la misma fecha y hora
+            fecha_hoy = datetime.now()
+            dos_horas_desde_ahora = fecha_hoy + timedelta(hours=2)
+
+            if fecha_hora_reserva < dos_horas_desde_ahora:
+                data['message'] = 'La reserva debe hacerse con al menos dos horas de anticipación ⏳'
+                return JsonResponse(data)
+
+            if fecha_hora_reserva < fecha_hoy:
+                data['message'] = 'Selecciona una fecha y hora válidas 📅🕒, con al menos dos horas de anticipación ⏳.'
+                return JsonResponse(data)
+
+            hora_reserva = fecha_hora_reserva.hour
+            minutos_reserva = fecha_hora_reserva.minute
+
+            if hora_reserva < 8 or (hora_reserva > 19 or (hora_reserva == 19 and minutos_reserva > 0)):
+                data['message'] = 'La hora de la reserva debe estar entre las 08:00 AM 🕗 y las 07:00 PM 🕖.'
+                return JsonResponse(data)
+
             reserva_cliente_existente = Reservas.objects.filter(
-                cliente=cliente,
+                cliente_id=cliente_id,
                 fecha_reserva=fecha_hora_reserva.date(),
                 hora_reserva=fecha_hora_reserva.time()
             ).exists()
@@ -333,9 +363,8 @@ def reservarMesaCliente(request):
                 data['message'] = 'Ya tienes una reserva en la misma fecha y hora.'
                 return JsonResponse(data)
 
-            # Verificar si ya existe una reserva para esa mesa en la misma fecha y hora
             reserva_existente = Reservas.objects.filter(
-                mesa=mesa,
+                mesa_id=mesa_id,
                 fecha_reserva=fecha_hora_reserva.date(),
                 hora_reserva=fecha_hora_reserva.time()
             ).exists()
@@ -344,36 +373,55 @@ def reservarMesaCliente(request):
                 data['message'] = 'La mesa ya está reservada para esa fecha y hora.'
                 return JsonResponse(data)
 
-            # Crear la nueva reserva
+            if len(articulos) == 0:
+                data['message'] = 'No podemos reservar una mesa sin una orden previa 📝🚫'
+                return JsonResponse(data)
+
             nuevaReserva = Reservas.objects.create(
                 fecha_reserva=fecha_hora_reserva.date(),
                 hora_reserva=fecha_hora_reserva.time(),
                 numero_personas_reserva=personas,
                 estado_reserva='Pendiente',
-                mesa=mesa,
-                cliente=cliente
+                mesa_id=mesa_id,
+                cliente_id=cliente_id
             )
 
-            # Crear detalles de la reserva y ventas
+            total_precio = Decimal('0.00')
             for item in articulos:
                 plato_id = item["plato_id"]
-                cantidad = item["cantidad"]
+                cantidad = int(item["cantidad"])  # Convertir a entero
                 menuSeleccionado = Menus.objects.get(menu_id=plato_id)
+
+                # Calcular el precio con descuento
+                precio_con_descuento = menuSeleccionado.precio_con_descuento()
+
+                # Asegurarse de que precio_con_descuento es Decimal
+                if not isinstance(precio_con_descuento, Decimal):
+                    precio_con_descuento = Decimal(precio_con_descuento)
+
+                total_precio += precio_con_descuento * Decimal(cantidad)
 
                 # Crear detalles de la reserva con la cantidad de platos
                 Detalles_Reservas.objects.create(
                     reserva=nuevaReserva,
                     menu=menuSeleccionado,
-                    cantidad=cantidad  # Guardar la cantidad en el detalle de la reserva
+                    cantidad=cantidad
                 )
+
+            # Si quieres guardar el total_precio en la reserva, añade un campo al modelo de Reservas para eso
+            # nuevaReserva.total_precio = total_precio
+            # nuevaReserva.save()
 
             data['status'] = True
             data['message'] = 'Reserva realizada con éxito.'
+            data['total_precio'] = total_precio  # Opcional, si deseas devolver el total en la respuesta
             return JsonResponse(data)
 
         except Exception as e:
             data['message'] = str(e)
             return JsonResponse(data)
+
+    return JsonResponse(data)
 
 
 @background(schedule=60)  # Asegúrate de que el decorador esté configurado correctamente
@@ -653,11 +701,6 @@ def procesarActualizacionReservas(request):
 def listadoVentas(request):
     # Obtener todas las ventas
     ventas = Ventas.objects.all()
-
-    # Calcular el total de cada venta
-    for venta in ventas:
-        venta.total_venta = venta.menu.precio_menu * venta.cantidad
-        venta.save()
 
     # Obtener los datos para el template
     menuBdd = Menus.objects.all()
@@ -944,13 +987,25 @@ def listadoPromociones(request):
 
 
 def guardarPromociones(request):
-    menu_id_menu=request.POST["menu_id_menu"]
-    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
-    descripcion_pro=request.POST["descripcion_pro"]
+    menu_id_menu = request.POST["menu_id_menu"]
+    menuSeleccionado = Menus.objects.get(menu_id=menu_id_menu)
+    descripcion_pro = request.POST["descripcion_pro"]
     fecha_inicio_pro = request.POST.get('fecha_inicio_pro')
     fecha_fin_pro = request.POST.get('fecha_fin_pro')
-    descuento_pro=request.POST["descuento_pro"]
+    descuento_pro = request.POST["descuento_pro"]
 
+    # Validar si ya existe una promoción para el mismo menú en el rango de fechas
+    promociones_existentes = Promociones.objects.filter(
+        menu=menuSeleccionado,
+        fecha_inicio_pro__lte=fecha_fin_pro,
+        fecha_fin_pro__gte=fecha_inicio_pro
+    )
+
+    if promociones_existentes.exists():
+        messages.error(request, 'Ya existe una promoción para este menú en las fechas especificadas.')
+        return redirect('listadoPromociones')
+
+    # Crear la nueva promoción si no existen conflictos
     nuevoPromociones = Promociones.objects.create(
         descripcion_pro=descripcion_pro,
         fecha_inicio_pro=fecha_inicio_pro,
@@ -982,23 +1037,37 @@ def editarPromociones(request,promociones_id):
     return render(request, 'editarPromociones.html', {'promociones': promocionEditar,'menus':menuBdd})
 
 def procesarActualizacionPromociones(request):
-    promociones_id=request.POST["promociones_id"]
-    menu_id_menu=request.POST["menu_id_menu"]
-    menuSeleccionado=Menus.objects.get(menu_id=menu_id_menu)
-    descripcion_pro=request.POST["descripcion_pro"]
+    promociones_id = request.POST["promociones_id"]
+    menu_id_menu = request.POST["menu_id_menu"]
+    menuSeleccionado = Menus.objects.get(menu_id=menu_id_menu)
+    descripcion_pro = request.POST["descripcion_pro"]
     fecha_inicio_pro = request.POST.get('fecha_inicio_pro')
     fecha_fin_pro = request.POST.get('fecha_fin_pro')
-    descuento_pro=request.POST["descuento_pro"]
-    #Insertando datos mediante el ORM de DJANGO
-    promocionEditar=Promociones.objects.get(promociones_id=promociones_id)
-    promocionEditar.menu=menuSeleccionado
-    promocionEditar.descripcion_pro=descripcion_pro
-    promocionEditar.fecha_inicio_pro=fecha_inicio_pro
-    promocionEditar.fecha_fin_pro=fecha_fin_pro
-    promocionEditar.descuento_pro=descuento_pro
+    descuento_pro = request.POST["descuento_pro"]
+
+    # Obtener la promoción a actualizar
+    promocionEditar = Promociones.objects.get(promociones_id=promociones_id)
+
+    # Validar si el rango de fechas actualizado se solapa con otra promoción existente
+    promociones_existentes = Promociones.objects.filter(
+        menu=menuSeleccionado,
+        fecha_inicio_pro__lte=fecha_fin_pro,
+        fecha_fin_pro__gte=fecha_inicio_pro
+    ).exclude(promociones_id=promocionEditar.promociones_id)
+
+    if promociones_existentes.exists():
+        messages.error(request, 'Ya existe una promoción para este menú en las fechas especificadas.')
+        return redirect('listadoPromociones')
+
+    # Actualizar los datos de la promoción
+    promocionEditar.menu = menuSeleccionado
+    promocionEditar.descripcion_pro = descripcion_pro
+    promocionEditar.fecha_inicio_pro = fecha_inicio_pro
+    promocionEditar.fecha_fin_pro = fecha_fin_pro
+    promocionEditar.descuento_pro = descuento_pro
     promocionEditar.save()
-    messages.success(request,
-      'Procion ACTUALIZADO Exitosamente')
+
+    messages.success(request, 'Promoción actualizada exitosamente.')
     return redirect('listadoPromociones')
 ###########################################################################################################################################################
 def listadoRecibo_Reserva(request):

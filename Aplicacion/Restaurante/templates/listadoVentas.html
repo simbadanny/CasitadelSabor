@@ -35,10 +35,28 @@
                                 <td>{{ venta.cliente.nombre_cli }} {{ venta.cliente.apellido_cli }}</td>
                                 <td>{{ venta.mesa.numero_mes }}</td>
                                 <td>{{ venta.menu.nombre_menu }}</td>
-                                <td>{{ venta.menu.precio_menu }}</td>
+                                <td>
+                                    {% if venta.menu.promociones_set.exists %}
+                                        <!-- Si hay promociones, muestra el precio con descuento -->
+                                        <span style="text-decoration: line-through;">{{ venta.menu.precio_menu }}</span>
+                                        <br>
+                                        <span style="color: green;">{{ venta.precio_con_descuento }}</span>
+                                    {% else %}
+                                        <!-- Si no hay promociones, muestra el precio normal -->
+                                        {{ venta.menu.precio_menu }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ venta.cantidad }}</td>
                                 <td>{{ venta.fecha_venta }}</td>
-                                <td style="color: green;">{{ venta.total_venta }} $</td>
+                                <td>
+                                    {% if venta.menu.promociones_set.exists %}
+                                        <!-- Total con descuento -->
+                                        <span style="color: orange;">{{ venta.total_con_descuento|floatformat:2 }}</span>
+                                    {% else %}
+                                        <!-- Total sin descuento -->
+                                        <span style="color: green;">{{ venta.menu.precio_menu|floatformat:2 }}</span>
+                                    {% endif %}
+                                </td>
 
 
                                 <td>

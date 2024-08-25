@@ -95,100 +95,56 @@
   <div class="form-group col-md-8">
     <div class="modal-content">
       <div class="modal-body">
-        <form class="" action="/procesarActualizacionVentas/"  enctype="multipart/form-data" method="post" id="frm_nuevo_ventas" >
+        <form action="/procesarActualizacionPromociones/" enctype="multipart/form-data" method="post" id="frm_nuevo_promociones">
           {% csrf_token %}
-          <input type="hidden" name="venta_id"  value="{{ventas.venta_id}}">
-          <div class="row">
-    <!-- CLIENTE -->
-    <div class="form-group col-md-6">
-        <label for="cliente_id_cliente">
-            <b><i class="fas fa-user"></i> CLIENTE:</b>
-        </label>
-        <select class="form-control selectpicker" data-live-search="true" name="cliente_id_cliente" id="cliente_id_cliente" required>
-            <option value="">Seleccione el Cliente</option>
-            {% for cliente in clientes %}
-            <option value="{{ cliente.cliente_id }}" {% if cliente.cliente_id == valor_cliente_actual %}selected{% endif %}>{{ cliente.nombre_cli }} {{ cliente.apellido_cli }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- MESA -->
-    <div class="form-group col-md-6">
-      <label for="id_mesa_mesa">
-        <b><i class="fas fa-chair"></i> MESA</b>
-      </label>
-      <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="id_mesa_mesa" id="id_mesa_mesa" required data-live-search-placeholder="Buscar mesa...">
-        <option value="">Seleccione la Mesa</option>
-        {% for mesa in mesas %}
-        <option value="{{ mesa.id_mesa }}" {% if mesa.id_mesa == valor_mesa_actual %}selected{% endif %}>{{ mesa.numero_mes }}</option>
-        {% endfor %}
-      </select>
-    </div>
-</div>
-            <script type="text/javascript">
-                document.getElementById("cliente_id_cliente").value = "{{ ventas.cliente.cliente_id }}";
-                document.getElementById("id_mesa_mesa").value = "{{ ventas.mesa.id_mesa }}";
-            </script>
+          <input type="hidden" name="promociones_id" value="{{ promociones.promociones_id }}">
+          <div class="card-body">
             <div class="row">
-                <!-- NOMBRE MENÚ -->
-                <div class="form-group col-md-6">
-                    <label for="menu_id_menu">
-                        <b><i class="fas fa-utensils"></i> NOMBRE MENÚ:</b>
-                    </label>
-                    <select class="form-control selectpicker" data-live-search="true" name="menu_id_menu" id="menu_id_menu" required onchange="calcularTotal()">
-                        <option value="">Seleccione el nombre Menu</option>
-                        {% for menus in menu %}
-                        <option value="{{ menus.menu_id }}" data-precio="{{ menus.precio_menu }}" {% if menus.menu_id == ventas.menu.menu_id %} selected {% endif %}>{{ menus.nombre_menu }}</option>
-                        {% endfor %}
-                    </select>
-                    <small class="form-text text-muted">
-                        El menú no puede ser cambiado directamente.
-                        <a href="{% url 'listadoDetalles_Reservas' %}" class="btn btn-link">Actualizar Detalle de Reserva</a>
-                        Para cambiar el menú.
-                    </small>
-                </div>
-                <!-- PRECIO MENÚ -->
-                <div class="form-group col-md-6">
-                    <label for="precio_menu">
-                        <b><i class="fas fa-dollar-sign"></i> PRECIO MENÚ:</b>
-                    </label>
-                    <input type="text" id="precio_menu" class="form-control" readonly>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- NUMERO PERSONAS -->
-                <div class="form-group col-md-6">
-                  <label for="cantidad"><i class="fas fa-id-card"></i> <b>CANTIDAD DE PLATOS:</b></label>
-                  <input type="number" name="cantidad" id="cantidad" oninput="soloNumeros(this)" value="{{ventas.cantidad}}" placeholder="Ingrese el número" class="form-control" required>
-                </div>
-                <!-- FECHA VENTA -->
-                <div class="form-group col-md-6">
-                  <label for="fecha_venta">
-                      <b><i class="fas fa-calendar-alt"></i> FECHA VENTA:</b>
-                  </label>
-                  <input type="date" name="fecha_venta" id="fecha_venta" class="form-control"
-                         value="{{ventas.fecha_venta|date:'Y-m-d'}}" readonly>
-                  <small>
-                      <a href="{% url 'editarReservas' reserva_id=ventas.reserva.reserva_id %}"  class="btn btn-link">Modificar</a>
-                      <span class="text-muted">Si desea actualizar la fecha, el nombre del cliente y la mesa, debe ir a la sección de reservas.</span>
-                  </small>
+              <div class="col-md-6">
+                <label for="menu_id_menu"><b><i class="fas fa-utensils"></i> MENÚS:</b></label>
+                <br>
+                <br>
+                <select class="form-control selectpicker" data-live-search="true" data-live-search-style="startsWith" name="menu_id_menu" id="menu_id_menu" required data-live-search-placeholder="Buscar proveedor...">
+                  <option value="">Seleccione El Menú</option>
+                  {% for menu in menus %}
+                    <option value="{{ menu.menu_id }}">{{ menu.nombre_menu }}</option>
+                  {% endfor %}
+                </select>
+                <script type="text/javascript">
+                    document.getElementById("menu_id_menu").value="{{promociones.menu.menu_id}}";
+                  </script>
               </div>
-            </div>
-            <div class="row">
-                <!-- TOTAL VENTA -->
-                <div class="form-group col-md-12">
-                    <label for="total_venta">
-                        <b><i class="fas fa-dollar-sign"></i> TOTAL VENTA:</b>
-                    </label>
-                    <input type="number" name="total_venta" id="total_venta" class="form-control" placeholder="Total automático" readonly>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fecha_inicio_pro"><i class="fas fa-calendar-alt"></i> Fecha Inicio</label>
+                  <input type="date" class="form-control" id="fecha_inicio_pro" name="fecha_inicio_pro" value="{{ promociones.fecha_inicio_pro|date:'Y-m-d' }}"placeholder="fecha_inicio_pro">
                 </div>
-            </div>
+              </div>
+              </div>
+              <div class="form-group">
+                <label for="descripcion_pro"><i class="fas fa-align-left"></i> Descripcion</label>
+                <textarea class="form-control" id="descripcion_pro" name="descripcion_pro" oninput="soloLetras(this)" placeholder="" rows="3">{{promociones.descripcion_pro}}</textarea>
+              </div>
+              <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fecha_fin_pro"><i class="fas fa-calendar-check"></i> Fecha Fin</label>
+                  <input type="date" class="form-control" id="fecha_fin_pro" name="fecha_fin_pro"value="{{promociones.fecha_fin_pro|date:'Y-m-d'}}" placeholder="fecha_fin_pro">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="descuento_pro"><i class="fas fa-percent"></i> Descuento (%)</label>
+                  <input type="number" class="form-control" id="descuento_pro" name="descuento_pro" value="{{promociones.descuento_pro}}" min="0" max="100">
+                </div>
+              </div>
+              </div>
+          </div>
           <div class="modal-footer">
             <button type="submit" name="button" class="btn btn-warning">
               &nbsp;&nbsp;&nbsp; Actualizar &nbsp;&nbsp;&nbsp;
             </button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="{% url 'listadoVentas' %}" class="btn btn-danger">
+            <a href="{% url 'listadoPromociones' %}" class="btn btn-danger">
               Cancelar
             </a>
           </div>
@@ -196,117 +152,91 @@
       </div>
     </div>
   </div>
-  <div class="form-group col-md-3">
+
+  <div class="form-group col-md-4">
     <div class="card card-profile card-secondary">
-          <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
-									<div class="profile-picture">
-										<div class="avatar avatar-xl">
-											<img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
-										</div>
-									</div>
-								</div>
-								<div class="card-body">
-									<div class="user-profile text-center">
-                    <div class="name">
-                        <span>{{ clientes.nombre_cli }}</span>
-                    </div>
-										<div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
-                    <div class="">
-                        <span>{{ clientes.email_cli }}</span>
-                    </div>
-                    <div class="job">
-                        <p>"En esta sección, editarás los datos de  <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli}}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
-                    </div>
-									</div>
-								</div>
-							</div>
-
-            </div>
+      <div class="card-header" style="background-image: url('{% static 'assets/img/blogpost.jpg' %}');">
+        <div class="profile-picture">
+          <div class="avatar avatar-xl">
+            <img src="{% static 'assets/img/profile.jpg' %}" alt="Profile Image" class="avatar-img rounded-circle">
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="user-profile text-center">
+          <div class="name">
+            <span>{{ clientes.nombre_cli }}</span>
+          </div>
+          <div class="job">Cliente de La Casita del Sabor 🍽️🏠</div>
+          <div>
+            <span>{{ clientes.email_cli }}</span>
+          </div>
+          <div class="job">
+            <p>"En esta sección, editarás los datos de <span><strong>{{ clientes.nombre_cli }} {{ clientes.apellido_cli}}</strong></span>. Por favor, asegúrate de ingresar la información correcta."</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <script>
-      function eliminarVentas(venta_id) {
-          swal({
-              title: '¿Estás seguro?',
-              text: "¡No podrás revertir esto!",
-              icon: 'warning',
-              buttons: {
-                  cancel: {
-                      visible: true,
-                      text: 'No, cancelar',
-                      className: 'btn btn-secondary'
-                  },
-                  confirm: {
-                      text: 'Sí, eliminarlo',
-                      className: 'btn btn-danger'
-                  }
-              }
-          }).then((willDelete) => {
-              if (willDelete) {
-                  window.location.href = '/eliminarVentas/' + venta_id;
-              } else {
-                  swal("¡La Venta está segura!", {
-                      icon: "info",
-                      buttons: {
-                          confirm: {
-                              className: 'btn btn-success'
-                          }
-                      }
-                  });
-              }
-          });
-      }
-      $(document).ready(function() {
-      $("#frm_nuevo_ventas").validate({
+</div>
+<script type="text/javascript">
+  $(document).ready(function () {
+      $("#frm_nuevo_promociones").validate({
           rules: {
-              "fecha_venta": {
+              "descripcion_pro": {
                   required: true,
-
+                  minlength: 3,
+                  maxlength: 550
               },
-              "total_venta": {
+              "fecha_inicio_pro": {
+                  required: true,
+                  dateISO: true
+              },
+              "fecha_fin_pro": {
+                  required: true,
+                  dateISO: true
+              },
+              "disponibilidad_pro": {
+                  required: true
+              },
+              "descuento_pro": {
                   required: true,
                   number: true,
                   min: 0.01,
-                  max: 1000000
-              },
-              "cliente_id_cliente": {  // Corrected from "reserva_id_reserva"
-                  required: true
+                  max: 100
               },
               "menu_id_menu": {
-                  required: true
-              },
-              "id_mesa_mesa": {  // Corrected from "mesa_id_reserva"
-                  required: true
-              },
-              "cantidad": {  // Corrected from "numero_personas"
                   required: true,
-                  number: true, // Add this rule if the quantity should be numeric
-                  min: 1 // Ensure the quantity is at least 1
+
               }
+
           },
           messages: {
-              "fecha_venta": {
-                  required: "Debe ingresar la fecha de la venta",
-
+              "descripcion_pro": {
+                  required: "Debe ingresar la descripción de la promoción",
+                  minlength: "La descripción debe tener al menos 3 caracteres",
+                  maxlength: "La descripción no puede tener más de 550 caracteres"
               },
-              "total_venta": {
-                  required: "Debe ingresar el total de la venta",
-                  number: "Ingrese un número válido para el total",
-                  min: "El total no puede ser menor que 0.01",
-                  max: "El total no puede ser mayor que 1,000,000"
+              "fecha_inicio_pro": {
+                  required: "Debe ingresar la fecha de inicio de la promoción",
+                  dateISO: "Por favor, ingrese una fecha válida (ISO)"
               },
-              "cliente_id_cliente": {  // Corrected from "reserva_id_reserva"
-                  required: "Debe seleccionar un cliente"
+              "fecha_fin_pro": {
+                  required: "Debe ingresar la fecha de fin de la promoción",
+                  dateISO: "Por favor, ingrese una fecha válida (ISO)"
+              },
+              "disponibilidad_pro": {
+                  required: "Por favor seleccione la disponibilidad de la promoción"
+              },
+              "descuento_pro": {
+                  required: "Debe ingresar el descuento de la promoción",
+                  number: "Por favor, ingrese un número válido",
+                  min: "El descuento no puede ser menor a 0.01",
+                  max: "El descuento no puede ser mayor a 100"
               },
               "menu_id_menu": {
-                  required: "Debe seleccionar un menú"
-              },
-              "id_mesa_mesa": {  // Corrected from "mesa_id_reserva"
-                  required: "Debe seleccionar una mesa"
-              },
-              "cantidad": {  // Corrected from "numero_personas"
-                  required: "Debe ingresar la cantidad de platos",
-                  number: "Ingrese un número válido",
-                  min: "La cantidad debe ser al menos 1"
+                  required: "Debe seleccionar un Menu",
+
               }
           },
           submitHandler: function (form) {
@@ -332,76 +262,40 @@
           }
       });
   });
-      function soloNumeros(input) {
-          // Reemplaza cualquier carácter que no sea un dígito numérico con una cadena vacía
-          input.value = input.value.replace(/\D/g, '');
-      }
-
-      function soloLetras(input) {
-          // Reemplaza cualquier carácter que no sea una letra o espacio con una cadena vacía
-          input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
-      }
-  </script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Obtén la fecha actual
-        var today = new Date().toISOString().split('T')[0];
-        // Establece la fecha mínima en el campo de fecha
-        document.getElementById('fecha_venta').setAttribute('min', today);
-    });
 </script>
+
 <script>
-  function calcularTotal() {
-    var menuSelect = document.getElementById("menu_id_menu");
-    var precioInput = document.getElementById("precio_menu");
-    var cantidadInput = document.getElementById("cantidad");
-    var totalInput = document.getElementById("total_venta");
+  function soloLetras(input) {
+    input.value = input.value.replace(/[^a-zA-Z ]/g, '');
+  }
 
-    // Obtiene el precio del menú seleccionado
-    var selectedOption = menuSelect.options[menuSelect.selectedIndex];
-    var precio = parseFloat(selectedOption.getAttribute("data-precio")) || 0;
-    var cantidad = parseFloat(cantidadInput.value) || 0;
+  function soloNumeros(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+  }
 
-    // Actualiza el campo de precio y total
-    precioInput.value = precio.toFixed(2);
-    totalInput.value = (precio * cantidad).toFixed(2);
-}
-
-// Inicializar el campo de precio y total cuando se carga la página
-document.addEventListener("DOMContentLoaded", function() {
-    var menuSelect = document.getElementById("menu_id_menu");
-    var cantidadInput = document.getElementById("cantidad");
-
-    // Recalcular el total si hay una opción seleccionada en el menú
-    var selectedOption = menuSelect.options[menuSelect.selectedIndex];
-    if (selectedOption) {
-        var precio = parseFloat(selectedOption.getAttribute("data-precio")) || 0;
-        var cantidad = parseFloat(cantidadInput.value) || 0;
-
-        document.getElementById("precio_menu").value = precio.toFixed(2);
-        document.getElementById("total_venta").value = (precio * cantidad).toFixed(2);
+  function validarCorreo(input) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(input.value)) {
+      input.setCustomValidity('Ingrese un correo válido.');
+    } else {
+      input.setCustomValidity('');
     }
-
-    // Añadir event listeners para el cambio en el menú y cantidad
-    menuSelect.addEventListener("change", calcularTotal);
-    cantidadInput.addEventListener("input", calcularTotal);
-});
-
+  }
 </script>
-<style media="screen">
-  .readonly {
-    pointer-events: none;
-    background-color: #e9ecef; /* Cambia el color si lo deseas */
-    color: #6c757d; /* Cambia el color del texto si lo deseas */
-}
-</style>
-<script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-    // Añadir la clase readonly a los selects que se deben bloquear
-    document.querySelectorAll('#cliente_id_cliente, #id_mesa_mesa, #menu_id_menu').forEach(function(select) {
-        select.classList.add('readonly');
-    });
-});
-</script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtén la fecha actual
+            var today = new Date().toISOString().split('T')[0];
+            // Establece la fecha mínima en el campo de fecha
+            document.getElementById('fecha_inicio_pro').setAttribute('min', today);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtén la fecha actual
+            var today = new Date().toISOString().split('T')[0];
+            // Establece la fecha mínima en el campo de fecha
+            document.getElementById('fecha_fin_pro').setAttribute('min', today);
+        });
+    </script>
 {% endblock %}

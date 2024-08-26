@@ -234,31 +234,24 @@ def listadoOrdenMenus(request):
     mesaBdd = Mesas.objects.filter(estado_mes='Libre')
     login = False
     menues_recomendados = []
-    cliente = None  # Inicializa la variable cliente
+    cliente = None
 
     if request.user.is_authenticated:
         user = request.user
-        # Buscar el cliente por correo electrónico
         cliente = Clientes.objects.filter(email_cli=user.email).first()
         login = True
 
         if cliente:
-            hoy = timezone.now().date()
-
             datos_interacciones = obtener_interacciones_cliente(cliente)
             es_nuevo_cliente = datos_interacciones.empty
 
-            if es_nuevo_cliente or cliente.ultima_recomendacion != hoy:
-                if not datos_interacciones.empty:
-                    menues_recomendados = recomendar_menus_por_categoria(cliente, datos_interacciones)
+            if not datos_interacciones.empty:
+                menues_recomendados = recomendar_menus_por_categoria(cliente, datos_interacciones)
 
-                enviar_notificacion_recomendacion(cliente.email_cli, menues_recomendados, es_nuevo_cliente)
-                cliente.ultima_recomendacion = hoy
-                cliente.save()
-            else:
-                menues_recomendados = Menus.objects.none()
+            enviar_notificacion_recomendacion(cliente.email_cli, menues_recomendados, es_nuevo_cliente)
+            cliente.ultima_recomendacion = timezone.now()  # Actualiza a la hora actual
+            cliente.save()
 
-    # Obtener menús con promociones activas
     menus_con_promocion = Menus.objects.filter(
         promociones__fecha_inicio_pro__lte=timezone.now().date(),
         promociones__fecha_fin_pro__gte=timezone.now().date()
@@ -267,13 +260,14 @@ def listadoOrdenMenus(request):
     data = {
         'menus': menuBdd,
         'mesas': mesaBdd,
-        'user': cliente,  # Asegúrate de pasar el cliente, no el User
+        'user': cliente,
         'login': login,
         'menus_con_promocion': menus_con_promocion,
         'menues_recomendados': menues_recomendados if login else []
     }
 
     return render(request, 'listadoOrdenMenus.html', data)
+
 
 #################################################################################################################################################
 def reporte_semanal(request):

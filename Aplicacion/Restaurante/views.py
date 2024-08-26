@@ -242,15 +242,18 @@ def listadoOrdenMenus(request):
         login = True
 
         if cliente:
-            datos_interacciones = obtener_interacciones_cliente(cliente)
-            es_nuevo_cliente = datos_interacciones.empty
+            hoy = date.today()  # Fecha actual sin la hora
 
-            if not datos_interacciones.empty:
-                menues_recomendados = recomendar_menus_por_categoria(cliente, datos_interacciones)
+            if cliente.ultima_recomendacion != hoy:  # Verifica si la última recomendación no fue hoy
+                datos_interacciones = obtener_interacciones_cliente(cliente)
+                es_nuevo_cliente = datos_interacciones.empty
 
-            enviar_notificacion_recomendacion(cliente.email_cli, menues_recomendados, es_nuevo_cliente)
-            cliente.ultima_recomendacion = timezone.now()  # Actualiza a la hora actual
-            cliente.save()
+                if not datos_interacciones.empty:
+                    menues_recomendados = recomendar_menus_por_categoria(cliente, datos_interacciones)
+
+                enviar_notificacion_recomendacion(cliente.email_cli, menues_recomendados, es_nuevo_cliente)
+                cliente.ultima_recomendacion = hoy  # Actualiza solo con la fecha, sin la hora
+                cliente.save()
 
     menus_con_promocion = Menus.objects.filter(
         promociones__fecha_inicio_pro__lte=timezone.now().date(),
@@ -267,7 +270,6 @@ def listadoOrdenMenus(request):
     }
 
     return render(request, 'listadoOrdenMenus.html', data)
-
 
 #################################################################################################################################################
 def reporte_semanal(request):

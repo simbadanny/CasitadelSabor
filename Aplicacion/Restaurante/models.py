@@ -143,6 +143,14 @@ class Ventas(models.Model):
     def total_con_descuento(self):
         return round(self.precio_con_descuento * self.cantidad, 2)
 
+    @property
+    def precio_sin_descuento(self):
+        return round(self.menu.precio_menu, 2)
+
+    @property
+    def total_sin_descuento(self):
+        return round(self.precio_sin_descuento * self.cantidad, 2)
+
 
 
 

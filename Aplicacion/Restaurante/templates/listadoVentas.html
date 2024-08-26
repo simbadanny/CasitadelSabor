@@ -10,7 +10,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-receipt"></i> Listado Ventas
+                <i class="fas fa-receipt"></i> Listado de Ventas
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -31,32 +31,32 @@
                         <tbody>
                             {% for venta in ventas %}
                             <tr>
-                                <td>{{ venta.venta_id }}</td>
-                                <td>{{ venta.cliente.nombre_cli }} {{ venta.cliente.apellido_cli }}</td>
-                                <td>{{ venta.mesa.numero_mes }}</td>
-                                <td>{{ venta.menu.nombre_menu }}</td>
-                                <td>
-                                    {% if venta.menu.promociones_set.exists %}
-                                        <!-- Si hay promociones, muestra el precio con descuento -->
-                                        <span style="text-decoration: line-through;">{{ venta.menu.precio_menu }}</span>
-                                        <br>
-                                        <span style="color: green;">{{ venta.precio_con_descuento }}</span>
-                                    {% else %}
-                                        <!-- Si no hay promociones, muestra el precio normal -->
-                                        {{ venta.menu.precio_menu }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ venta.cantidad }}</td>
-                                <td>{{ venta.fecha_venta }}</td>
-                                <td>
-                                    {% if venta.menu.promociones_set.exists %}
-                                        <!-- Total con descuento -->
-                                        <span style="color: orange;">{{ venta.total_con_descuento|floatformat:2 }}</span>
-                                    {% else %}
-                                        <!-- Total sin descuento -->
-                                        <span style="color: green;">{{ venta.menu.precio_menu|floatformat:2 }}</span>
-                                    {% endif %}
-                                </td>
+                              <td>{{ venta.venta_id }}</td>
+                             <td>{{ venta.cliente.nombre_cli }} {{ venta.cliente.apellido_cli }}</td>
+                             <td>{{ venta.mesa.numero_mes }}</td>
+                             <td>{{ venta.menu.nombre_menu }}</td>
+                             <td>
+                                 {% if venta.menu.promociones_set.exists %}
+                                     <!-- Si hay promociones, muestra el precio con descuento -->
+                                     <span style="text-decoration: line-through;">{{ venta.precio_sin_descuento }}</span>
+                                     <br>
+                                     <span style="color: green;">{{ venta.precio_con_descuento }}</span>
+                                 {% else %}
+                                     <!-- Si no hay promociones, muestra el precio normal -->
+                                     {{ venta.precio_sin_descuento }}
+                                 {% endif %}
+                             </td>
+                             <td>{{ venta.cantidad }}</td>
+                             <td>{{ venta.fecha_venta }}</td>
+                             <td>
+                                 {% if venta.menu.promociones_set.exists %}
+                                     <!-- Total con descuento -->
+                                     <span style="color: orange;">{{ venta.total_con_descuento }} $</span>
+                                 {% else %}
+                                     <!-- Total sin descuento -->
+                                     <span style="color: green;">{{ venta.total_sin_descuento }} $</span>
+                                 {% endif %}
+                             </td>
 
 
                                 <td>
@@ -169,27 +169,41 @@
             </div>
         </div>
     </div>
-<script>
-  function calcularTotal() {
-      // Obtener el precio del menú seleccionado
-      var selectMenu = document.getElementById('menu_id_menu');
-      var precioMenu = parseFloat(selectMenu.options[selectMenu.selectedIndex].getAttribute('data-precio')) || 0;
-      document.getElementById('precio_menu').value = precioMenu.toFixed(2);
+    <script>
+      function calcularTotal() {
+          // Obtener el precio del menú seleccionado
+          var selectMenu = document.getElementById('menu_id_menu');
+          var precioNormal = parseFloat(selectMenu.options[selectMenu.selectedIndex].getAttribute('data-precio-normal')) || 0;
+          var precioDescuento = parseFloat(selectMenu.options[selectMenu.selectedIndex].getAttribute('data-precio-descuento')) || 0;
 
-      // Obtener la cantidad de platos
-      var cantidadPlatos = parseInt(document.getElementById('cantidad').value) || 0;
+          // Determinar si hay un descuento y cuál precio usar
+          var precioFinal = precioDescuento > 0 ? precioDescuento : precioNormal;
+          document.getElementById('precio_menu').value = precioFinal.toFixed(2);
 
-      // Calcular el total
-      var totalVenta = precioMenu * cantidadPlatos;
+          // Obtener la cantidad de platos
+          var cantidadPlatos = parseInt(document.getElementById('cantidad').value) || 0;
 
-      // Mostrar el total en el campo correspondiente
-      document.getElementById('total_venta').value = totalVenta.toFixed(2);
-  }
+          // Calcular el total con descuento
+          var totalConDescuento = precioDescuento > 0 ? precioDescuento * cantidadPlatos : 0;
+          // Calcular el total sin descuento
+          var totalSinDescuento = precioNormal * cantidadPlatos;
 
-  // Asegurarse de que el total se recalcula cada vez que se cambia la cantidad
-  document.getElementById('cantidad').addEventListener('input', calcularTotal);
-  document.getElementById('menu_id_menu').addEventListener('change', calcularTotal);
-</script>
+          // Mostrar el total en los campos correspondientes
+          document.getElementById('total_con_descuento').value = totalConDescuento.toFixed(2);
+          document.getElementById('total_sin_descuento').value = totalSinDescuento.toFixed(2);
+      }
+
+      // Asegurarse de que el total se recalcula cada vez que se cambia la cantidad o el menú
+      window.onload = function() {
+          document.getElementById('cantidad').addEventListener('input', calcularTotal);
+          document.getElementById('menu_id_menu').addEventListener('change', calcularTotal);
+
+          // Calcular el total inicial si hay valores preestablecidos
+          calcularTotal();
+      };
+  </script>
+
+
 </div>
 
 <script>

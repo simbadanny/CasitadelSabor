@@ -157,8 +157,9 @@
             <div class="form-group col-md-6">
               <b><i class="fas fa-clock"></i> HORA RESERVA:</b>
                 <input type="time" name="hora_reserva" id="hora_reserva" value="{% if reservas.hora_reserva %}{{ reservas.hora_reserva|time:'H:i' }}{% endif %}" placeholder="Ingrese la hora de Reserva" class="form-control" required>
-                <!-- Agregar una breve indicación, si es necesario -->
                 <small class="form-text text-muted">Formato: HH:MM (24 horas)</small>
+                <small class="form-text text-danger"></small>
+
             </div>
 					</div>
           <div class="modal-footer">
@@ -214,7 +215,8 @@
                       required: true
                   },
                   "hora_reserva": {
-                      required: true
+                      required: true,
+                      horaReservaValida: true
                   },
                   "numero_personas_reserva": {
                       required: true,
@@ -237,7 +239,8 @@
                       required: "Debe ingresar la fecha de la reserva"
                   },
                   "hora_reserva": {
-                      required: "Debe ingresar la hora de la reserva"
+                      required: "Debe ingresar la hora de la reserva",
+                      horaReservaValida: "La hora debe estar entre las 08:00 y las 19:00."
                   },
                   "numero_personas_reserva": {
                       required: "Por favor ingrese el número de personas",
@@ -298,5 +301,16 @@
           // Establece la fecha mínima en el campo de fecha
           document.getElementById('fecha_reserva').setAttribute('min', today);
       });
+  </script>
+
+  <script type="text/javascript">
+    $.validator.addMethod("horaReservaValida", function(value, element) {
+    const hora = parseInt(value.split(':')[0], 10);
+    const minutos = parseInt(value.split(':')[1], 10);
+
+    // Verificar que la hora esté entre 8 AM y 7 PM
+    return (hora >= 8 && (hora < 19 || (hora === 19 && minutos === 0)));
+}, "La hora debe estar entre las 08:00 y las 19:00.");
+
   </script>
 {% endblock %}

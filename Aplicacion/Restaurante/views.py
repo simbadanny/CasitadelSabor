@@ -609,6 +609,7 @@ def editarReservas(request,reserva_id):
     clienteBdd = Clientes.objects.all()
     return render(request, 'editarReservas.html', {'reservas': reservaEditar,'clientes':clienteBdd,'mesas':mesaBdd })
 
+
 def procesarActualizacionReservas(request):
     if request.method == 'POST':
         try:
@@ -689,9 +690,10 @@ def procesarActualizacionReservas(request):
 
             messages.success(request, 'Reserva actualizada exitosamente.')
         except Exception as e:
-            messages.error(request, f'Error al actualizar la reserva: {str(e)}')
+            messages.error(request, f'No puedes actualizar la reserva: {str(e)}')
 
         return redirect('listadoReservas')
+
 
 ##########################################################################################################################################################
 def listadoVentas(request):

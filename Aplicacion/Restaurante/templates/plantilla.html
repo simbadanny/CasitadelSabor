@@ -486,19 +486,19 @@
 
 		</div>
 
-				{% if messages %}
-		    {% for mensaje in messages %}
-		        <script type="text/javascript">
-		            iziToast.success({
-		                title: 'OK',
-		                message: '{{ mensaje }}',
-		                position: 'topRight',
-		                progressBarColor: 'rgb(245, 247, 248)',
-		                backgroundColor: '#F5F7F8'
-		            });
-		        </script>
-		    {% endfor %}
-		{% endif %}
+		{% if messages %}
+		{% for mensaje in messages %}
+			<script type="text/javascript">
+				iziToast.{{ mensaje.tags }}({
+					title: '{% if mensaje.tags == "error" %}{% else %}OK{% endif %}',
+					message: '{{ mensaje }}',
+					position: 'topRight',
+					progressBarColor: 'rgb(245, 247, 248)',
+					backgroundColor: '#F5F7F8'
+				});
+			</script>
+		{% endfor %}
+	{% endif %}
 		<!-- Custom template | don't include it in your project! -->
 		<div class="custom-template">
 			<div class="title">Configuración</div>

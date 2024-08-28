@@ -935,6 +935,7 @@ def editarDetalles_Reservas(request,detalle_reserva_id):
     menuBdd = Menus.objects.all()
     return render(request, 'editarDetalles_Reservas.html', {'detalle_Reservas': detalle_ReservaEditar,'reservas':reservaBdd,'menus':menuBdd })
 
+
 def procesarActualizacionDetalles_Reservas(request):
     try:
         # Obtener los datos del POST
@@ -948,24 +949,36 @@ def procesarActualizacionDetalles_Reservas(request):
         menuSeleccionado = Menus.objects.get(menu_id=menu_id_menu)
         detalle_ReservaEditar = Detalles_Reservas.objects.get(detalle_reserva_id=detalle_reserva_id)
 
+        # Verificar si el menú ha cambiado
+        menuAnterior = detalle_ReservaEditar.menu
+
         # Actualizar el detalle de reserva
         detalle_ReservaEditar.menu = menuSeleccionado
         detalle_ReservaEditar.cantidad = cantidad
         detalle_ReservaEditar.reserva = reservaSeleccionado
         detalle_ReservaEditar.save()
 
+        if menuAnterior != menuSeleccionado:
+            # Si el menú cambió, eliminar la venta asociada al menú anterior
+            Ventas.objects.filter(reserva=reservaSeleccionado, menu=menuAnterior).delete()
 
-
-        # Crear una nueva venta con los datos actualizados
-        Ventas.objects.update(
-            menu=menuSeleccionado,
-            reserva=reservaSeleccionado,
-            cliente=reservaSeleccionado.cliente,
-            mesa=reservaSeleccionado.mesa,
-            fecha_venta=reservaSeleccionado.fecha_reserva,
-            cantidad=cantidad,
-            total_venta=menuSeleccionado.precio_menu * int(cantidad)
-        )
+            # Crear una nueva venta para el nuevo menú
+            Ventas.objects.create(
+                menu=menuSeleccionado,
+                reserva=reservaSeleccionado,
+                cliente=reservaSeleccionado.cliente,
+                mesa=reservaSeleccionado.mesa,
+                fecha_venta=reservaSeleccionado.fecha_reserva,
+                cantidad=cantidad,
+                total_venta=menuSeleccionado.precio_menu * int(cantidad)
+            )
+        else:
+            # Si el menú no cambió, actualizar la venta existente
+            venta_existente = Ventas.objects.filter(reserva=reservaSeleccionado, menu=menuSeleccionado).first()
+            if venta_existente:
+                venta_existente.cantidad = cantidad
+                venta_existente.total_venta = menuSeleccionado.precio_menu * int(cantidad)
+                venta_existente.save()
 
         messages.success(request, 'Detalles de Reserva ACTUALIZADO Exitosamente')
 
@@ -973,6 +986,7 @@ def procesarActualizacionDetalles_Reservas(request):
         messages.error(request, f'Error al actualizar los detalles de la reserva: {str(e)}')
 
     return redirect('listadoDetalles_Reservas')
+
 
 
 

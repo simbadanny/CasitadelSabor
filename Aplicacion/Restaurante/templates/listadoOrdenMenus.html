@@ -187,14 +187,14 @@
 
                   <!-- Mesa Select -->
                   <div class="mb-3">
-                      <select id="mesa-select" class="form-control">
-                          <option value=""><b>--Seleccione una mesa--</b></option>
-                          {% for mesa in mesas %}
-                              <option value="{{ mesa.id_mesa }}">
-                                  <b>Numero:</b> {{ mesa.numero_mes }} | <b>Capacidad:</b> {{ mesa.capacidad_mes }}
-                              </option>
-                          {% endfor %}
-                      </select>
+                    <select id="mesa-select" class="form-control">
+                      <option value=""><b>--Seleccione una mesa--</b></option>
+                      {% for mesa in mesas %}
+                          <option value="{{ mesa.id_mesa }}" data-capacidad="{{ mesa.capacidad_mes }}">
+                              <b>Numero:</b> {{ mesa.numero_mes }} | <b>Capacidad:</b> {{ mesa.capacidad_mes }}
+                          </option>
+                      {% endfor %}
+                    </select
                   </div>
                   <br>
                   <br>
@@ -204,7 +204,6 @@
                       </div>
                       <input type="number" value="1" min="1" class="form-control" id="personas" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
                   </div>
-
                   <!-- Fecha y Hora -->
                   <div class="d-flex mb-3">
                     <div class="flex-fill mr-2">
@@ -235,7 +234,34 @@
       </div>
   </div>
 
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const mesaSelect = document.getElementById('mesa-select');
+      const personasInput = document.getElementById('personas');
 
+      mesaSelect.addEventListener('change', function() {
+          const selectedOption = mesaSelect.options[mesaSelect.selectedIndex];
+          const capacidad = parseInt(selectedOption.getAttribute('data-capacidad'), 10);
+
+          // Set max value for personas input
+          personasInput.setAttribute('max', capacidad);
+
+          // Ensure the number of personas is within the allowed range
+          if (parseInt(personasInput.value, 10) > capacidad) {
+              personasInput.value = capacidad;
+          }
+      });
+
+      personasInput.addEventListener('input', function() {
+          const capacidad = parseInt(mesaSelect.options[mesaSelect.selectedIndex].getAttribute('data-capacidad'), 10);
+
+          // Validate the input value
+          if (parseInt(personasInput.value, 10) > capacidad) {
+              personasInput.value = capacidad;
+          }
+      });
+  });
+  </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const filters = document.querySelectorAll('.filters_menu li');

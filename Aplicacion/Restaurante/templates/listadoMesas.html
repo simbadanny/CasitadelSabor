@@ -149,7 +149,7 @@
     }
 </script>
 <script>
-function eliminarMesas(cliente_id) {
+function eliminarMesas(mesa_id) {
     swal({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -167,7 +167,7 @@ function eliminarMesas(cliente_id) {
         }
     }).then((willDelete) => {
         if (willDelete) {
-            window.location.href = '/eliminarClientes/' + cliente_id;
+            window.location.href = '/eliminarMesas/' + mesa_id;
         } else {
             swal("¡El cliente está seguro!", {
                 icon: "info",
